@@ -12,7 +12,17 @@ env:
   MIRROR_URL: "git@github.com:EpitechPromo2027/G-EIP-600-LYN-6-1-eip-maksen.mofredj.git"
 
 jobs:
+  check_critical_files:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: |
+          test -f .env
+
   push_to_epitech_repository:
+    needs: check_critical_files
     if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     steps:
