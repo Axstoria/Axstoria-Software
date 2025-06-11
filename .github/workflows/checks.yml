@@ -19,3 +19,13 @@ jobs:
       - name: Check for .env file presence
         run: |
           ! test -f .env
+  check_unnecessary_files:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get repository content
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check for IDE-generated files and directories presence
+        run: |
+          ! test -d .vscode
