@@ -17,7 +17,7 @@ jobs:
         with:
           fetch-depth: 0
       - run: |
-          test -f .env
+          ! test -f .env
 
   push_to_epitech_repository:
     needs: check_critical_files
