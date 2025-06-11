@@ -9,7 +9,7 @@ on:
       - 'main'
 
 env:
-  MIRROR_URL: "https://github.com/EpitechPromo2027/G-EIP-600-LYN-6-1-eip-maksen.mofredj"
+  MIRROR_URL: "git@github.com:EpitechPromo2027/G-EIP-600-LYN-6-1-eip-maksen.mofredj.git"
 
 jobs:
   push_to_epitech_repository:
