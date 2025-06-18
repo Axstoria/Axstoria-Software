@@ -1,0 +1,23 @@
+name: push_to_mirror
+
+on:
+  push:
+    branches:
+      - 'main'
+
+env:
+  MIRROR_URL: "git@github.com:EpitechPromo2027/G-EIP-600-LYN-6-1-eip-maksen.mofredj.git"
+
+jobs:
+  push_to_epitech_repository:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get repository content
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Push to Epitech repository
+        uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url: ${{ env.MIRROR_URL }}
+          ssh_private_key: ${{ secrets.EPITECH_REPOSITORY_KEY }}
