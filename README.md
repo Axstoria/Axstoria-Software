@@ -27,7 +27,7 @@ Nous avons donc imaginé une plateforme :
 ## ✨ Fonctionnalités
 
 - Création de campagnes, scènes, et fiches de personnages
-- Outils MJ intégrés (ex: lancer de dés)
+- Outils intégrés (ex: lancer de dés)
 - Mode en ligne multijoueur en hébergement local
 - Documentation complète + tutoriels vidéo intégrés
 
