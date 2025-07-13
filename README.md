@@ -10,7 +10,6 @@ Ce projet a été réalisé dans le cadre d’un **projet de fin d’étude** pa
 - [🎯 À propos](#-à-propos)
 - [✨ Fonctionnalités](#-fonctionnalités)
 - [👥 Équipe](#-équipe)
-- [📝 Licence](#-licence)
 
 ---
 
