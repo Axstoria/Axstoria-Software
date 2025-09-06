@@ -1,4 +1,35 @@
+# Workflow
+Every tests has to be written before the implementation of the functionnality and has to be updated if obsolete.
 
+## Branching & CI
+
+The branching of the project will be done as follow :
+
+    functionnality -> PR -> feature -> PR -> dev -> realease PR -> main Vx.x
+
+Meaning that a developper will work inside a functionnality branch, once the issues inside the ``functionnality`` are done they will merge it into the ``feature``. Once all functionnalities are merge into the ``feature``, it will be merge in ``dev``. And finally once the feature goals are achieved a new version will be released in ``main``.
+
+### CI Triggers
+- Push inside a branch
+	- Unit tests
+- PR toward ``feature``
+	- Integration tests
+- PR toward ``dev``
+	- Integration tests
+	- Build verification
+	- Performance tests
+- PR toward ``main``
+	- Performance tests
+	- Build verification
+	- (manual) E2E tests
+
+## Responsabilities
+
+### As a developper
+### As a reviewer
+### As a tester
+
+# Tests types
 ## Unit test
 
 ### Environment
@@ -6,7 +37,6 @@
 Unit test will have to be done using the **Unity Test Framework** package, which extends C# test framework **NUnit** with customs functionnality for Unity.
 
 ### Process
-
 The tests will be executed automatically using **Unity Cloud Build** before every push to ensure that no regression happens in the code. Failure on a unit test will block the push until correction.
 
 The execution of the unit tests will also be available on the Unity Editor Menu, as to not have to commit and push every time there's a need to verify the regression of the code.
@@ -17,7 +47,11 @@ The file name norm is : *Test/Unit_Test/{scope}_{functionnality}.asmdef*
 
 The Unit test will be used for the pure logical implementation of isolated C# module across every backend function of the project.
 
-The goal is to verify that each low level module work as intended during execution.
+They are not to be executed at runtime as they have to be isolated and their purpose is to verify that each low level module by itself will work as intended through all case of execution. So the tests will be done with truncated fixed value to analyze the behavior of the module.
+
+### Code Coverage
+
+The Code Coverage for Unit tests should aimed to be at 70% for non graphical modules.
 
 ## Integration test
 Integration tests will be done in one of the two cases :
@@ -49,6 +83,10 @@ In the case of the integration of the feature  :
 ### What to test?
 Every functionnality and features inside the game are concerned by the integration tests and must be done with the utmost care.
 
+### Code Coverage
+
+The Code Coverage for Integration tests should aimed to be at 80% for all modules.
+
 ## End-to-end test
 End-to-end test will be used for the versionning of the software between the dev and main branch.
 
@@ -76,6 +114,6 @@ At least 3 type of tests will be made and automatized, but more can get added if
 -   **Stress tests**: Evaluates how the game handles unexpected situations, such as sudden increases in player activity
 -   **Endurance tests**: Evaluates how the game performs over long periods of time
 
-## Code Coverage
+### Code Coverage
 
 The Code Coverage for Unit tests should aimed to be between 70 and 80% for non graphical modules.
