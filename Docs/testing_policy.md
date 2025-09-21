@@ -13,6 +13,7 @@ Meaning that a developper will work inside a functionnality branch, once the iss
 - Push inside a branch
 	- Unit tests
 - PR toward ``feature``
+    - Unit Test
 	- Integration tests
 - PR toward ``dev``
 	- Integration tests
@@ -26,10 +27,19 @@ Meaning that a developper will work inside a functionnality branch, once the iss
 ## Responsabilities
 
 ### As a developper
+
+As a developper your responsabilities are to ensure your code is safe, easy to read and commented for anyone who comes after you. You must write your codes properly and make sure that they are up to date and most importantly not erasing any blocking test. The responsability of the code you write and the correction of the bug that emerges from it is solely on you.
+
 ### As a reviewer
+
+As a reviewer you must be careful when you read the code of a fellow developper and pay proper attention to any typo and easy mistakes that you could come across. You must not half-assess your inspection and actually understand the code you reviewed as if the developper is not available you will be asked to correct it.
+
 ### As a tester
 
+As a tester you must be thorough in your testing and make sure to test every possibility to ensure that every bug and mistakes can be catched and corrected in due time.
+
 # Tests types
+
 ## Unit test
 
 ### Environment
@@ -37,7 +47,7 @@ Meaning that a developper will work inside a functionnality branch, once the iss
 Unit test will have to be done using the **Unity Test Framework** package, which extends C# test framework **NUnit** with customs functionnality for Unity.
 
 ### Process
-The tests will be executed automatically using **Unity Cloud Build** before every push to ensure that no regression happens in the code. Failure on a unit test will block the push until correction.
+The tests will be executed automatically using **Unity Cloud Build** before every push to ensure that no regression happens in the code. Failure on a unit test does not block a push, but will block a pull request
 
 The execution of the unit tests will also be available on the Unity Editor Menu, as to not have to commit and push every time there's a need to verify the regression of the code.
 
@@ -62,16 +72,18 @@ Integration tests will be done in one of the two cases :
 The integration tests are to be done on Unity first by using **UTF** (Unity Test Framework) to do automated test on a full sequence of events then by at least one of the developpers, in test mode and play mode, trying out the new functionnalities and features as a user.
 
 ### Process
+
 The automated tests must cover in a system the new functionnality and feature as a whole, testing multiple case of event, with the possibility of creating sub-systems to prevent and identify errors in a particular implementation.
 
 In the functionnality case :
+
 - First the developper that wrote the new functionnality will write his automated test with the help of the other dev that worked on this particular feature
 - If the automated test work on all cases then he can create his pull request 
 - If the automated test could not test everything or is judged as not complete then  colleague working on the same or similar feature (can be the same person that helped with the test writing) will do the following :
 	- Test each new functionnality as part of the project
 	- Test each functionnality of the feature in order of implementation
 	- Test of the main functionnalities in the project outside this feature
--  If each tests is a success then you can validate the pull request and implement the new functionnality in the feature branch.
+- If each tests is a success then you can validate the pull request and implement the new functionnality in the feature branch.
 
 In the case of the integration of the feature  : 
 - This time one or two devs from a different feature will do the following :
@@ -110,6 +122,7 @@ And devs are encourage to keep the profiler open in a tab when working in the ed
 
 ### What to test?
 At least 3 type of tests will be made and automatized, but more can get added if the need arise :
+
 - **Load tests**: Determines how the game performs when subjected to heavy workloads
 -   **Stress tests**: Evaluates how the game handles unexpected situations, such as sudden increases in player activity
 -   **Endurance tests**: Evaluates how the game performs over long periods of time
