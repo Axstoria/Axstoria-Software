@@ -1,4 +1,4 @@
-# Dungeon Scroll
+# Axstoria
 
 Un moteur de jeu spécialisé dans les **jeux de rôles virtuels**, développé sous **Unity**, pensé pour offrir une **expérience intuitive**, modulable, et **facile d’utilisation**.  
 Ce projet a été réalisé dans le cadre d’un **projet de fin d’étude** par une équipe de 6 étudiants.
@@ -7,9 +7,11 @@ Ce projet a été réalisé dans le cadre d’un **projet de fin d’étude** pa
 
 ## 📚 Sommaire
 
-- [🎯 À propos](#-à-propos)
-- [✨ Fonctionnalités](#-fonctionnalités)
-- [👥 Équipe](#-équipe)
+- [Axstoria](#axstoria)
+  - [📚 Sommaire](#-sommaire)
+  - [🎯 À propos](#-à-propos)
+  - [✨ Fonctionnalités](#-fonctionnalités)
+  - [👥 Équipe](#-équipe)
 
 ---
 

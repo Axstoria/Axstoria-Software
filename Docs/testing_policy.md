@@ -6,7 +6,6 @@ Every tests has to be written before the implementation of the functionnality an
 The branching of the project will be done as follow :
 
     functionnality -> PR -> feature -> PR -> dev -> realease PR -> main Vx.x
-
 Meaning that a developper will work inside a functionnality branch, once the issues inside the ``functionnality`` are done they will merge it into the ``feature``. Once all functionnalities are merge into the ``feature``, it will be merge in ``dev``. And finally once the feature goals are achieved a new version will be released in ``main``.
 
 ### CI Triggers
@@ -126,7 +125,3 @@ At least 3 type of tests will be made and automatized, but more can get added if
 - **Load tests**: Determines how the game performs when subjected to heavy workloads
 -   **Stress tests**: Evaluates how the game handles unexpected situations, such as sudden increases in player activity
 -   **Endurance tests**: Evaluates how the game performs over long periods of time
-
-### Code Coverage
-
-The Code Coverage for Unit tests should aimed to be between 70 and 80% for non graphical modules.
