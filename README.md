@@ -33,7 +33,6 @@ Nous avons donc imaginé une plateforme :
 - Mode en ligne multijoueur en hébergement local
 - Documentation complète + tutoriels vidéo intégrés
 
-
 ## 👥 Équipe
 
 Projet réalisé par une équipe de 6 étudiants :
@@ -46,5 +45,3 @@ Projet réalisé par une équipe de 6 étudiants :
 | Clément Monnoir   | [@Clemmonoire](https://github.com/Clemmonoire) |
 | Newen Calle       | [@NewenC](https://github.com/Newenc) |
 | Arthur Lassausaie     | [@Kayuranium](https://github.com/Kayuranium) |
-
-
