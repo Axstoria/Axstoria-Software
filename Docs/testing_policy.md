@@ -5,7 +5,7 @@ Every tests has to be written before the implementation of the functionnality an
 
 The branching of the project will be done as follow :
 
-    functionnality -> PR -> feature -> PR -> dev -> release PR -> main Vx.x
+    functionnality -> PR -> feature -> PR -> dev -> release PR -> main Vx.y
 Meaning that a developper will work inside a functionnality branch, once the issues inside the ``functionnality`` are done they will be merged it into the ``feature``. Once all functionnalities are merged into the ``feature``, it will be merged in ``dev``. And finally once the feature goals are achieved a new version will be released in ``main``.
 
 ### CI Triggers
