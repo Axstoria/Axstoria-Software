@@ -3,12 +3,12 @@
 ## Issue type, Feature and Task
 
 * __Feature__ is a general issue with multiple developpers assigned
-* It contains multiple sub_issues called __Task__ that are assigned to only one developper (in most case)
+* It contains multiple sub_issues called __Task__ that are assigned to only one developper (in most cases)
 * __Bug__ is an exceptionnal issue that is created when a problem is detected by the community on a __Feature__
 
 ## Issue Norm
 
-* Every issue must have a coherent description explicating the goal of the issue and the work that has to be accomplished. It must also contains the link to every issues and PR that are related to it (especially in the case of a __Bug__)
+* Every issue must have a coherent description explicating the goal of the issue and the work that has to be accomplished. It must also contain the link to every issue and PR that are related to it (especially in the case of a __Bug__)
 * Every issue must use the correct labels and be part of the project __Issue Board__, with the priority, size, type, status correctly filled. The __Features__ must also have the date corresponding to the sprint they are part of.
 * After the start of each sprint and the creation of the branches, the issues must be linked to their corresponding branches. In the case of a __Feature__ it is to be done at the end of the sprint start meeting by the president of the reunion, and for the __Tasks__ it is to be done by the person assigned to the task when they start it.That way when a PR is closed it should automatically update the issue board and close the linked issues.
 * It is imperative to update the issue board at every step of your issue in order to keep everyone well aware of the advancement of the sprint.
@@ -44,14 +44,14 @@ A __Feature__ is usually graded to be the size above the biggest __Task__ it con
 * __Backend Game__ : Improvements or additions to the functionalities of the game
 * __Duplicate__ : This issue or pull request already exists
 * __Distribution__ : Improvements or additions to the distribution page
-* *more label can be added in the future if the need arise*
+* *more label can be added in the future if the need arises*
 The labels have to be applied in priority to the __Tasks__ and then the __Features__ will be composed of the main labels of the __Tasks__.
 
 ## Status
 
-* __Backlog__ : Every issues created in advance, they are to be developped at an ulterior time.
+* __Backlog__ : Issues created in advance, they are to be developped at an ulterior time.
 * __Ready__ : Issues corresponding to the present sprint, one or multiple devs are assigned to them.
-* __Feature In Progress__ : Actual sprint's __Feature__ currently in developpement (There shouldn't be more than 3 or 4 features at a time except in a crisis time)
+* __Feature In Progress__ : Current sprint's __Feature__ that are in development (There shouldn't be more than 3 or 4 features at a time except in a crisis time)
 * __Task In Progress__ : __Task__ currently being developped by a developper (There shouldn't be more than one per developper except crisis time)
 * __In Review__ : Tested and completed issues, this issue is currently being reviewed as part of a Pull Request and needs the input of the PR reviewer(s) to be closed
-* __Done__ : Every issues that have been done and integrated.
+* __Done__ : Every issue that have been done and integrated.
