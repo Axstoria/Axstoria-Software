@@ -1,12 +1,12 @@
 # Workflow
-Every tests has to be written before the implementation of the functionnality and has to be updated if obsolete.
+Every test has to be written before the implementation of the functionnality and has to be updated if obsolete.
 
 ## Branching & CI
 
 The branching of the project will be done as follow :
 
     functionnality -> PR -> feature -> PR -> dev -> release PR -> main Vx.y
-Meaning that a developper will work inside a functionnality branch, once the issues inside the ``functionnality`` are done they will be merged it into the ``feature``. Once all functionnalities are merged into the ``feature``, it will be merged in ``dev``. And finally once the feature goals are achieved a new version will be released in ``main``.
+Meaning that a developper will work inside a functionnality branch, once the issues inside the ``functionnality`` are done they will be merged into the ``feature``. Once all functionnalities are merged into the ``feature``, it will be merged in ``dev``. And finally once the feature goals are achieved a new version will be released in ``main``.
 
 ### CI Triggers
 
@@ -28,15 +28,15 @@ Meaning that a developper will work inside a functionnality branch, once the iss
 
 ### As a developper
 
-As a developper your responsabilities are to ensure your code is safe, easy to read and commented for anyone who comes after you. You must write your codes properly and make sure that they are up to date and most importantly not erasing any blocking test. The responsibility of the code you write and the correction of the bug that emerges from it is solely on you.
+As a developper your responsibilities are to ensure your code is safe, easy to read and commented for anyone who comes after you. You must write your codes properly and make sure that they are up to date and most importantly not erasing any blocking test. The responsibility of the code you write and the correction of the bug that emerges from it is solely on you.
 
 ### As a reviewer
 
-As a reviewer you must be careful when you read the code of a fellow developper and pay proper attention to any typo and easy mistakes that you could come across. You must not half-ass your inspection and actually understand the code you reviewed as if the developper is not available you will be asked to correct it.
+As a reviewer you must be careful when you read the code of a fellow developper and pay proper attention to any typo and easy mistakes that you could come across. You must not half-ass your inspection and actually understand the code you reviewed, as if the developper is not available you will be asked to correct it.
 
 ### As a tester
 
-As a tester you must be thorough in your testing and make sure to test every possibility to ensure that every bug and mistakes can be catched and corrected in due time.
+As a tester you must be thorough in your testing and make sure to test every possibility to ensure that every bug and mistake can be caught and corrected in due time.
 
 # Tests types
 
@@ -80,9 +80,9 @@ The automated tests must cover in a system the new functionnality and feature as
 
 In the functionnality case :
 
-- First the developper that wrote the new functionnality will write his automated test with the help of the other dev that worked on this particular feature
-- If the automated test work on all cases then he can create his pull request
-- If the automated test could not test everything or is judged as not complete then  colleague working on the same or similar feature (can be the same person that helped with the test writing) will do the following :
+- First the developper that wrote the new functionnality will write his automated test with the help of the other devs that worked on this particular feature
+- If the automated tests work on all cases then he can create his pull request
+- If the automated tests could not test everything or are judged as not complete then colleague working on the same or similar feature (can be the same person that helped with the test writing) will do the following :
   - Test each new functionnality as part of the project
   - Test each functionnality of the feature in order of implementation
   - Test of the main functionnalities in the project outside this feature
@@ -97,7 +97,7 @@ In the case of the integration of the feature  :
 
 ### What to test?
 
-Every functionnality and features inside the game are concerned by the integration tests and must be done with the utmost care.
+Every functionnality and feature inside the game are concerned by the integration tests and must be done with the utmost care.
 
 ### Code Coverage
 
@@ -113,11 +113,11 @@ The end to end testing will be done in the Unity play mode for the early develop
 
 ### Process
 
-The test will be done in 2 part, first the developpers will test the version to verify that everything is stable and up-to-date by doing manual tests. Then once we're sure that everything is up to standards the version will be put on the main branch and the binary will be made accessible to our group of 20 testers, along with a notification of the new functionnalities, the fixes and changes made to the project.  They will have complete access to the binary until the next version and will report at any moment their feelings about the game, the bug and the part to enhance. Those reports will be then added to the list of issues to address in the Kanban and a part of the team will be dedicated to correct that for the next version, while the rest works on the new functionnalities.
+The test will be done in 2 parts, first the developpers will test the version to verify that everything is stable and up-to-date by doing manual tests. Then once we're sure that everything is up to standards the version will be put on the main branch and the binary will be made accessible to our group of 20 testers, along with a notification of the new functionnalities, the fixes and changes made to the project.  They will have complete access to the binary until the next version and will report at any moment their feelings about the game, the bugs and the parts to enhance. These reports will be then added to the list of issues to address in the Kanban and a part of the team will be dedicated to correct that for the next version, while the rest works on the new functionnalities.
 
 ### What to test?
 
-As said precedently, the binary as a whole will be tested and how user friendly it is. Every component, feature and functionnality will be tested by the players to make sure everything runs smoothly and give them an optimal experience.
+As said precedently, the binary as a whole will be tested and how user friendly it is. Every component, feature and functionnality will be tested by the players to make sure everything runs smoothly and gives them an optimal experience.
 
 ## Performance test
 
@@ -128,7 +128,7 @@ Performance test will be done using the **Unity Profiler** which allows us to re
 ### Process
 
 During each versionning, in the end-to-end tests made by developpers, a full performance test will be conducted to make sure the game is enjoyable for the players.
-And devs are encourage to keep the profiler open in a tab when working in the editors to make sure that the game metrics doesn't suddenly change with the modification or addition of a functionnality.
+And devs are encouraged to keep the profiler open in a tab when working in the editors to make sure that the game metrics don't suddenly change with the modification or addition of a functionnality.
 
 ### What to test?
 

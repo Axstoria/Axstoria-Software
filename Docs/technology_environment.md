@@ -10,7 +10,7 @@ Development Environment : Unity 6.1, Visual Studio
 
 Programming Language : C#
 
-Code Versioning : GitHub (Epitech repository + public repository in the Axstoria"z" organization)
+Code Versioning : GitHub (Epitech repository + public repository in the Axstoria organization)
 
 Marketplace Infrastructure :
 
