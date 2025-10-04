@@ -1,15 +1,17 @@
-# Dungeon Scroll
+# Axstoria
 
 Un moteur de jeu spécialisé dans les **jeux de rôles virtuels**, développé sous **Unity**, pensé pour offrir une **expérience intuitive**, modulable, et **facile d’utilisation**.  
-Ce projet a été réalisé dans le cadre d’un **projet de fin d’étude** par une équipe de 6 étudiants.
+Ce projet a été réalisé dans le cadre d’un **projet de fin d’études** par une équipe de 6 étudiants.
 
 ---
 
 ## 📚 Sommaire
 
-- [🎯 À propos](#-à-propos)
-- [✨ Fonctionnalités](#-fonctionnalités)
-- [👥 Équipe](#-équipe)
+- [Axstoria](#axstoria)
+  - [📚 Sommaire](#-sommaire)
+  - [🎯 À propos](#-à-propos)
+  - [✨ Fonctionnalités](#-fonctionnalités)
+  - [👥 Équipe](#-équipe)
 
 ---
 
@@ -31,7 +33,6 @@ Nous avons donc imaginé une plateforme :
 - Mode en ligne multijoueur en hébergement local
 - Documentation complète + tutoriels vidéo intégrés
 
-
 ## 👥 Équipe
 
 Projet réalisé par une équipe de 6 étudiants :
@@ -41,8 +42,6 @@ Projet réalisé par une équipe de 6 étudiants :
 | Alexandre Ramain      | [@ShireXela2](https://github.com/ShireXela2) |
 | Sofiane Larbi      | [@Sofiane-Larbi](https://github.com/Sofiane-Larbi) |
 | Maksen Mofredj      | [@MaksenM](https://github.com/MaksenM) |
-| Clément Monnoir   | [@Clemmonoire](https://github.com/Clemmonoire) |
+| Clément Monnoire   | [@Clemmonoire](https://github.com/Clemmonoire) |
 | Newen Calle       | [@NewenC](https://github.com/Newenc) |
 | Arthur Lassausaie     | [@Kayuranium](https://github.com/Kayuranium) |
-
-
