@@ -1,0 +1,11 @@
+:root {
+}
+
+.header {
+}
+
+.button {
+    font-size: 20px;
+    width: 220px;
+    height: 60px;
+}
