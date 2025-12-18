@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.fab.uitk-runtime-dropdown": {
+      "version": "https://github.com/fabSchneider/fab.uitk-runtime-dropdown.git#upm",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "1312a5f9ba9a8072bd697b762fac97610f37e123"
+    },
     "com.unity.ai.navigation": {
       "version": "2.0.6",
       "depth": 0,

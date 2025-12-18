@@ -1,0 +1,9 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/EditionToolbarUI.uss?fileID=7433441132597879392&amp;guid=2aa33c093366387469f03e4a9eb3157e&amp;type=3#EditionToolbarUI" />
+    <ui:VisualElement name="menubar" class="menubar" style="flex-direction: row; background-color: rgb(192, 192, 192);">
+        <ui:Button text="File" name="file-button" class="toolbar__button" />
+        <ui:Button text="Edit" name="edit-button" class="toolbar__button" />
+        <ui:Button text="View" name="view-button" class="toolbar__button" />
+        <ui:Button text="Tools" name="tools-button" class="toolbar__button" />
+    </ui:VisualElement>
+</ui:UXML>
