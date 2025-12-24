@@ -129,7 +129,6 @@ GameObject:
   m_Component:
   - component: {fileID: 177393110}
   - component: {fileID: 177393109}
-  - component: {fileID: 177393111}
   - component: {fileID: 177393112}
   m_Layer: 5
   m_Name: UI_TilePlacement
@@ -176,29 +175,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &177393111
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 177393108}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e21c0c418bcf7f40ad9315485078bb8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlacementManager
-  m_hexLandGrid: {fileID: 986007665}
-  m_tilePrefabs:
-  - {fileID: 5679900585067106708, guid: 69b13ea45f4482946b3e8e6aaea5bb7d, type: 3}
-  m_currentPrefabIndex: 0
-  m_groundMask:
-    m_Bits: 0
-  m_hexPreview: {fileID: 0}
-  m_allowDeleteWithRightClick: 1
-  uiDocument: {fileID: 0}
-  saveButtonName: Save
-  loadButtonName: Load
 --- !u!114 &177393112
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -565,6 +541,7 @@ MonoBehaviour:
     m_Bits: 64
   preview: {fileID: 1263937232}
   allowDeleteWithRightClick: 1
+  highlightMaterial: {fileID: 2100000, guid: 3633517d404040c4b9682c37d030634e, type: 2}
 --- !u!4 &1454533600
 Transform:
   m_ObjectHideFlags: 0
