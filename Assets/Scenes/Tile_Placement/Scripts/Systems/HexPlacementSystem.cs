@@ -25,9 +25,11 @@ namespace HexGrid.Systems
         public System.Func<bool> ShouldBlockInput;
 
         private readonly Dictionary<Vector3Int, GameObject> _byCell = new();
-        private PlacedTile selectedTile;
-        private Material originalMaterial;
+        private readonly HashSet<PlacedTile> selectedTiles = new();
+        private readonly Dictionary<PlacedTile, Material> originalMaterials = new();
         private Material previewOriginalMaterial;
+        private readonly List<GameObject> additionalPreviews = new();
+        private PlacedTile referenceTile;
 
         public int PrefabCount => tilePrefabs?.Count ?? 0;
         public bool HasGrid => grid != null;
@@ -38,7 +40,7 @@ namespace HexGrid.Systems
 
             if (Keyboard.current.escapeKey.wasPressedThisFrame)
             {
-                DeselectTile();
+                DeselectAllTiles();
                 return;
             }
 
@@ -54,28 +56,50 @@ namespace HexGrid.Systems
 
             if (preview != null) preview.transform.position = world;
 
+            bool canPlaceAll = CanPlaceAllSelectedTilesAt(cell);
+
+            SetPreviewsVisibility(canPlaceAll);
+            UpdateAdditionalPreviews(cell);
+
             if (Mouse.current.leftButton.wasPressedThisFrame)
             {
+                bool ctrlHeld = Keyboard.current.leftCtrlKey.isPressed || Keyboard.current.rightCtrlKey.isPressed;
+
                 if (_byCell.TryGetValue(cell, out GameObject tileObj))
                 {
                     PlacedTile clickedTile = tileObj.GetComponent<PlacedTile>();
                     if (clickedTile != null)
                     {
-                        if (selectedTile == clickedTile)
+                        if (ctrlHeld)
                         {
-                            DeselectTile();
+                            if (selectedTiles.Contains(clickedTile))
+                            {
+                                DeselectTile(clickedTile);
+                            }
+                            else
+                            {
+                                SelectTile(clickedTile);
+                            }
                         }
                         else
                         {
-                            SelectTile(clickedTile);
+                            if (selectedTiles.Count == 1 && selectedTiles.Contains(clickedTile))
+                            {
+                                DeselectAllTiles();
+                            }
+                            else
+                            {
+                                DeselectAllTiles();
+                                SelectTile(clickedTile);
+                            }
                         }
                     }
                 }
                 else
                 {
-                    if (selectedTile != null)
+                    if (selectedTiles.Count > 0)
                     {
-                        MoveTileToCell(selectedTile, cell);
+                        MoveSelectedTilesToCell(cell);
                     }
                     else
                     {
@@ -86,16 +110,21 @@ namespace HexGrid.Systems
 
             if (allowDeleteWithRightClick && Mouse.current.rightButton.wasPressedThisFrame)
             {
-                if (selectedTile != null)
+                if (_byCell.TryGetValue(cell, out GameObject clickedObj))
                 {
-                    if (selectedTile.cell == cell)
+                    PlacedTile clickedTile = clickedObj.GetComponent<PlacedTile>();
+                    if (clickedTile != null && selectedTiles.Contains(clickedTile))
                     {
-                        RemoveAtCell(cell);
+                        RemoveSelectedTiles();
                     }
                     else
                     {
-                        DeselectTile();
+                        RemoveAtCell(cell);
                     }
+                }
+                else if (selectedTiles.Count > 0)
+                {
+                    DeselectAllTiles();
                 }
                 else
                 {
@@ -128,9 +157,10 @@ namespace HexGrid.Systems
         {
             if (_byCell.TryGetValue(cell, out var obj))
             {
-                if (selectedTile != null && selectedTile.gameObject == obj)
+                PlacedTile tile = obj.GetComponent<PlacedTile>();
+                if (tile != null && selectedTiles.Contains(tile))
                 {
-                    DeselectTile();
+                    DeselectTile(tile);
                 }
 
                 Destroy(obj);
@@ -144,9 +174,9 @@ namespace HexGrid.Systems
             {
                 if (m.cell == cell)
                 {
-                    if (selectedTile == m)
+                    if (selectedTiles.Contains(m))
                     {
-                        DeselectTile();
+                        DeselectTile(m);
                     }
 
                     Destroy(m.gameObject);
@@ -157,7 +187,7 @@ namespace HexGrid.Systems
 
         public void ClearAll()
         {
-            DeselectTile();
+            DeselectAllTiles();
 
             foreach (var kv in _byCell) if (kv.Value != null) Destroy(kv.Value);
             _byCell.Clear();
@@ -168,7 +198,7 @@ namespace HexGrid.Systems
 
         public void RebuildFrom(MapDataDTO data)
         {
-            DeselectTile();
+            DeselectAllTiles();
 
             if (data?.tiles == null) return;
             if (tilePrefabs == null || tilePrefabs.Count == 0) { Debug.LogError("No tile prefabs assigned."); return; }
@@ -198,72 +228,240 @@ namespace HexGrid.Systems
 
         private void SelectTile(PlacedTile tile)
         {
-            if (selectedTile != null)
-            {
-                DeselectTile();
-            }
+            selectedTiles.Add(tile);
 
-            selectedTile = tile;
+            if (referenceTile == null)
+            {
+                referenceTile = tile;
+            }
 
             var renderer = tile.GetComponentInChildren<Renderer>();
             if (renderer != null && highlightMaterial != null)
             {
-                originalMaterial = renderer.material;
+                originalMaterials[tile] = renderer.material;
                 renderer.material = highlightMaterial;
             }
 
-            if (preview != null && highlightMaterial != null)
+            UpdatePreviewHighlight();
+            UpdateMultiSelectionPreviews();
+        }
+
+        private void DeselectTile(PlacedTile tile)
+        {
+            if (!selectedTiles.Contains(tile)) return;
+
+            selectedTiles.Remove(tile);
+
+            if (referenceTile == tile)
             {
-                var previewRenderer = preview.GetComponentInChildren<Renderer>();
-                if (previewRenderer != null)
+                referenceTile = null;
+                foreach (var t in selectedTiles)
+                {
+                    referenceTile = t;
+                    break;
+                }
+            }
+
+            var renderer = tile.GetComponentInChildren<Renderer>();
+            if (renderer != null && originalMaterials.TryGetValue(tile, out Material original))
+            {
+                renderer.material = original;
+                originalMaterials.Remove(tile);
+            }
+
+            UpdatePreviewHighlight();
+            UpdateMultiSelectionPreviews();
+        }
+
+        private void DeselectAllTiles()
+        {
+            foreach (var tile in selectedTiles)
+            {
+                var renderer = tile.GetComponentInChildren<Renderer>();
+                if (renderer != null && originalMaterials.TryGetValue(tile, out Material original))
+                {
+                    renderer.material = original;
+                }
+            }
+
+            selectedTiles.Clear();
+            originalMaterials.Clear();
+            referenceTile = null;
+
+            UpdatePreviewHighlight();
+            ClearAdditionalPreviews();
+
+            if (preview != null)
+            {
+                preview.SetActive(true);
+            }
+        }
+
+        private void UpdatePreviewHighlight()
+        {
+            if (preview == null) return;
+
+            var previewRenderer = preview.GetComponentInChildren<Renderer>();
+            if (previewRenderer == null) return;
+
+            if (selectedTiles.Count > 0)
+            {
+                if (highlightMaterial != null && previewOriginalMaterial == null)
                 {
                     previewOriginalMaterial = previewRenderer.material;
                     previewRenderer.material = highlightMaterial;
                 }
             }
-        }
-
-        private void DeselectTile()
-        {
-            if (selectedTile == null) return;
-
-            var renderer = selectedTile.GetComponentInChildren<Renderer>();
-            if (renderer != null && originalMaterial != null)
+            else
             {
-                renderer.material = originalMaterial;
-            }
-
-            if (preview != null && previewOriginalMaterial != null)
-            {
-                var previewRenderer = preview.GetComponentInChildren<Renderer>();
-                if (previewRenderer != null)
+                if (previewOriginalMaterial != null)
                 {
                     previewRenderer.material = previewOriginalMaterial;
+                    previewOriginalMaterial = null;
+                }
+            }
+        }
+
+        private void RemoveSelectedTiles()
+        {
+            var tilesToRemove = new List<PlacedTile>(selectedTiles);
+            foreach (var tile in tilesToRemove)
+            {
+                _byCell.Remove(tile.cell);
+                Destroy(tile.gameObject);
+            }
+
+            selectedTiles.Clear();
+            originalMaterials.Clear();
+            UpdatePreviewHighlight();
+            ClearAdditionalPreviews();
+        }
+
+        private void MoveSelectedTilesToCell(Vector3Int targetCell)
+        {
+            if (selectedTiles.Count == 0 || referenceTile == null) return;
+
+            Vector3 targetWorld = grid.GetCellCenterWorld(targetCell);
+            Vector3 deltaWorld = targetWorld - referenceTile.transform.position;
+
+            var tileMoves = new List<(PlacedTile tile, Vector3Int newCell, Vector3 newWorldPos)>();
+            foreach (var tile in selectedTiles)
+            {
+                Vector3 newWorldPos = tile.transform.position + deltaWorld;
+                Vector3Int newCell = grid.WorldToCell(newWorldPos);
+
+                if (_byCell.ContainsKey(newCell))
+                {
+                    return;
+                }
+
+                tileMoves.Add((tile, newCell, newWorldPos));
+            }
+
+            foreach (var (tile, newCell, _) in tileMoves)
+            {
+                _byCell.Remove(tile.cell);
+            }
+
+            foreach (var (tile, newCell, newWorldPos) in tileMoves)
+            {
+                Vector3 worldPos = grid.GetCellCenterWorld(newCell);
+                tile.transform.position = worldPos;
+                tile.cell = newCell;
+                _byCell[newCell] = tile.gameObject;
+            }
+
+            DeselectAllTiles();
+        }
+
+        private void UpdateMultiSelectionPreviews()
+        {
+            ClearAdditionalPreviews();
+
+            if (selectedTiles.Count <= 1 || preview == null || referenceTile == null) return;
+
+            foreach (var tile in selectedTiles)
+            {
+                if (tile == referenceTile) continue;
+
+                var previewObj = Instantiate(preview);
+                previewObj.name = $"AdditionalPreview_{tile.cell}";
+                previewObj.transform.rotation = tile.transform.rotation;
+
+                additionalPreviews.Add(previewObj);
+            }
+        }
+
+        private void UpdateAdditionalPreviews(Vector3Int cursorCell)
+        {
+            if (selectedTiles.Count <= 1 || additionalPreviews.Count == 0 || referenceTile == null) return;
+
+            Vector3 cursorWorld = grid.GetCellCenterWorld(cursorCell);
+            Vector3 deltaWorld = cursorWorld - referenceTile.transform.position;
+
+            int previewIndex = 0;
+            foreach (var tile in selectedTiles)
+            {
+                if (tile == referenceTile) continue;
+
+                if (previewIndex >= additionalPreviews.Count) break;
+
+                Vector3 targetWorld = tile.transform.position + deltaWorld;
+
+                additionalPreviews[previewIndex].transform.position = targetWorld;
+                additionalPreviews[previewIndex].transform.rotation = tile.transform.rotation;
+
+                previewIndex++;
+            }
+        }
+
+        private void ClearAdditionalPreviews()
+        {
+            foreach (var previewObj in additionalPreviews)
+            {
+                if (previewObj != null) Destroy(previewObj);
+            }
+            additionalPreviews.Clear();
+        }
+
+        private bool CanPlaceAllSelectedTilesAt(Vector3Int targetCell)
+        {
+            if (selectedTiles.Count == 0) return true;
+            if (referenceTile == null) return true;
+
+            Vector3 targetWorld = grid.GetCellCenterWorld(targetCell);
+            Vector3 deltaWorld = targetWorld - referenceTile.transform.position;
+
+            foreach (var tile in selectedTiles)
+            {
+                Vector3 newWorldPos = tile.transform.position + deltaWorld;
+                Vector3Int newCell = grid.WorldToCell(newWorldPos);
+
+                if (_byCell.ContainsKey(newCell))
+                {
+                    return false;
                 }
             }
 
-            selectedTile = null;
-            originalMaterial = null;
-            previewOriginalMaterial = null;
+            return true;
         }
 
-        private void MoveTileToCell(PlacedTile tile, Vector3Int newCell)
+        private void SetPreviewsVisibility(bool visible)
         {
-            if (_byCell.ContainsKey(newCell)) return;
+            if (selectedTiles.Count == 0) return;
 
-            Vector3Int oldCell = tile.cell;
-            GameObject tileObj = tile.gameObject;
+            if (preview != null)
+            {
+                preview.SetActive(visible);
+            }
 
-            _byCell.Remove(oldCell);
-
-            Vector3 worldPos = grid.GetCellCenterWorld(newCell);
-            tileObj.transform.position = worldPos;
-
-            tile.cell = newCell;
-
-            _byCell[newCell] = tileObj;
-
-            DeselectTile();
+            foreach (var previewObj in additionalPreviews)
+            {
+                if (previewObj != null)
+                {
+                    previewObj.SetActive(visible);
+                }
+            }
         }
     }
 }
