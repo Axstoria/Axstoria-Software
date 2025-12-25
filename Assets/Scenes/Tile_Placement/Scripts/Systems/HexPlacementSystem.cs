@@ -30,6 +30,14 @@ namespace HexGrid.Systems
         private Material previewOriginalMaterial;
         private readonly List<GameObject> additionalPreviews = new();
         private PlacedTile referenceTile;
+        private bool hidePreviewsUntilMouseMove = false;
+        private Vector2 lastMousePosition;
+
+        [Header("Keyboard Movement")]
+        [SerializeField] private float initialKeyDelay = 0.3f;
+        [SerializeField] private float keyRepeatInterval = 0.1f;
+        private float keyRepeatTimer = 0f;
+        private Vector3Int? lastKeyDirection = null;
 
         public int PrefabCount => tilePrefabs?.Count ?? 0;
         public bool HasGrid => grid != null;
@@ -44,7 +52,53 @@ namespace HexGrid.Systems
                 return;
             }
 
+            if (selectedTiles.Count > 0)
+            {
+                Vector3Int? currentDirection = null;
+                if (Keyboard.current.upArrowKey.isPressed) currentDirection = new Vector3Int(0, 1, 0);
+                else if (Keyboard.current.downArrowKey.isPressed) currentDirection = new Vector3Int(0, -1, 0);
+                else if (Keyboard.current.rightArrowKey.isPressed) currentDirection = new Vector3Int(1, 0, 0);
+                else if (Keyboard.current.leftArrowKey.isPressed) currentDirection = new Vector3Int(-1, 0, 0);
+
+                if (currentDirection.HasValue)
+                {
+                    if (currentDirection != lastKeyDirection)
+                    {
+                        MoveSelectedTilesInDirection(currentDirection.Value);
+                        lastKeyDirection = currentDirection;
+                        keyRepeatTimer = initialKeyDelay;
+                    }
+                    else
+                    {
+                        keyRepeatTimer -= Time.deltaTime;
+                        if (keyRepeatTimer <= 0f)
+                        {
+                            MoveSelectedTilesInDirection(currentDirection.Value);
+                            keyRepeatTimer = keyRepeatInterval;
+                        }
+                    }
+                    return;
+                }
+                else
+                {
+                    lastKeyDirection = null;
+                    keyRepeatTimer = 0f;
+                }
+            }
+            else
+            {
+                lastKeyDirection = null;
+                keyRepeatTimer = 0f;
+            }
+
             Vector2 mouse = Mouse.current.position.ReadValue();
+
+            if (hidePreviewsUntilMouseMove && mouse != lastMousePosition)
+            {
+                hidePreviewsUntilMouseMove = false;
+            }
+            lastMousePosition = mouse;
+
             Ray ray = Camera.main.ScreenPointToRay(mouse);
             if (!Physics.Raycast(ray, out var hit, 1000f, ~0)) return;
 
@@ -58,8 +112,11 @@ namespace HexGrid.Systems
 
             bool canPlaceAll = CanPlaceAllSelectedTilesAt(cell);
 
-            SetPreviewsVisibility(canPlaceAll);
-            UpdateAdditionalPreviews(cell);
+            if (!hidePreviewsUntilMouseMove)
+            {
+                SetPreviewsVisibility(canPlaceAll);
+                UpdateAdditionalPreviews(cell);
+            }
 
             if (Mouse.current.leftButton.wasPressedThisFrame)
             {
@@ -448,12 +505,12 @@ namespace HexGrid.Systems
 
         private void SetPreviewsVisibility(bool visible)
         {
-            if (selectedTiles.Count == 0) return;
-
             if (preview != null)
             {
                 preview.SetActive(visible);
             }
+
+            if (selectedTiles.Count == 0) return;
 
             foreach (var previewObj in additionalPreviews)
             {
@@ -462,6 +519,82 @@ namespace HexGrid.Systems
                     previewObj.SetActive(visible);
                 }
             }
+        }
+
+        private void MoveSelectedTilesInDirection(Vector3Int direction)
+        {
+            if (selectedTiles.Count == 0 || referenceTile == null) return;
+
+            const int maxAttempts = 10;
+            Vector3Int currentTargetCell = referenceTile.cell;
+
+            for (int attempt = 1; attempt <= maxAttempts; attempt++)
+            {
+                currentTargetCell += direction;
+
+                if (CanPlaceAllAtCell(currentTargetCell, ignoreSelectedTiles: true))
+                {
+                    ApplyMoveToCell(currentTargetCell);
+                    return;
+                }
+            }
+        }
+
+        private bool CanPlaceAllAtCell(Vector3Int targetCell, bool ignoreSelectedTiles)
+        {
+            if (selectedTiles.Count == 0 || referenceTile == null) return false;
+
+            Vector3 targetWorld = grid.GetCellCenterWorld(targetCell);
+            Vector3 deltaWorld = targetWorld - referenceTile.transform.position;
+
+            foreach (var tile in selectedTiles)
+            {
+                Vector3 newWorldPos = tile.transform.position + deltaWorld;
+                Vector3Int newCell = grid.WorldToCell(newWorldPos);
+
+                if (_byCell.ContainsKey(newCell))
+                {
+                    if (ignoreSelectedTiles)
+                    {
+                        GameObject occupyingObj = _byCell[newCell];
+                        PlacedTile occupyingTile = occupyingObj?.GetComponent<PlacedTile>();
+
+                        if (occupyingTile != null && selectedTiles.Contains(occupyingTile))
+                        {
+                            continue;
+                        }
+                    }
+
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private void ApplyMoveToCell(Vector3Int targetCell)
+        {
+            Vector3 targetWorld = grid.GetCellCenterWorld(targetCell);
+            Vector3 deltaWorld = targetWorld - referenceTile.transform.position;
+
+            foreach (var tile in selectedTiles)
+            {
+                _byCell.Remove(tile.cell);
+            }
+
+            foreach (var tile in selectedTiles)
+            {
+                Vector3 newWorldPos = tile.transform.position + deltaWorld;
+                Vector3Int newCell = grid.WorldToCell(newWorldPos);
+                Vector3 worldPos = grid.GetCellCenterWorld(newCell);
+
+                tile.transform.position = worldPos;
+                tile.cell = newCell;
+                _byCell[newCell] = tile.gameObject;
+            }
+
+            hidePreviewsUntilMouseMove = true;
+            SetPreviewsVisibility(false);
         }
     }
 }
