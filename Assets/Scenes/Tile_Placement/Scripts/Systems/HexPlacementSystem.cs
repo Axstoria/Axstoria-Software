@@ -32,6 +32,10 @@ namespace HexGrid.Systems
         // External blocker (UI hover etc.)
         public System.Func<bool> ShouldBlockInput;
 
+        private const float HEX_ROTATION_ANGLE = 60f;
+        private const float RAYCAST_MAX_DISTANCE = 1000f;
+        private const int MAX_KEYBOARD_MOVE_ATTEMPTS = 10;
+
         private readonly Dictionary<Vector3Int, GameObject> _byCell = new();
         private readonly HashSet<PlacedTile> selectedTiles = new();
         private readonly Dictionary<PlacedTile, Material> originalMaterials = new();
@@ -54,105 +58,50 @@ namespace HexGrid.Systems
             ? moveSelectionMaterial
             : rotateSelectionMaterial;
 
-        private void Update()
+        private Vector3 CalculateDeltaWorld(Vector3Int targetCell)
         {
-            if (ShouldBlockInput != null && ShouldBlockInput()) return;
+            Vector3 targetWorld = grid.GetCellCenterWorld(targetCell);
+            return targetWorld - referenceTile.transform.position;
+        }
 
-            if (Keyboard.current.digit1Key.wasPressedThisFrame)
+        private bool HandleKeyRepeat(Vector3Int? currentDirection, System.Action action)
+        {
+            if (currentDirection.HasValue)
             {
-                SwitchSelectionMode(SelectionMode.Move);
-            }
-            else if (Keyboard.current.digit2Key.wasPressedThisFrame)
-            {
-                SwitchSelectionMode(SelectionMode.Rotate);
-            }
-
-            if (Keyboard.current.escapeKey.wasPressedThisFrame)
-            {
-                DeselectAllTiles();
-                return;
-            }
-
-            if (Keyboard.current.deleteKey.wasPressedThisFrame && selectedTiles.Count > 0)
-            {
-                RemoveSelectedTiles();
-                return;
-            }
-
-            if (selectedTiles.Count > 0)
-            {
-                if (currentSelectionMode == SelectionMode.Move)
+                if (currentDirection != lastKeyDirection)
                 {
-                    Vector3Int? currentDirection = null;
-                    if (Keyboard.current.upArrowKey.isPressed) currentDirection = new Vector3Int(0, 1, 0);
-                    else if (Keyboard.current.downArrowKey.isPressed) currentDirection = new Vector3Int(0, -1, 0);
-                    else if (Keyboard.current.rightArrowKey.isPressed) currentDirection = new Vector3Int(1, 0, 0);
-                    else if (Keyboard.current.leftArrowKey.isPressed) currentDirection = new Vector3Int(-1, 0, 0);
-
-                    if (currentDirection.HasValue)
+                    action();
+                    lastKeyDirection = currentDirection;
+                    keyRepeatTimer = initialKeyDelay;
+                }
+                else
+                {
+                    keyRepeatTimer -= Time.deltaTime;
+                    if (keyRepeatTimer <= 0f)
                     {
-                        if (currentDirection != lastKeyDirection)
-                        {
-                            MoveSelectedTilesInDirection(currentDirection.Value);
-                            lastKeyDirection = currentDirection;
-                            keyRepeatTimer = initialKeyDelay;
-                        }
-                        else
-                        {
-                            keyRepeatTimer -= Time.deltaTime;
-                            if (keyRepeatTimer <= 0f)
-                            {
-                                MoveSelectedTilesInDirection(currentDirection.Value);
-                                keyRepeatTimer = keyRepeatInterval;
-                            }
-                        }
-                        return;
-                    }
-                    else
-                    {
-                        lastKeyDirection = null;
-                        keyRepeatTimer = 0f;
+                        action();
+                        keyRepeatTimer = keyRepeatInterval;
                     }
                 }
-                else if (currentSelectionMode == SelectionMode.Rotate)
-                {
-                    float? currentRotation = null;
-                    if (Keyboard.current.leftArrowKey.isPressed) currentRotation = -60f;
-                    else if (Keyboard.current.rightArrowKey.isPressed) currentRotation = 60f;
-
-                    if (currentRotation.HasValue)
-                    {
-                        Vector3Int currentFakeDirection = new Vector3Int(currentRotation.Value > 0 ? 1 : -1, 0, 0);
-
-                        if (currentFakeDirection != lastKeyDirection)
-                        {
-                            RotateSelectedTiles(currentRotation.Value);
-                            lastKeyDirection = currentFakeDirection;
-                            keyRepeatTimer = initialKeyDelay;
-                        }
-                        else
-                        {
-                            keyRepeatTimer -= Time.deltaTime;
-                            if (keyRepeatTimer <= 0f)
-                            {
-                                RotateSelectedTiles(currentRotation.Value);
-                                keyRepeatTimer = keyRepeatInterval;
-                            }
-                        }
-                        return;
-                    }
-                    else
-                    {
-                        lastKeyDirection = null;
-                        keyRepeatTimer = 0f;
-                    }
-                }
+                return true;
             }
             else
             {
                 lastKeyDirection = null;
                 keyRepeatTimer = 0f;
+                return false;
             }
+        }
+
+        private void Update()
+        {
+            if (ShouldBlockInput != null && ShouldBlockInput()) return;
+
+            HandleModeInput();
+
+            if (HandleSelectionInput()) return;
+
+            if (HandleKeyboardMovement()) return;
 
             Vector2 mouse = Mouse.current.position.ReadValue();
 
@@ -163,7 +112,7 @@ namespace HexGrid.Systems
             lastMousePosition = mouse;
 
             Ray ray = Camera.main.ScreenPointToRay(mouse);
-            if (!Physics.Raycast(ray, out var hit, 1000f, ~0)) return;
+            if (!Physics.Raycast(ray, out var hit, RAYCAST_MAX_DISTANCE, ~0)) return;
 
             if ((groundMask & (1 << hit.collider.gameObject.layer)) == 0) return;
             if (grid == null) { Debug.LogError("HexPlacementSystem: Grid is null."); return; }
@@ -171,11 +120,87 @@ namespace HexGrid.Systems
             Vector3Int cell = grid.WorldToCell(hit.point);
             Vector3 world = grid.GetCellCenterWorld(cell);
 
+            HandleMouseInput(cell, world);
+        }
+
+        private void HandleModeInput()
+        {
+            if (Keyboard.current.digit1Key.wasPressedThisFrame)
+            {
+                SwitchSelectionMode(SelectionMode.Move);
+            }
+            else if (Keyboard.current.digit2Key.wasPressedThisFrame)
+            {
+                SwitchSelectionMode(SelectionMode.Rotate);
+            }
+        }
+
+        private bool HandleSelectionInput()
+        {
+            if (Keyboard.current.escapeKey.wasPressedThisFrame || Keyboard.current.enterKey.wasPressedThisFrame)
+            {
+                DeselectAllTiles();
+                return true;
+            }
+
+            if (Keyboard.current.deleteKey.wasPressedThisFrame && selectedTiles.Count > 0)
+            {
+                RemoveSelectedTiles();
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool HandleKeyboardMovement()
+        {
+            if (selectedTiles.Count > 0)
+            {
+                if (currentSelectionMode == SelectionMode.Move)
+                {
+                    Vector3Int? currentDirection = null;
+                    if (Keyboard.current.upArrowKey.isPressed) currentDirection = new Vector3Int(0, 1, 0);
+                    else if (Keyboard.current.downArrowKey.isPressed) currentDirection = new Vector3Int(0, -1, 0);
+                    else if (Keyboard.current.rightArrowKey.isPressed) currentDirection = new Vector3Int(1, 0, 0);
+                    else if (Keyboard.current.leftArrowKey.isPressed) currentDirection = new Vector3Int(-1, 0, 0);
+
+                    if (HandleKeyRepeat(currentDirection, () => MoveSelectedTilesInDirection(currentDirection.Value)))
+                    {
+                        return true;
+                    }
+                }
+                else if (currentSelectionMode == SelectionMode.Rotate)
+                {
+                    float? currentRotation = null;
+                    if (Keyboard.current.leftArrowKey.isPressed) currentRotation = -HEX_ROTATION_ANGLE;
+                    else if (Keyboard.current.rightArrowKey.isPressed) currentRotation = HEX_ROTATION_ANGLE;
+
+                    Vector3Int? fakeDirection = currentRotation.HasValue
+                        ? new Vector3Int(currentRotation.Value > 0 ? 1 : -1, 0, 0)
+                        : null;
+
+                    if (HandleKeyRepeat(fakeDirection, () => RotateSelectedTiles(currentRotation.Value)))
+                    {
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                lastKeyDirection = null;
+                keyRepeatTimer = 0f;
+            }
+
+            return false;
+        }
+
+        private void HandleMouseInput(Vector3Int cell, Vector3 world)
+        {
             if (currentSelectionMode == SelectionMode.Move)
             {
                 if (preview != null) preview.transform.position = world;
 
-                bool canPlaceAll = CanPlaceAllSelectedTilesAt(cell);
+                bool canPlaceAll = CanPlaceAllAtCell(cell, ignoreSelectedTiles: false);
 
                 if (!hidePreviewsUntilMouseMove)
                 {
@@ -228,7 +253,7 @@ namespace HexGrid.Systems
                     {
                         if (currentSelectionMode == SelectionMode.Move)
                         {
-                            MoveSelectedTilesToCell(cell);
+                            MoveTilesToCell(cell, validateCollisions: true, hidePreviewsAfter: false);
                         }
                     }
                     else
@@ -383,6 +408,19 @@ namespace HexGrid.Systems
             UpdateMultiSelectionPreviews();
         }
 
+        private void RestoreTileMaterial(PlacedTile tile, bool removeFromDictionary = true)
+        {
+            var renderer = tile.GetComponentInChildren<Renderer>();
+            if (renderer != null && originalMaterials.TryGetValue(tile, out Material original))
+            {
+                renderer.material = original;
+                if (removeFromDictionary)
+                {
+                    originalMaterials.Remove(tile);
+                }
+            }
+        }
+
         private void DeselectTile(PlacedTile tile)
         {
             if (!selectedTiles.Contains(tile)) return;
@@ -399,12 +437,7 @@ namespace HexGrid.Systems
                 }
             }
 
-            var renderer = tile.GetComponentInChildren<Renderer>();
-            if (renderer != null && originalMaterials.TryGetValue(tile, out Material original))
-            {
-                renderer.material = original;
-                originalMaterials.Remove(tile);
-            }
+            RestoreTileMaterial(tile);
 
             UpdatePreviewHighlight();
             UpdateMultiSelectionPreviews();
@@ -414,11 +447,7 @@ namespace HexGrid.Systems
         {
             foreach (var tile in selectedTiles)
             {
-                var renderer = tile.GetComponentInChildren<Renderer>();
-                if (renderer != null && originalMaterials.TryGetValue(tile, out Material original))
-                {
-                    renderer.material = original;
-                }
+                RestoreTileMaterial(tile, removeFromDictionary: false);
             }
 
             selectedTiles.Clear();
@@ -499,39 +528,45 @@ namespace HexGrid.Systems
             SetPreviewsVisibility(true);
         }
 
-        private void MoveSelectedTilesToCell(Vector3Int targetCell)
+        private bool MoveTilesToCell(Vector3Int targetCell, bool validateCollisions, bool hidePreviewsAfter)
         {
-            if (selectedTiles.Count == 0 || referenceTile == null) return;
+            if (selectedTiles.Count == 0 || referenceTile == null) return false;
 
-            Vector3 targetWorld = grid.GetCellCenterWorld(targetCell);
-            Vector3 deltaWorld = targetWorld - referenceTile.transform.position;
+            Vector3 deltaWorld = CalculateDeltaWorld(targetCell);
 
-            var tileMoves = new List<(PlacedTile tile, Vector3Int newCell, Vector3 newWorldPos)>();
-            foreach (var tile in selectedTiles)
+            if (validateCollisions)
             {
-                Vector3 newWorldPos = tile.transform.position + deltaWorld;
-                Vector3Int newCell = grid.WorldToCell(newWorldPos);
-
-                if (_byCell.ContainsKey(newCell))
+                foreach (var tile in selectedTiles)
                 {
-                    return;
+                    Vector3 newWorldPos = tile.transform.position + deltaWorld;
+                    Vector3Int newCell = grid.WorldToCell(newWorldPos);
+                    if (_byCell.ContainsKey(newCell)) return false;
                 }
-
-                tileMoves.Add((tile, newCell, newWorldPos));
             }
 
-            foreach (var (tile, newCell, _) in tileMoves)
+            foreach (var tile in selectedTiles)
             {
                 _byCell.Remove(tile.cell);
             }
 
-            foreach (var (tile, newCell, newWorldPos) in tileMoves)
+            foreach (var tile in selectedTiles)
             {
+                Vector3 newWorldPos = tile.transform.position + deltaWorld;
+                Vector3Int newCell = grid.WorldToCell(newWorldPos);
                 Vector3 worldPos = grid.GetCellCenterWorld(newCell);
+
                 tile.transform.position = worldPos;
                 tile.cell = newCell;
                 _byCell[newCell] = tile.gameObject;
             }
+
+            if (hidePreviewsAfter)
+            {
+                hidePreviewsUntilMouseMove = true;
+                SetPreviewsVisibility(false);
+            }
+
+            return true;
         }
 
         private void UpdateMultiSelectionPreviews()
@@ -556,8 +591,7 @@ namespace HexGrid.Systems
         {
             if (selectedTiles.Count <= 1 || additionalPreviews.Count == 0 || referenceTile == null) return;
 
-            Vector3 cursorWorld = grid.GetCellCenterWorld(cursorCell);
-            Vector3 deltaWorld = cursorWorld - referenceTile.transform.position;
+            Vector3 deltaWorld = CalculateDeltaWorld(cursorCell);
 
             int previewIndex = 0;
             foreach (var tile in selectedTiles)
@@ -584,28 +618,6 @@ namespace HexGrid.Systems
             additionalPreviews.Clear();
         }
 
-        private bool CanPlaceAllSelectedTilesAt(Vector3Int targetCell)
-        {
-            if (selectedTiles.Count == 0) return true;
-            if (referenceTile == null) return true;
-
-            Vector3 targetWorld = grid.GetCellCenterWorld(targetCell);
-            Vector3 deltaWorld = targetWorld - referenceTile.transform.position;
-
-            foreach (var tile in selectedTiles)
-            {
-                Vector3 newWorldPos = tile.transform.position + deltaWorld;
-                Vector3Int newCell = grid.WorldToCell(newWorldPos);
-
-                if (_byCell.ContainsKey(newCell))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
         private void SetPreviewsVisibility(bool visible)
         {
             if (preview != null)
@@ -628,16 +640,15 @@ namespace HexGrid.Systems
         {
             if (selectedTiles.Count == 0 || referenceTile == null) return;
 
-            const int maxAttempts = 10;
             Vector3Int currentTargetCell = referenceTile.cell;
 
-            for (int attempt = 1; attempt <= maxAttempts; attempt++)
+            for (int attempt = 1; attempt <= MAX_KEYBOARD_MOVE_ATTEMPTS; attempt++)
             {
                 currentTargetCell += direction;
 
                 if (CanPlaceAllAtCell(currentTargetCell, ignoreSelectedTiles: true))
                 {
-                    ApplyMoveToCell(currentTargetCell);
+                    MoveTilesToCell(currentTargetCell, validateCollisions: false, hidePreviewsAfter: true);
                     return;
                 }
             }
@@ -645,10 +656,12 @@ namespace HexGrid.Systems
 
         private bool CanPlaceAllAtCell(Vector3Int targetCell, bool ignoreSelectedTiles)
         {
-            if (selectedTiles.Count == 0 || referenceTile == null) return false;
+            if (selectedTiles.Count == 0 || referenceTile == null)
+            {
+                return !ignoreSelectedTiles;
+            }
 
-            Vector3 targetWorld = grid.GetCellCenterWorld(targetCell);
-            Vector3 deltaWorld = targetWorld - referenceTile.transform.position;
+            Vector3 deltaWorld = CalculateDeltaWorld(targetCell);
 
             foreach (var tile in selectedTiles)
             {
@@ -675,31 +688,6 @@ namespace HexGrid.Systems
             return true;
         }
 
-        private void ApplyMoveToCell(Vector3Int targetCell)
-        {
-            Vector3 targetWorld = grid.GetCellCenterWorld(targetCell);
-            Vector3 deltaWorld = targetWorld - referenceTile.transform.position;
-
-            foreach (var tile in selectedTiles)
-            {
-                _byCell.Remove(tile.cell);
-            }
-
-            foreach (var tile in selectedTiles)
-            {
-                Vector3 newWorldPos = tile.transform.position + deltaWorld;
-                Vector3Int newCell = grid.WorldToCell(newWorldPos);
-                Vector3 worldPos = grid.GetCellCenterWorld(newCell);
-
-                tile.transform.position = worldPos;
-                tile.cell = newCell;
-                _byCell[newCell] = tile.gameObject;
-            }
-
-            hidePreviewsUntilMouseMove = true;
-            SetPreviewsVisibility(false);
-        }
-
         private void SwitchSelectionMode(SelectionMode newMode)
         {
             if (currentSelectionMode == newMode) return;
@@ -716,6 +704,7 @@ namespace HexGrid.Systems
             }
 
             UpdatePreviewHighlight();
+            UpdateMultiSelectionPreviews();
         }
 
         private void RotateSelectedTiles(float angleDelta)
