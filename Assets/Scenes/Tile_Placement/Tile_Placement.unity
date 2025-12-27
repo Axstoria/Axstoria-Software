@@ -541,7 +541,10 @@ MonoBehaviour:
     m_Bits: 64
   preview: {fileID: 1263937232}
   allowDeleteWithRightClick: 1
-  highlightMaterial: {fileID: 2100000, guid: 3633517d404040c4b9682c37d030634e, type: 2}
+  moveSelectionMaterial: {fileID: 2100000, guid: 3633517d404040c4b9682c37d030634e, type: 2}
+  rotateSelectionMaterial: {fileID: 2100000, guid: 7b5ca8437572eca47be412338ea4fdf7, type: 2}
+  initialKeyDelay: 0.3
+  keyRepeatInterval: 0.1
 --- !u!4 &1454533600
 Transform:
   m_ObjectHideFlags: 0

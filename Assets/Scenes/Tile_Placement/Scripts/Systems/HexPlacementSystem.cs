@@ -5,6 +5,12 @@ using UnityEngine.InputSystem;
 
 namespace HexGrid.Systems
 {
+    public enum SelectionMode
+    {
+        Move,
+        Rotate
+    }
+
     /// Core placement logic: raycast, place/remove, preview, dictionary + markers.
     public class HexPlacementSystem : MonoBehaviour
     {
@@ -19,7 +25,9 @@ namespace HexGrid.Systems
         [SerializeField] private bool allowDeleteWithRightClick = true;
 
         [Header("Selection")]
-        [SerializeField] private Material highlightMaterial;
+        [SerializeField] private Material moveSelectionMaterial;
+        [SerializeField] private Material rotateSelectionMaterial;
+        private SelectionMode currentSelectionMode = SelectionMode.Move;
 
         // External blocker (UI hover etc.)
         public System.Func<bool> ShouldBlockInput;
@@ -42,9 +50,22 @@ namespace HexGrid.Systems
         public int PrefabCount => tilePrefabs?.Count ?? 0;
         public bool HasGrid => grid != null;
 
+        private Material CurrentSelectionMaterial => currentSelectionMode == SelectionMode.Move
+            ? moveSelectionMaterial
+            : rotateSelectionMaterial;
+
         private void Update()
         {
             if (ShouldBlockInput != null && ShouldBlockInput()) return;
+
+            if (Keyboard.current.digit1Key.wasPressedThisFrame)
+            {
+                SwitchSelectionMode(SelectionMode.Move);
+            }
+            else if (Keyboard.current.digit2Key.wasPressedThisFrame)
+            {
+                SwitchSelectionMode(SelectionMode.Rotate);
+            }
 
             if (Keyboard.current.escapeKey.wasPressedThisFrame)
             {
@@ -52,37 +73,79 @@ namespace HexGrid.Systems
                 return;
             }
 
+            if (Keyboard.current.deleteKey.wasPressedThisFrame && selectedTiles.Count > 0)
+            {
+                RemoveSelectedTiles();
+                return;
+            }
+
             if (selectedTiles.Count > 0)
             {
-                Vector3Int? currentDirection = null;
-                if (Keyboard.current.upArrowKey.isPressed) currentDirection = new Vector3Int(0, 1, 0);
-                else if (Keyboard.current.downArrowKey.isPressed) currentDirection = new Vector3Int(0, -1, 0);
-                else if (Keyboard.current.rightArrowKey.isPressed) currentDirection = new Vector3Int(1, 0, 0);
-                else if (Keyboard.current.leftArrowKey.isPressed) currentDirection = new Vector3Int(-1, 0, 0);
-
-                if (currentDirection.HasValue)
+                if (currentSelectionMode == SelectionMode.Move)
                 {
-                    if (currentDirection != lastKeyDirection)
+                    Vector3Int? currentDirection = null;
+                    if (Keyboard.current.upArrowKey.isPressed) currentDirection = new Vector3Int(0, 1, 0);
+                    else if (Keyboard.current.downArrowKey.isPressed) currentDirection = new Vector3Int(0, -1, 0);
+                    else if (Keyboard.current.rightArrowKey.isPressed) currentDirection = new Vector3Int(1, 0, 0);
+                    else if (Keyboard.current.leftArrowKey.isPressed) currentDirection = new Vector3Int(-1, 0, 0);
+
+                    if (currentDirection.HasValue)
                     {
-                        MoveSelectedTilesInDirection(currentDirection.Value);
-                        lastKeyDirection = currentDirection;
-                        keyRepeatTimer = initialKeyDelay;
+                        if (currentDirection != lastKeyDirection)
+                        {
+                            MoveSelectedTilesInDirection(currentDirection.Value);
+                            lastKeyDirection = currentDirection;
+                            keyRepeatTimer = initialKeyDelay;
+                        }
+                        else
+                        {
+                            keyRepeatTimer -= Time.deltaTime;
+                            if (keyRepeatTimer <= 0f)
+                            {
+                                MoveSelectedTilesInDirection(currentDirection.Value);
+                                keyRepeatTimer = keyRepeatInterval;
+                            }
+                        }
+                        return;
                     }
                     else
                     {
-                        keyRepeatTimer -= Time.deltaTime;
-                        if (keyRepeatTimer <= 0f)
-                        {
-                            MoveSelectedTilesInDirection(currentDirection.Value);
-                            keyRepeatTimer = keyRepeatInterval;
-                        }
+                        lastKeyDirection = null;
+                        keyRepeatTimer = 0f;
                     }
-                    return;
                 }
-                else
+                else if (currentSelectionMode == SelectionMode.Rotate)
                 {
-                    lastKeyDirection = null;
-                    keyRepeatTimer = 0f;
+                    float? currentRotation = null;
+                    if (Keyboard.current.leftArrowKey.isPressed) currentRotation = -60f;
+                    else if (Keyboard.current.rightArrowKey.isPressed) currentRotation = 60f;
+
+                    if (currentRotation.HasValue)
+                    {
+                        Vector3Int currentFakeDirection = new Vector3Int(currentRotation.Value > 0 ? 1 : -1, 0, 0);
+
+                        if (currentFakeDirection != lastKeyDirection)
+                        {
+                            RotateSelectedTiles(currentRotation.Value);
+                            lastKeyDirection = currentFakeDirection;
+                            keyRepeatTimer = initialKeyDelay;
+                        }
+                        else
+                        {
+                            keyRepeatTimer -= Time.deltaTime;
+                            if (keyRepeatTimer <= 0f)
+                            {
+                                RotateSelectedTiles(currentRotation.Value);
+                                keyRepeatTimer = keyRepeatInterval;
+                            }
+                        }
+                        return;
+                    }
+                    else
+                    {
+                        lastKeyDirection = null;
+                        keyRepeatTimer = 0f;
+                    }
                 }
             }
             else
@@ -108,14 +171,21 @@ namespace HexGrid.Systems
             Vector3Int cell = grid.WorldToCell(hit.point);
             Vector3 world = grid.GetCellCenterWorld(cell);
 
-            if (preview != null) preview.transform.position = world;
-
-            bool canPlaceAll = CanPlaceAllSelectedTilesAt(cell);
-
-            if (!hidePreviewsUntilMouseMove)
+            if (currentSelectionMode == SelectionMode.Move)
             {
-                SetPreviewsVisibility(canPlaceAll);
-                UpdateAdditionalPreviews(cell);
+                if (preview != null) preview.transform.position = world;
+
+                bool canPlaceAll = CanPlaceAllSelectedTilesAt(cell);
+
+                if (!hidePreviewsUntilMouseMove)
+                {
+                    SetPreviewsVisibility(canPlaceAll);
+                    UpdateAdditionalPreviews(cell);
+                }
+            }
+            else if (currentSelectionMode == SelectionMode.Rotate)
+            {
+                SetPreviewsVisibility(false);
             }
 
             if (Mouse.current.leftButton.wasPressedThisFrame)
@@ -146,7 +216,7 @@ namespace HexGrid.Systems
                             }
                             else
                             {
-                                DeselectAllTiles();
+                                DeselectAllTiles(resetModeToMove: false);
                                 SelectTile(clickedTile);
                             }
                         }
@@ -156,7 +226,10 @@ namespace HexGrid.Systems
                 {
                     if (selectedTiles.Count > 0)
                     {
-                        MoveSelectedTilesToCell(cell);
+                        if (currentSelectionMode == SelectionMode.Move)
+                        {
+                            MoveSelectedTilesToCell(cell);
+                        }
                     }
                     else
                     {
@@ -293,10 +366,17 @@ namespace HexGrid.Systems
             }
 
             var renderer = tile.GetComponentInChildren<Renderer>();
-            if (renderer != null && highlightMaterial != null)
+            if (renderer != null)
             {
-                originalMaterials[tile] = renderer.material;
-                renderer.material = highlightMaterial;
+                if (CurrentSelectionMaterial != null)
+                {
+                    originalMaterials[tile] = renderer.material;
+                    renderer.material = CurrentSelectionMaterial;
+                }
+                else
+                {
+                    Debug.LogWarning("HexPlacementSystem: Selection material not assigned. Please assign moveSelectionMaterial and rotateSelectionMaterial in Inspector.");
+                }
             }
 
             UpdatePreviewHighlight();
@@ -330,7 +410,7 @@ namespace HexGrid.Systems
             UpdateMultiSelectionPreviews();
         }
 
-        private void DeselectAllTiles()
+        private void DeselectAllTiles(bool resetModeToMove = true)
         {
             foreach (var tile in selectedTiles)
             {
@@ -345,12 +425,22 @@ namespace HexGrid.Systems
             originalMaterials.Clear();
             referenceTile = null;
 
+            if (resetModeToMove)
+            {
+                currentSelectionMode = SelectionMode.Move;
+            }
+
             UpdatePreviewHighlight();
             ClearAdditionalPreviews();
 
             if (preview != null)
             {
                 preview.SetActive(true);
+            }
+
+            if (resetModeToMove)
+            {
+                SetPreviewsVisibility(true);
             }
         }
 
@@ -363,10 +453,14 @@ namespace HexGrid.Systems
 
             if (selectedTiles.Count > 0)
             {
-                if (highlightMaterial != null && previewOriginalMaterial == null)
+                if (CurrentSelectionMaterial != null && previewOriginalMaterial == null)
                 {
                     previewOriginalMaterial = previewRenderer.material;
-                    previewRenderer.material = highlightMaterial;
+                    previewRenderer.material = CurrentSelectionMaterial;
+                }
+                else if (CurrentSelectionMaterial != null && previewOriginalMaterial != null)
+                {
+                    previewRenderer.material = CurrentSelectionMaterial;
                 }
             }
             else
@@ -390,8 +484,19 @@ namespace HexGrid.Systems
 
             selectedTiles.Clear();
             originalMaterials.Clear();
+            referenceTile = null;
+
+            currentSelectionMode = SelectionMode.Move;
+
             UpdatePreviewHighlight();
             ClearAdditionalPreviews();
+
+            if (preview != null)
+            {
+                preview.SetActive(true);
+            }
+
+            SetPreviewsVisibility(true);
         }
 
         private void MoveSelectedTilesToCell(Vector3Int targetCell)
@@ -427,8 +532,6 @@ namespace HexGrid.Systems
                 tile.cell = newCell;
                 _byCell[newCell] = tile.gameObject;
             }
-
-            DeselectAllTiles();
         }
 
         private void UpdateMultiSelectionPreviews()
@@ -595,6 +698,46 @@ namespace HexGrid.Systems
 
             hidePreviewsUntilMouseMove = true;
             SetPreviewsVisibility(false);
+        }
+
+        private void SwitchSelectionMode(SelectionMode newMode)
+        {
+            if (currentSelectionMode == newMode) return;
+
+            currentSelectionMode = newMode;
+
+            foreach (var tile in selectedTiles)
+            {
+                var renderer = tile.GetComponentInChildren<Renderer>();
+                if (renderer != null && CurrentSelectionMaterial != null)
+                {
+                    renderer.material = CurrentSelectionMaterial;
+                }
+            }
+
+            UpdatePreviewHighlight();
+        }
+
+        private void RotateSelectedTiles(float angleDelta)
+        {
+            foreach (var tile in selectedTiles)
+            {
+                tile.transform.Rotate(0f, angleDelta, 0f, Space.Self);
+                tile.yRotation = tile.transform.eulerAngles.y;
+            }
+
+            foreach (var previewObj in additionalPreviews)
+            {
+                if (previewObj != null)
+                {
+                    previewObj.transform.Rotate(0f, angleDelta, 0f, Space.Self);
+                }
+            }
+
+            if (preview != null && selectedTiles.Count > 0)
+            {
+                preview.transform.Rotate(0f, angleDelta, 0f, Space.Self);
+            }
         }
     }
 }
