@@ -256,17 +256,6 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
---- !u!114 &346124362 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5064759959105522398, guid: 0b2f1f6fd1285cf49bea011e2fb0e222, type: 3}
-  m_PrefabInstance: {fileID: 8237422361895521150}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -437,7 +426,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &8237422361895521150
+--- !u!1001 &1295335100
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -447,7 +436,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2682817083089393720, guid: 0b2f1f6fd1285cf49bea011e2fb0e222, type: 3}
       propertyPath: m_Name
-      value: MenuBarUIManager
+      value: EditionUIManager
       objectReference: {fileID: 0}
     - target: {fileID: 4166284136050183846, guid: 0b2f1f6fd1285cf49bea011e2fb0e222, type: 3}
       propertyPath: m_LocalPosition.x
@@ -489,14 +478,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5064759959105522398, guid: 0b2f1f6fd1285cf49bea011e2fb0e222, type: 3}
-      propertyPath: m_PanelSettings
-      value: 
-      objectReference: {fileID: 11400000, guid: 430c963e6cbd4c6418d7e8a15f5e4275, type: 2}
-    - target: {fileID: 8495737498442768354, guid: 0b2f1f6fd1285cf49bea011e2fb0e222, type: 3}
-      propertyPath: uiDoc
-      value: 
-      objectReference: {fileID: 346124362}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -509,4 +490,4 @@ SceneRoots:
   - {fileID: 330585546}
   - {fileID: 410087041}
   - {fileID: 832575519}
-  - {fileID: 8237422361895521150}
+  - {fileID: 1295335100}

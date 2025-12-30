@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4166284136050183846}
-  - component: {fileID: 8495737498442768354}
+  - component: {fileID: 2225280617837686807}
   m_Layer: 0
-  m_Name: MenuBarUIManager
+  m_Name: EditionUIManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33,7 +33,7 @@ Transform:
   - {fileID: 27692719673943808}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8495737498442768354
+--- !u!114 &2225280617837686807
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,7 +42,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2682817083089393720}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6403a03785e44a748ad4421307fdd92c, type: 3}
+  m_Script: {fileID: 11500000, guid: 8ee48cdd2ec942745b6ddf435a332e3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   uiDoc: {fileID: 5064759959105522398}
@@ -57,7 +57,7 @@ GameObject:
   - component: {fileID: 27692719673943808}
   - component: {fileID: 5064759959105522398}
   m_Layer: 0
-  m_Name: UIDocument
+  m_Name: EditionUIDocument
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -92,7 +92,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PanelSettings: {fileID: 11400000, guid: 430c963e6cbd4c6418d7e8a15f5e4275, type: 2}
   m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 9197481963319205126, guid: 24f3e56c071992744af76000e5183842, type: 3}
+  sourceAsset: {fileID: 9197481963319205126, guid: 449e56fb7e25fea4ebe15b080d010540, type: 3}
   m_SortingOrder: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
