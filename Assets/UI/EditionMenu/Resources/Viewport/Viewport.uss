@@ -1,0 +1,65 @@
+:root {
+    --text-color: rgb(20, 20, 20);
+    --button-color: rgb(220, 255, 255);
+    --button-open-color: rgb(188, 188, 188);
+    --button-color-hover: rgb(208, 208, 208);
+    --button-color-active: rgb(255, 255, 255);
+    --button-border-color: rgb(192, 192, 192);
+    --button-border-radius: 0;
+}
+
+.unity-text-element {
+    color: var(--text-color);
+}
+
+.menubar {
+    flex-direction: row;
+    align-self: flex-start;
+    background-color: var(--button-border-color);
+    border-color: var(--button-border-color);
+    border-radius: var(--button-border-radius);
+    border-width: 1px;
+    width: 100%;
+}
+
+.button {
+    background-color: var(--button-border-color);
+    margin: 0;
+    border-width: 0;
+    font-size: 16px;
+    padding-top: 3px;
+    padding-right: 10px;
+    padding-bottom: 3px;
+    padding-left: 10px;
+}
+
+.button:hover:enabled {
+    background-color: var(--button-color-hover);
+}
+
+.button:active:enabled {
+    background-color: var(--button-color-active);
+}
+
+.toolbar__button {
+    background-color: var(--button-border-color);
+    margin: 0;
+    border-width: 0;
+    font-size: 16px;
+    padding-top: 3px;
+    padding-right: 10px;
+    padding-bottom: 3px;
+    padding-left: 10px;
+}
+
+.toolbar__button:hover:enabled {
+    background-color: var(--button-color-hover);
+}
+
+.toolbar__button:active:enabled {
+    background-color: var(--button-color-active);
+}
+
+.toolbar__button.fab-dropdown-target--open {
+    background-color: var(--button-open-color);
+}
