@@ -1,5 +1,4 @@
-﻿using Unity.Mathematics;
-using UnityEngine;
+﻿using Controler.Math;
 
 namespace Domain
 {
@@ -23,7 +22,7 @@ namespace Domain
         /// <remarks>
         /// Defaults to identity (no rotation).
         /// </remarks>
-        public quaternion Rotation { get; set; } = Quaternion.identity;
+        public Quaternion Rotation { get; set; } = Quaternion.identity;
         
         /// <summary>
         /// Gets or sets the scale of the object.

@@ -1,10 +1,8 @@
-﻿using Unity.Mathematics;
-using UnityEngine;
-
-namespace Controler.Editor.ViewModels
+﻿namespace Controler.Editor.ViewModels
 {
     using Loxodon.Framework.Observables;
     using Domain;
+    using Controler.Math;
     
     /// <summary>
     /// ViewModel for managing and exposing transformation properties (position, rotation, scale) to the UI.
