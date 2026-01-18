@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 02a1576c3d29d5d4597da951113901ee
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Samples/Loxodon Framework/2.0.0/Tutorials/Scripts/MixedComponentPoolAsyncLoadExample.cs
+  uploadId: 677266

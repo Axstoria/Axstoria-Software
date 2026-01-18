@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: d8e2fe4010c4a1c4b85971e52189f90c
+timeCreated: 1530161879
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Samples/Loxodon Framework/2.0.0/Tutorials/Scripts/VariableExample.cs
+  uploadId: 677266

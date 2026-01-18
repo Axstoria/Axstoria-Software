@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 56290cdf7fa71dc478fe1161a23cf964
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Runtime/Framework/Views/GlobalSetting.cs
+  uploadId: 677266

@@ -1,0 +1,39 @@
+/**
+@mainpage Doxygen tool
+
+@author Johan Holtby (Norritt42) - johan.holtby@gmail.com
+
+
+If you have any questions contact me on johan.holtby@gmail.com
+
+I also will put up video tutorials on my youtube: http://www.youtube.com/user/Norritt42/videos
+
+This is a doxygen tool for Unity.  It only works for Windows since it uses external batch files. I have been inspired by http://www.jacobpennock.com/Blog/?p=629
+
+<B>To use this tool you need to install:</B>
+<ol>
+  <li>Doxygen - www.doxygen.org</li>
+  <li>A LaTeX to pdf tool - e.g. http://miktex.org/download </li> 
+  <li>Remember to update miketex using Update(admin)) </li>
+  <li>Install Ghostscript if needed - http://www.ghostscript.com/download/gsdnld.html (The MikTex uses this)</li>
+  <li>Remember to close and reopen Unity if you have it open to update environment variables.</li>
+  <li>Rename DoxyPDF.txt to DoxyPDF.bat in Doxygen\Editor\Resources</li>
+</ol>
+
+One thing that I have found out the hard way is that if you have deep file hearcies
+some times makeindex refman.idx rejects files. 
+This is a known bug http://sourceforge.net/p/miktex/bugs/2144/
+
+<B>To generate the PDF files:</B>
+<ol>
+  <li>Fill in every thing in settings.</li>
+  <li>Press "Save Settings(...."</li>
+  <li>Go to "Generate/View/Edit"</li>
+  <li>Remember to always use full paths to source in Doxygenwizard and they should have / not \ as fodler separator</li>
+  <li>Press "Generate PDFs"</li>
+</ol>
+
+Best of luck\n
+/Norritt42
+
+*/

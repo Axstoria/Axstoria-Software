@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 98bb4deb54f2dde4f8f8d67f3fc4bd1e
+timeCreated: 1565076297
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Samples/Loxodon Framework/2.0.0/Tutorials/Prefabs/CoroutineTaskExample.prefab
+  uploadId: 677266

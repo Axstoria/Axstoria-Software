@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 32415a93d29f19e478f2afa4d8ce9636
+timeCreated: 1564124991
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Runtime/Framework/Localizations/UI/LocalizedImageInResources.cs
+  uploadId: 677266

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: f3450d8ae617c714c9841d87771cd32a
+timeCreated: 1579403614
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Samples/Loxodon Framework/2.0.0/Tutorials/Resources/Cube/Cube.mat
+  uploadId: 677266

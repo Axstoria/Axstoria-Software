@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 3cc7a7cbb90eb5a4aa3ef23f1e6812c8
+timeCreated: 1568876591
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Samples/Loxodon Framework/2.0.0/Tutorials/Resources/LocalizationTutorials/default/LocalizationModule.asset
+  uploadId: 677266

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: c54597ab137486d428ccd9932aafb180
+timeCreated: 1541727995
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Samples/Loxodon Framework/2.0.0/Tutorials/ListView
+    And Sprite Databinding Tutorials.unity
+  uploadId: 677266

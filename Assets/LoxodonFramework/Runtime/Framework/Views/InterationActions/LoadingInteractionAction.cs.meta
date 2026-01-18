@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 84cfbfde703aea248a68fc0ac5faa1f4
+timeCreated: 1561360199
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Runtime/Framework/Views/InterationActions/LoadingInteractionAction.cs
+  uploadId: 677266

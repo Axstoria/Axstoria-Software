@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 6796fb47836d37a44a9cfb3b0478f855
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Resources/Shaders/Loading.shader
+  uploadId: 677266

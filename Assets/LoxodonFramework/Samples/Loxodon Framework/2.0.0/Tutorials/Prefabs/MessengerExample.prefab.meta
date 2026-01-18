@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 1b8c759b7678ee541b3b7b7422099dc9
+timeCreated: 1478944045
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Samples/Loxodon Framework/2.0.0/Tutorials/Prefabs/MessengerExample.prefab
+  uploadId: 677266

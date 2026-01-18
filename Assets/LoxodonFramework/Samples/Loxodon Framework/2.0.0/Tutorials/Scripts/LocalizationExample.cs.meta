@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 48b5f4e8d32748a4eac3c82031f10534
+timeCreated: 1480040412
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Samples/Loxodon Framework/2.0.0/Tutorials/Scripts/LocalizationExample.cs
+  uploadId: 677266

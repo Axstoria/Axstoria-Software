@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 46c138a4585a74f4094b836bfd126014
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Runtime/Framework/Localizations/Data/LocalizedString.cs
+  uploadId: 677266

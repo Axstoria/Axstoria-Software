@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 91c47e5a11a184b43870044e64882791
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Runtime/Framework/Binding/Parameters/ParameterWrapInvoker.cs
+  uploadId: 677266

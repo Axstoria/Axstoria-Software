@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 85e9828941560c34bb9c42659e331c55
+PackageManifestImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/package.json
+  uploadId: 677266

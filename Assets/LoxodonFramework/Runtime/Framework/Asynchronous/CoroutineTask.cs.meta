@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 16b2ebda88c8f1c4fa2d520b2fb6a3c2
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Runtime/Framework/Asynchronous/CoroutineTask.cs
+  uploadId: 677266

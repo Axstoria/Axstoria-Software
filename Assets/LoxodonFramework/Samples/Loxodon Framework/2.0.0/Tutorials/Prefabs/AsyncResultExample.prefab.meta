@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 376c3eb51244f1f4c81613af3a0fa445
+timeCreated: 1478943982
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Samples/Loxodon Framework/2.0.0/Tutorials/Prefabs/AsyncResultExample.prefab
+  uploadId: 677266

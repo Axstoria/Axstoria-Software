@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: e68840df98421d14ea5944672030a21b
+AssemblyDefinitionImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Editor/Loxodon.Framework.Editor.asmdef
+  uploadId: 677266

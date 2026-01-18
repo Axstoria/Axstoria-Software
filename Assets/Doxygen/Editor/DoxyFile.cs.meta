@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a5c848cd6391a2f4c970e184fb890542
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 13962
+  packageName: Doxygen Tool
+  packageVersion: 1.2.1
+  assetPath: Assets/Doxygen/Editor/DoxyFile.cs
+  uploadId: 423706

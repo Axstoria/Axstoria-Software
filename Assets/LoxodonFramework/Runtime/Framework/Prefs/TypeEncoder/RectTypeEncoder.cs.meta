@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: e2f113f6b99645e40971ba7e26ce741f
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Runtime/Framework/Prefs/TypeEncoder/RectTypeEncoder.cs
+  uploadId: 677266

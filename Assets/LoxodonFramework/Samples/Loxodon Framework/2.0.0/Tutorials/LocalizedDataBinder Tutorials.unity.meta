@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: c5097c3ae1ad5d245938a308169513ad
+timeCreated: 1588216045
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Samples/Loxodon Framework/2.0.0/Tutorials/LocalizedDataBinder
+    Tutorials.unity
+  uploadId: 677266

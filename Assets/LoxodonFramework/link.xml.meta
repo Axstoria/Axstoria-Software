@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: a77de988e082d8b4abecb3e0f1afc557
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/link.xml
+  uploadId: 677266
