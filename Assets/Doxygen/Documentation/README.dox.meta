@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: 484d5cda470d644429cd06f6401a0363
+DefaultImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 13962
+  packageName: Doxygen Tool
+  packageVersion: 1.2.1
+  assetPath: Assets/Doxygen/Documentation/README.dox
+  uploadId: 423706

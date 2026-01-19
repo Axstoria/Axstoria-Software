@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 88671dbc3b457f4479681b4a0cd0adf0
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/CHANGELOG.md
+  uploadId: 677266

@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: c4f5e21cbd9d5744b9d90ba90b8e4747
+timeCreated: 1483249327
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Runtime/Framework/Views/IView.cs
+  uploadId: 677266

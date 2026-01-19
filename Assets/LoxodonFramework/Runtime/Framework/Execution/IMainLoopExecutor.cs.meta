@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: e40acf0b9501a534a997057d824777ba
+timeCreated: 1483249332
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Runtime/Framework/Execution/IMainLoopExecutor.cs
+  uploadId: 677266

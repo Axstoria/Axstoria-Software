@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 805e2c58f68d0df429ca1f0f28c4b4a2
+timeCreated: 1478944014
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Samples/Loxodon Framework/2.0.0/Tutorials/Prefabs/AsyncTaskExample.prefab
+  uploadId: 677266

@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: c1ba3f5496d095b43902cab67583c745
+TextScriptImporter:
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 13962
+  packageName: Doxygen Tool
+  packageVersion: 1.2.1
+  assetPath: Assets/Doxygen/Editor/Resources/BaseDoxyfile.txt
+  uploadId: 423706

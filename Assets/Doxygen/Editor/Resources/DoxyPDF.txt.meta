@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 4bb8f146f061aa04d917359c52654871
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 13962
+  packageName: Doxygen Tool
+  packageVersion: 1.2.1
+  assetPath: Assets/Doxygen/Editor/Resources/DoxyPDF.txt
+  uploadId: 423706

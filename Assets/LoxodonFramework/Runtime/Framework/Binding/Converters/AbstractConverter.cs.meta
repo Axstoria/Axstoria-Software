@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 1e59265aa7f0cbb40ba54dffae086265
+timeCreated: 1483249343
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Runtime/Framework/Binding/Converters/AbstractConverter.cs
+  uploadId: 677266

@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: a0cfeecd69059ed4a9ecdb790bcf315c
+timeCreated: 1483249327
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Runtime/Framework/Views/Attributes.cs
+  uploadId: 677266

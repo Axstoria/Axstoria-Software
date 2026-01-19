@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 3e6ba4bfbaa1f8e44b7002c5e12c3c20
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Runtime/Framework/Asynchronous/TaskYieldInstruction.cs
+  uploadId: 677266

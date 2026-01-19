@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 5b5a1bb191c709f49b89565b9dcf92be
+timeCreated: 1560757693
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Samples/Loxodon Framework/2.0.0/Tutorials/Scripts/DatabindingForButtonGroupExample.cs
+  uploadId: 677266
