@@ -1,0 +1,7 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Scenes/Tile_Placement/UI/UI_TilePlacement_style.uss?fileID=7433441132597879392&amp;guid=d30c30cf65f805a47987580ff140ff63&amp;type=3#UI_TilePlacement_style" />
+    <ui:VisualElement name="Container" style="flex-grow: 1; align-items: flex-start;">
+        <ui:Button text="Save" name="Save" class="button" focusable="false" />
+        <ui:Button text="Load" name="Load" class="button" focusable="false" />
+    </ui:VisualElement>
+</ui:UXML>
