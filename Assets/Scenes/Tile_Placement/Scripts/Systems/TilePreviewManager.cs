@@ -4,31 +4,30 @@ using UnityEngine;
 
 namespace HexGrid.Systems
 {
-    /// Manages preview GameObjects: main preview and multi-selection previews.
+    /// Manages preview GameObjects for tile placement and multi-selection.
     public class TilePreviewManager
     {
         private readonly GameObject _preview;
+        /// Additional previews for multi-tile selection movement.
         private readonly List<GameObject> _additionalPreviews = new();
         private readonly HexGridManager _gridManager;
 
         private Material _previewOriginalMaterial;
+        /// Hides previews after keyboard movement until mouse moves again.
         private bool _hidePreviewsUntilMouseMove;
 
-        /// Gets or sets whether previews should be hidden until mouse moves.
         public bool HidePreviewsUntilMouseMove
         {
             get => _hidePreviewsUntilMouseMove;
             set => _hidePreviewsUntilMouseMove = value;
         }
 
-        /// Initializes the preview manager with preview GameObject and grid manager.
         public TilePreviewManager(GameObject preview, HexGridManager gridManager)
         {
             _preview = preview;
             _gridManager = gridManager;
         }
 
-        /// Updates preview material to match current selection mode.
         public void UpdatePreviewHighlight(Material selectionMaterial, bool hasSelection)
         {
             if (_preview == null) return;
@@ -58,7 +57,6 @@ namespace HexGrid.Systems
             }
         }
 
-        /// Creates preview instances for each selected tile (except reference).
         public void UpdateMultiSelectionPreviews(HashSet<PlacedTile> selectedTiles, PlacedTile referenceTile)
         {
             ClearAdditionalPreviews();
@@ -77,7 +75,6 @@ namespace HexGrid.Systems
             }
         }
 
-        /// Updates positions of additional previews to follow cursor.
         public void UpdateAdditionalPreviews(Vector3Int cursorCell, HashSet<PlacedTile> selectedTiles, PlacedTile referenceTile)
         {
             if (selectedTiles.Count <= 1 || _additionalPreviews.Count == 0 || referenceTile == null) return;
@@ -101,7 +98,6 @@ namespace HexGrid.Systems
             }
         }
 
-        /// Destroys all additional preview instances.
         public void ClearAdditionalPreviews()
         {
             foreach (var previewObj in _additionalPreviews)
@@ -111,7 +107,6 @@ namespace HexGrid.Systems
             _additionalPreviews.Clear();
         }
 
-        /// Sets visibility of main preview and additional previews.
         public void SetPreviewsVisibility(bool visible, int selectionCount)
         {
             if (_preview != null)
@@ -130,7 +125,6 @@ namespace HexGrid.Systems
             }
         }
 
-        /// Sets the world position of the main preview.
         public void SetPreviewPosition(Vector3 position)
         {
             if (_preview != null)
@@ -139,7 +133,6 @@ namespace HexGrid.Systems
             }
         }
 
-        /// Rotates the main preview by the specified angle.
         public void RotatePreview(float angleDelta)
         {
             if (_preview != null)
@@ -148,7 +141,6 @@ namespace HexGrid.Systems
             }
         }
 
-        /// Rotates all additional previews by the specified angle.
         public void RotateAdditionalPreviews(float angleDelta)
         {
             foreach (var previewObj in _additionalPreviews)
@@ -160,7 +152,6 @@ namespace HexGrid.Systems
             }
         }
 
-        /// Gets the current Y rotation of the main preview.
         public float GetPreviewYRotation()
         {
             return _preview != null ? _preview.transform.eulerAngles.y : 0f;
