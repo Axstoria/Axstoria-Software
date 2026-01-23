@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 namespace HexGrid.Systems
 {
-    /// Core placement logic: raycast, place/remove, preview, dictionary + markers.
+    /// Main controller for hex tile placement, selection and interaction.
     public class HexPlacementSystem : MonoBehaviour
     {
         [Header("Grid & Prefabs")]
@@ -22,7 +22,7 @@ namespace HexGrid.Systems
         [SerializeField] private Material moveSelectionMaterial;
         [SerializeField] private Material rotateSelectionMaterial;
 
-        /// External blocker (UI hover etc.).
+        /// External callback to block input (e.g., when hovering UI).
         public System.Func<bool> ShouldBlockInput;
 
         private const float HEX_ROTATION_ANGLE = 60f;
@@ -40,13 +40,9 @@ namespace HexGrid.Systems
         private float keyRepeatTimer = 0f;
         private Vector3Int? lastKeyDirection = null;
 
-        /// Gets the number of available tile prefabs.
         public int PrefabCount => _gridManager?.PrefabCount ?? 0;
-
-        /// Gets whether the grid is initialized.
         public bool HasGrid => _gridManager?.HasGrid ?? false;
 
-        /// Initializes managers (grid, preview, selection).
         private void Awake()
         {
             _gridManager = new HexGridManager(grid, tilePrefabs);
@@ -54,7 +50,7 @@ namespace HexGrid.Systems
             _selectionManager = new TileSelectionManager(_gridManager, _previewManager, moveSelectionMaterial, rotateSelectionMaterial, preview);
         }
 
-        /// Handles key repeat timing for smooth keyboard input.
+        /// Handles key repeat timing for smooth continuous keyboard input.
         private bool HandleKeyRepeat(Vector3Int? currentDirection, System.Action action)
         {
             if (currentDirection.HasValue)
@@ -84,10 +80,20 @@ namespace HexGrid.Systems
             }
         }
 
-        /// Main update loop: handles input, raycasting, and mouse interaction.
         private void Update()
         {
             if (ShouldBlockInput != null && ShouldBlockInput()) return;
+
+            // Block tile interaction when camera controls are active
+            bool cameraModifierPressed = Keyboard.current.leftAltKey.isPressed ||
+                                         Keyboard.current.rightAltKey.isPressed ||
+                                         Keyboard.current.leftShiftKey.isPressed ||
+                                         Keyboard.current.rightShiftKey.isPressed;
+            if (cameraModifierPressed)
+            {
+                _previewManager.SetPreviewsVisibility(false, _selectionManager.SelectionCount);
+                return;
+            }
 
             HandleModeInput();
 
@@ -115,7 +121,6 @@ namespace HexGrid.Systems
             HandleMouseInput(cell, world);
         }
 
-        /// Processes mode switching input (1=Move, 2=Rotate).
         private void HandleModeInput()
         {
             if (Keyboard.current.digit1Key.wasPressedThisFrame)
@@ -128,7 +133,6 @@ namespace HexGrid.Systems
             }
         }
 
-        /// Processes selection input (Escape/Enter=deselect, Delete=remove).
         private bool HandleSelectionInput()
         {
             if (Keyboard.current.escapeKey.wasPressedThisFrame || Keyboard.current.enterKey.wasPressedThisFrame)
@@ -146,7 +150,6 @@ namespace HexGrid.Systems
             return false;
         }
 
-        /// Processes arrow key input for moving/rotating selected tiles.
         private bool HandleKeyboardMovement()
         {
             if (_selectionManager.SelectionCount > 0)
@@ -189,7 +192,6 @@ namespace HexGrid.Systems
             return false;
         }
 
-        /// Processes mouse input for selection, placement, and deletion.
         private void HandleMouseInput(Vector3Int cell, Vector3 world)
         {
             if (_selectionManager.CurrentMode == SelectionMode.Move)
@@ -284,14 +286,12 @@ namespace HexGrid.Systems
             }
         }
 
-        /// Clears all tiles from the grid and deselects all.
         public void ClearAll()
         {
             _selectionManager.DeselectAllTiles();
             _gridManager.ClearAll();
         }
 
-        /// Rebuilds the grid from saved map data.
         public void RebuildFrom(MapDataDTO data)
         {
             _selectionManager.DeselectAllTiles();

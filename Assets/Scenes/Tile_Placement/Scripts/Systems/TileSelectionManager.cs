@@ -4,17 +4,17 @@ using UnityEngine;
 
 namespace HexGrid.Systems
 {
-    /// Selection modes: Move for positioning, Rotate for orientation.
     public enum SelectionMode
     {
         Move,
         Rotate
     }
 
-    /// Manages tile selection: materials, state, movement, rotation.
+    /// Manages tile selection state, materials, movement and rotation.
     public class TileSelectionManager
     {
         private readonly HashSet<PlacedTile> _selectedTiles = new();
+        /// Stores original materials to restore when deselecting.
         private readonly Dictionary<PlacedTile, Material> _originalMaterials = new();
         private readonly HexGridManager _gridManager;
         private readonly TilePreviewManager _previewManager;
@@ -25,27 +25,17 @@ namespace HexGrid.Systems
         private PlacedTile _referenceTile;
         private SelectionMode _currentSelectionMode = SelectionMode.Move;
 
-        /// Gets the number of selected tiles.
         public int SelectionCount => _selectedTiles.Count;
-
-        /// Gets whether any tiles are selected.
         public bool HasSelection => _selectedTiles.Count > 0;
-
-        /// Gets the reference tile (first selected, used for movement anchoring).
+        /// First selected tile, used as anchor for multi-tile movement.
         public PlacedTile ReferenceTile => _referenceTile;
-
-        /// Gets the current selection mode.
         public SelectionMode CurrentMode => _currentSelectionMode;
-
-        /// Gets the set of selected tiles.
         public HashSet<PlacedTile> SelectedTiles => _selectedTiles;
 
-        /// Gets the material for the current selection mode.
         private Material CurrentSelectionMaterial => _currentSelectionMode == SelectionMode.Move
             ? _moveSelectionMaterial
             : _rotateSelectionMaterial;
 
-        /// Initializes the selection manager with required dependencies.
         public TileSelectionManager(
             HexGridManager gridManager,
             TilePreviewManager previewManager,
@@ -60,7 +50,6 @@ namespace HexGrid.Systems
             _preview = preview;
         }
 
-        /// Adds tile to selection and applies highlight material.
         public void SelectTile(PlacedTile tile)
         {
             _selectedTiles.Add(tile);
@@ -88,7 +77,6 @@ namespace HexGrid.Systems
             _previewManager.UpdateMultiSelectionPreviews(_selectedTiles, _referenceTile);
         }
 
-        /// Removes tile from selection and restores original material.
         public void DeselectTile(PlacedTile tile)
         {
             if (!_selectedTiles.Contains(tile)) return;
@@ -111,7 +99,6 @@ namespace HexGrid.Systems
             _previewManager.UpdateMultiSelectionPreviews(_selectedTiles, _referenceTile);
         }
 
-        /// Clears all selections and optionally resets to Move mode.
         public void DeselectAllTiles(bool resetModeToMove = true)
         {
             foreach (var tile in _selectedTiles)
@@ -142,7 +129,6 @@ namespace HexGrid.Systems
             }
         }
 
-        /// Removes all selected tiles from the grid.
         public void RemoveSelectedTiles()
         {
             var tilesToRemove = new List<PlacedTile>(_selectedTiles);
@@ -168,7 +154,6 @@ namespace HexGrid.Systems
             _previewManager.SetPreviewsVisibility(true, _selectedTiles.Count);
         }
 
-        /// Moves all selected tiles to target position with optional collision checking.
         public bool MoveTilesToCell(Vector3Int targetCell, bool validateCollisions, bool hidePreviewsAfter)
         {
             if (_selectedTiles.Count == 0 || _referenceTile == null) return false;
@@ -205,7 +190,6 @@ namespace HexGrid.Systems
             return true;
         }
 
-        /// Rotates all selected tiles by the specified angle.
         public void RotateSelectedTiles(float angleDelta)
         {
             foreach (var tile in _selectedTiles)
@@ -222,7 +206,6 @@ namespace HexGrid.Systems
             }
         }
 
-        /// Switches to a different selection mode and updates materials.
         public void SwitchSelectionMode(SelectionMode newMode)
         {
             if (_currentSelectionMode == newMode) return;
@@ -242,13 +225,12 @@ namespace HexGrid.Systems
             _previewManager.UpdateMultiSelectionPreviews(_selectedTiles, _referenceTile);
         }
 
-        /// Checks if a tile is currently selected.
         public bool Contains(PlacedTile tile)
         {
             return _selectedTiles.Contains(tile);
         }
 
-        /// Moves selected tiles in a direction, skipping occupied cells.
+        /// Moves selection in direction, skipping occupied cells up to maxAttempts.
         public void MoveInDirection(Vector3Int direction, int maxAttempts)
         {
             if (_selectedTiles.Count == 0 || _referenceTile == null) return;
@@ -267,7 +249,6 @@ namespace HexGrid.Systems
             }
         }
 
-        /// Validates if all selected tiles can be placed at target position.
         public bool CanPlaceAllAtCell(Vector3Int targetCell, bool ignoreSelectedTiles)
         {
             if (_selectedTiles.Count == 0 || _referenceTile == null)
@@ -302,14 +283,12 @@ namespace HexGrid.Systems
             return true;
         }
 
-        /// Calculates world position delta from reference tile to target cell.
         private Vector3 CalculateDeltaWorld(Vector3Int targetCell)
         {
             Vector3 targetWorld = _gridManager.GetCellCenterWorld(targetCell);
             return targetWorld - _referenceTile.transform.position;
         }
 
-        /// Restores tile's original material and optionally removes from dictionary.
         private void RestoreTileMaterial(PlacedTile tile, bool removeFromDictionary = true)
         {
             var renderer = tile.GetComponentInChildren<Renderer>();

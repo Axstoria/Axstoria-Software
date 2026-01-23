@@ -239,6 +239,7 @@ MonoBehaviour:
   saveButtonName: Save
   loadButtonName: Load
   placementSystem: {fileID: 1454533599}
+  cameraController: {fileID: 429844577}
 --- !u!1 &429844572
 GameObject:
   m_ObjectHideFlags: 0
@@ -251,6 +252,7 @@ GameObject:
   - component: {fileID: 429844574}
   - component: {fileID: 429844573}
   - component: {fileID: 429844576}
+  - component: {fileID: 429844577}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -376,6 +378,20 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &429844577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 429844572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faae5cd68b76f3d499c782a82e128c1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HexGrid.Systems.CameraController
+  settings: {fileID: 11400000, guid: fcc889d8b7bb14545ba0d586ead6734f, type: 2}
+  cameraTransform: {fileID: 0}
 --- !u!1 &986007664
 GameObject:
   m_ObjectHideFlags: 0

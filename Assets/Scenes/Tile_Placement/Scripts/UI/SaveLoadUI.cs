@@ -19,6 +19,7 @@ namespace HexGrid.UI
         [SerializeField] private string saveButtonName = "Save";
         [SerializeField] private string loadButtonName = "Load";
         [SerializeField] private HexPlacementSystem placementSystem;
+        [SerializeField] private CameraController cameraController;
 
         private Button _save, _load;
         private IMapSerializer _serializer;
@@ -51,6 +52,8 @@ namespace HexGrid.UI
             if (placementSystem != null)
                 placementSystem.ShouldBlockInput = UIToolkitHoverBlock.IsPointerOverAnyButton;
 
+            if (cameraController != null)
+                cameraController.ShouldBlockInput = UIToolkitHoverBlock.IsPointerOverAnyButton;
         }
 
         private void OnDisable()
@@ -60,6 +63,9 @@ namespace HexGrid.UI
 
             if (placementSystem != null)
                 placementSystem.ShouldBlockInput = null;
+
+            if (cameraController != null)
+                cameraController.ShouldBlockInput = null;
         }
 
         private void OnSaveClicked()
