@@ -43,6 +43,11 @@ namespace HexGrid.Systems
         public int PrefabCount => _gridManager?.PrefabCount ?? 0;
         public bool HasGrid => _gridManager?.HasGrid ?? false;
 
+        [Header("Map Bounds (recommended)")]
+        [SerializeField] private Collider mapBoundsCollider; // drag your Plane collider here
+        [SerializeField] private float boundsPadding = 0.02f; // small margin to avoid edge jitter
+        [SerializeField] private bool blockPlacementOutsideBounds = true;
+
         private void Awake()
         {
             _gridManager = new HexGridManager(grid, tilePrefabs);
