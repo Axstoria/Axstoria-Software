@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using HexGrid.Models;
 using UnityEngine;
+// using Controler.Editor.ViewModels;
 
 namespace HexGrid.Systems
 {
@@ -11,6 +12,7 @@ namespace HexGrid.Systems
         private readonly Dictionary<Vector3Int, GameObject> _byCell = new();
         private readonly Grid _grid;
         private readonly List<GameObject> _tilePrefabs;
+        // private HexTerrainLayoutViewModel _terrainViewModel;
 
         public int PrefabCount => _tilePrefabs?.Count ?? 0;
         public bool HasGrid => _grid != null;
@@ -20,6 +22,22 @@ namespace HexGrid.Systems
             _grid = grid;
             _tilePrefabs = tilePrefabs;
         }
+
+        // public void SetTerrainViewModel(HexTerrainLayoutViewModel viewModel)
+        // {
+        //     _terrainViewModel = viewModel;
+            
+        //     // Subscribe to tile additions/removals from the view model
+        //     if (_terrainViewModel != null)
+        //     {
+        //         _terrainViewModel.Tiles.CollectionChanged += OnViewModelTilesChanged;
+        //     }
+        // }
+
+        // private void OnViewModelTilesChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        // {
+            
+        // }
 
         public bool TryGetTileAt(Vector3Int cell, out GameObject tile)
         {
@@ -63,6 +81,19 @@ namespace HexGrid.Systems
             marker.prefabIndex = idx;
             marker.cell = cell;
             marker.yRotation = yRotation;
+
+            // if (_terrainViewModel != null)
+            // {
+            //     var hexTile = new HexTile
+            //     {
+            //       PrefabIndex = idx,
+            //       X = cell.x,
+            //       Y = cell.y,
+            //       Z = cell.z,
+            //       YRotation = yRotation
+            //     };
+            //     _terrainViewModel.AddTile(hexTile);
+            // }
         }
 
         public void RemoveAtCell(Vector3Int cell)
@@ -71,6 +102,15 @@ namespace HexGrid.Systems
             {
                 Object.Destroy(obj);
                 _byCell.Remove(cell);
+                
+                // if (_terrainViewModel != null)
+                // {
+                //     var tileVM = _terrainViewModel.Tiles.Find(t => t.GetCell() == cell);
+                //     if (tileVM != null)
+                //     {
+                //         _terrainViewModel.RemoveTile(tileVM);
+                //     }
+                // }
                 return;
             }
 
@@ -90,6 +130,17 @@ namespace HexGrid.Systems
         {
             _byCell.Remove(oldCell);
             _byCell[newCell] = tile.gameObject;
+
+            // if (_terrainViewModel != null)
+            // {
+            //     var tileVM = _terrainViewModel.Tiles.Find(t => t.GetCell() == oldCell);
+            //     if (tileVM != null)
+            //     {
+            //         tileVM.X.Value = newCell.x;
+            //         tileVM.Y.Value = newCell.y;
+            //         tileVM.Z.Value = newCell.z;
+            //     }
+            // }
         }
 
         public void ClearAll()
@@ -105,6 +156,7 @@ namespace HexGrid.Systems
             {
                 if (m != null) Object.Destroy(m.gameObject);
             }
+            // _terrainViewModel?.ClearAllTiles();
         }
 
         /// Rebuilds grid from saved map data (used when loading).

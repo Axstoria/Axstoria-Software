@@ -32,6 +32,7 @@ namespace HexGrid.Systems
         private HexGridManager _gridManager;
         private TilePreviewManager _previewManager;
         private TileSelectionManager _selectionManager;
+        // private HexTerrainLayoutViewModel _terrainViewModel;
         private Vector2 lastMousePosition;
 
         [Header("Keyboard Movement")]
@@ -50,6 +51,8 @@ namespace HexGrid.Systems
 
         private void Awake()
         {
+            // var hexTerrainLayout = new HexterrainLayout{ Width = 100, Height = 100 };
+            // _terrainViewModel = new HexTerrainLayoutViewModel(hexTerrainLayout);
             _gridManager = new HexGridManager(grid, tilePrefabs);
             _previewManager = new TilePreviewManager(preview, _gridManager);
             _selectionManager = new TileSelectionManager(_gridManager, _previewManager, moveSelectionMaterial, rotateSelectionMaterial, preview);
