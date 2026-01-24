@@ -1,4 +1,4 @@
-#if !UNITY_EDITOR && USE_SFB
+#if USE_SFB
 using SFB;
 
 namespace HexGrid.IO
