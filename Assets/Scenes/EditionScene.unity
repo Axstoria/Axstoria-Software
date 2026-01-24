@@ -193,7 +193,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 177393108}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
@@ -919,8 +919,12 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2225280617837686807, guid: 0b2f1f6fd1285cf49bea011e2fb0e222, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2225280617837686807, guid: 0b2f1f6fd1285cf49bea011e2fb0e222, type: 3}
+      propertyPath: placementSystem
+      value: 
+      objectReference: {fileID: 1454533599}
     - target: {fileID: 2682817083089393720, guid: 0b2f1f6fd1285cf49bea011e2fb0e222, type: 3}
       propertyPath: m_Name
       value: EditionUIManager
