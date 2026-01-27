@@ -1,4 +1,4 @@
-﻿namespace Controler.Math
+﻿namespace Domain.Math
 {
     public class Vector3
     {

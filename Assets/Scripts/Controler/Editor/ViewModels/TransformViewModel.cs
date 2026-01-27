@@ -2,7 +2,7 @@
 {
     using Loxodon.Framework.Observables;
     using Domain;
-    using Controler.Math;
+    using Domain.Math;
     
     /// <summary>
     /// ViewModel for managing and exposing transformation properties (position, rotation, scale) to the UI.
