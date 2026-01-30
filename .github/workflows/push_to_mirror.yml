@@ -5,9 +5,6 @@ on:
     branches:
       - 'main'
 
-env:
-  MIRROR_URL: = "git@github.com:EpitechPGE45-2025/G-EIP-700-PAR-7-1-eip-50.git"
-
 jobs:
   push_to_epitech_repository:
     runs-on: ubuntu-latest
@@ -19,5 +16,5 @@ jobs:
       - name: Push to Epitech repository
         uses: pixta-dev/repository-mirroring-action@v1
         with:
-          target_repo_url: ${{ env.MIRROR_URL }}
+          target_repo_url: ${{ secrets.EPITECH_REPOSITORY_URL }}
           ssh_private_key: ${{ secrets.EPITECH_REPOSITORY_KEY }}
