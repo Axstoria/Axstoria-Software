@@ -2,17 +2,17 @@
 
 ## **1. Project context**
 
-Axstoria is a tool to help all TTRPG's player to host online game and create their own world but here in a 3D world.
+Axstoria is a tool to help all TTRPG's players to host online game and create their own world but here in a 3D world.
 
 ## **2. User role**
 
-The following roles will be involved in beta testing
+The following roles will be involved in beta testing :
 
 | **Role Name**  | **Description** |
 |--------|----------------------|
-| Editor       | Outside an online session, the user that will use the edition part of the program to create maps, rules or character sheets |
-| Game Master       | The host of a session, they create the room and manage every aspect of the world on top of having ownership and authority on every object as server. |
-| Player       | Player that has been invited to the session by the host. They have limited ownership on the token that has been attributed to them by the host |
+| Editor       | Outside an online session, the user that will use the edition part of the program to create maps, rules or character sheets. |
+| Game Master       | The host of a session, they create the room and manage every aspect of the world on top of having ownership and authority on every object on the server. |
+| Player       | Player that has been invited to the session by the host. They have limited ownership on the token that has been attributed to them by the host. |
 
 ---
 
@@ -23,28 +23,28 @@ The following features will be shown during the defense
 | **Feature ID** | **User role** | **Feature name** | **Short description** |
 |--------------|---------------|-------------------------|--------------------------------------|
 | F1 | Everyone | Free Camera movement | Ability to move the camera freely in a 3D environment |
-| F2 | Everyone | Camera preset angle | Can change smoothly the camera between two preset angles top and isometric |
+| F2 | Everyone | Camera preset angle | Can change smoothly the camera between two preset angles : top and isometric |
 | F3 | Editor | Table Grid Creation | Create a custom 2D grid for map layout at map initialization |
-| F4 | Editor | Tile management | Create move and delete tiles freely to act as a base for the map layout |
+| F4 | Editor | Tile management | Create, move and delete tiles freely to act as a base for the map layout |
 | F5 | Editor | Object Manipulation | Handle location, rotation and scaling of object on map |
 | F6 | Editor | Object preview | Display a preview of where an object will be placed |
 | F7 | Editor | Fix terrain object on tile | Terrain object must be able to snap on the tile they sit on |
 | F8 | Editor | 3D Object Importation | Can import 3D object as game object to use them to create your map |
-| F9 | Editor | Save and Load map | Can save a map with a custom name and laod it in the according menu later |
+| F9 | Editor | Save and Load map | Can save and load a map's data |
 | F10 | Editor | Free decorative object manipulation | Non-terrain object can be placed freely on the map no matter grid or 2D placement |
-| F11 | Editor | UI panel | User can activate or deactivate different UI panels |
-| F12 | Editor | Character Sheet Creation | User can create a character sheets using the different "block" availables and variable parameters |
-| F13 | Editor | Import and Export Sheets | User can import and export the character sheets they created in order to access them in the game state |
-| F14 | Game Master | Session hosting and invitation | User can create a lobby chat room where he can invite his players via steam |
-| F15 | Game Master | Session configuration | During the lobby, the user can change the parameter of the game such as which rules and characters sheets the game will be using |
+| F11 | Editor | UI panel | User can show or hide different UI panels |
+| F12 | Editor | Character Sheet Creation | User can create a character sheets using the different nodes available and variable parameters |
+| F13 | Editor | Import and Export Sheets | User can import and export the character sheets they created in order to access them during the game |
+| F14 | Game Master | Session hosting and invitation | User can create a lobby room where they can invite their players via steam |
+| F15 | Game Master | Session configuration | During the lobby, the user can change the parameters of the game such as the state of the map's elements and character sheets |
 | F16 | Game Master | Server Authority | If there's a conflictual action, the game master acts as a server and has the authority on the outcome. |
-| F17 | Game Master | Data synchronization | Synchronize the data on the server and sends it to the player |
+| F17 | Game Master | Data synchronization | Synchronize the data on the server and send it to the player |
 | F18 | Editor | Custom Metadata | Add custom metadata (notes, tag, link to sheet) to an object |
-| F19 | Game Master | Set Object Visibility | User can set the visibility of an object to specific or all the users |
+| F19 | Game Master | Set Object Visibility | User can set the visibility of an object to a specific or every user |
 | F20 | Game Master | Set Metadata visibility | Change the visibility of an object's metadata for set user (ex: a character's token with a link to the character sheet) |
 | F21 | Game Master | Set Ownership | Can change the ownership of an object to a specific user |
 | F22 | Player | Move Owned object | User can move an object they own |
-| F23 | Player/Game Master | Dice roll | User can throw on or more specific dice through the UI or a command line in chat and the result will display visually and in chat |
+| F23 | Player/Game Master | Dice roll | User can throw one or more specific dice through the UI or a command line in chat and the result will display visually and in chat |
 | F24 | Game Master/Player | Hidden rolls | User can chose to hide his dice roll, the result will only display to the user and the game master |
 | F25 | Game Master | Fog of War placement | User can put a volume base fog of war to hide a part of the map |
 | F26 | Game Master | Fog of War depth | User can chose the depth of how much layers of class will be affected by the fog (tokens, objects, terrains, tiles) |
@@ -54,7 +54,7 @@ The following features will be shown during the defense
 | F30 | Game Master/Player | Distance tool | Calculate and display the distance between two points in meters |
 | F31 | Game Master/Player | Ping tool | Display a visual marker on the map with the user's color |
 | F32 | Game Master/Player | Line of Sight Tool | Choose two points on the map and display if there's a direct line of sight or not |
-| F33 | Game Master | Save and Load map state | User can save the state of a map during a session in order to load it in the exact same configuration in a future session |
+| F33 | Game Master | Save and Load map state | User can save the state of a game during a session in order to load it in the exact same configuration in a future session |
 
 ---
 
