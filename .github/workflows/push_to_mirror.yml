@@ -6,8 +6,7 @@ on:
       - 'main'
 
 env:
-  MIRROR_URL: "git@github.com:EpitechPromo2027/G-EIP-600-LYN-6-1-eip-maksen.mofredj.git"
-  NEW_MIRROR_URL: = "git@github.com:EpitechPGE45-2025/G-EIP-700-PAR-7-1-eip-50.git"
+  MIRROR_URL: = "git@github.com:EpitechPGE45-2025/G-EIP-700-PAR-7-1-eip-50.git"
 
 jobs:
   push_to_epitech_repository:
@@ -21,9 +20,4 @@ jobs:
         uses: pixta-dev/repository-mirroring-action@v1
         with:
           target_repo_url: ${{ env.MIRROR_URL }}
-          ssh_private_key: ${{ secrets.EPITECH_REPOSITORY_KEY }}
-      - name: Push to new Epitech repository
-        uses: pixta-dev/repository-mirroring-action@v1
-        with:
-          target_repo_url: ${{ env.NEW_MIRROR_URL }}
           ssh_private_key: ${{ secrets.EPITECH_REPOSITORY_KEY }}
