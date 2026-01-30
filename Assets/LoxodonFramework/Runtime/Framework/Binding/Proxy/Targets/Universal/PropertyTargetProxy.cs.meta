@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: e1c1f6b61f45f70479fba9b9ad7fdda5
+timeCreated: 1483249344
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Runtime/Framework/Binding/Proxy/Targets/Universal/PropertyTargetProxy.cs
+  uploadId: 677266

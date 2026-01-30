@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: ab7cd71ff1a5f544db40e41067c8e79d
+timeCreated: 1561544252
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Runtime/Framework/Utilities/FilterEnumerator.cs
+  uploadId: 677266

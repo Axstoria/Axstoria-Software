@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 739bead5c7ab6a54a810c248bb23136f
+timeCreated: 1479210341
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Samples/Loxodon Framework/2.0.0/Examples/Resources/UI/Logins/Login.prefab
+  uploadId: 677266

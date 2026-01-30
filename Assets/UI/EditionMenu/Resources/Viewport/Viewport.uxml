@@ -1,0 +1,12 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/EditionMenu/Resources/Viewport/Viewport.uss?fileID=7433441132597879392&amp;guid=c19d6ee89226d074da5b18ff7f2d8f28&amp;type=3#Viewport" />
+    <engine:VisualElement name="background" class="menubar" style="height: 50px;">
+        <engine:Button text="Move Object&#10;" name="move-object" class="button" />
+        <engine:Button text="Change View" name="change-view" class="button" />
+        <engine:Button text="Catalog" name="catalog" class="button" />
+        <engine:Button text="Ping&#10;" name="ping" class="button" />
+        <engine:Button text="Fog of War" name="fog-of-war" class="button" />
+        <engine:Button text="Dice" name="dice" class="button" />
+        <engine:Button text="Measure Distance" name="measure-distance" class="button" />
+    </engine:VisualElement>
+</engine:UXML>

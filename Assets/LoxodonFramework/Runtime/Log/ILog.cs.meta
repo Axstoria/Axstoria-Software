@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: f6d5211dc5739dc4f9fafcd03ec608d7
+timeCreated: 1483249600
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Runtime/Log/ILog.cs
+  uploadId: 677266

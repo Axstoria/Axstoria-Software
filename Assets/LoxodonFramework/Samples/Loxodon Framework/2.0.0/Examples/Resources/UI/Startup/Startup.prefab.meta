@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 937f1c73de307c04bb52766dbcb6660b
+timeCreated: 1470503164
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Samples/Loxodon Framework/2.0.0/Examples/Resources/UI/Startup/Startup.prefab
+  uploadId: 677266

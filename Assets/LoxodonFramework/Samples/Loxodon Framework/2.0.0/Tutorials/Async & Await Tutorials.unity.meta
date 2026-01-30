@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: febab0e716da2a148bfeb4b766b886fb
+timeCreated: 1592217456
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Samples/Loxodon Framework/2.0.0/Tutorials/Async
+    & Await Tutorials.unity
+  uploadId: 677266

@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 8d0a1e0b16a9a3d47afadc645f2c0289
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Runtime/Framework/Binding/Proxy/Targets/TargetNameUtil.cs
+  uploadId: 677266

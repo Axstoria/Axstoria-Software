@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 98b80835af0e82244a4a058004ab6d6d
+timeCreated: 1541744563
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Samples/Loxodon Framework/2.0.0/Tutorials/Scripts/ListItemView.cs
+  uploadId: 677266

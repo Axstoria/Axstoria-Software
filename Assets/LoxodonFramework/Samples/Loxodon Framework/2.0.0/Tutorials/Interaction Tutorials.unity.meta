@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 65e251dd9ede81d4e8b04d679cd67223
+timeCreated: 1531279694
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Samples/Loxodon Framework/2.0.0/Tutorials/Interaction
+    Tutorials.unity
+  uploadId: 677266

@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: b7777eca746ac784194ccc72de16c4b6
+timeCreated: 1588216103
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Samples/Loxodon Framework/2.0.0/Tutorials/Scripts/LocalizedDataBinderExample.cs
+  uploadId: 677266

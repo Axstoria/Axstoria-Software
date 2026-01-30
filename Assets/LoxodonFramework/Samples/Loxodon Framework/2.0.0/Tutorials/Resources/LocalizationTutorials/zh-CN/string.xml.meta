@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 883b347506fadaf4fb718c78b68bbb06
+timeCreated: 1479202469
+licenseType: Store
+TextScriptImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Samples/Loxodon Framework/2.0.0/Tutorials/Resources/LocalizationTutorials/zh-CN/string.xml
+  uploadId: 677266

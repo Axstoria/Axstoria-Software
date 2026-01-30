@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: eed8874b18eb1cf49a4d15c11a125922
+timeCreated: 1478944106
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Samples/Loxodon Framework/2.0.0/Tutorials/Prefabs/ProgressTaskExample.prefab
+  uploadId: 677266

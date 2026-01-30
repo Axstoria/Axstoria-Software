@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: dfac43dd776b3e34fa285c8fad49386b
+timeCreated: 1560757542
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Samples/Loxodon Framework/2.0.0/Tutorials/Bind
+    Multiple Buttons To The Same Command Tutorials.unity
+  uploadId: 677266

@@ -6,7 +6,7 @@ on:
       - 'main'
 
 env:
-  MIRROR_URL: "git@github.com:EpitechPromo2027/G-EIP-600-LYN-6-1-eip-maksen.mofredj.git"
+  MIRROR_URL: = "git@github.com:EpitechPGE45-2025/G-EIP-700-PAR-7-1-eip-50.git"
 
 jobs:
   push_to_epitech_repository:

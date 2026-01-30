@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c3eb8e94fcd3a404fb8615d62fd63078
+timeCreated: 1552985922
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Docs/LoxodonFramework.pdf
+  uploadId: 677266

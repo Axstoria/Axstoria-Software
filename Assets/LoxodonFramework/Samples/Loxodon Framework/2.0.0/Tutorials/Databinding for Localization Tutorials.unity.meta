@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: e779eec7bb26a6645b5243f9e0c52af1
+timeCreated: 1542989861
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 178583
+  packageName: Loxodon.Framework 2.0
+  packageVersion: 2.6.6
+  assetPath: Assets/LoxodonFramework/Samples/Loxodon Framework/2.0.0/Tutorials/Databinding
+    for Localization Tutorials.unity
+  uploadId: 677266
