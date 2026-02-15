@@ -55,6 +55,7 @@ public class ChatManager : NetworkBehaviour
     [ClientRpc]
     private void RpcHandleMessage(string message)
     {
+        Debug.Log($"Message received from server: {message}");
         OnMessage?.Invoke($"\n{message}");
     }
 
