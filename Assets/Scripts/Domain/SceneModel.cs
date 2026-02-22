@@ -1,4 +1,4 @@
-﻿using Controler.Math;
+﻿using Domain.Math;
 
 namespace Domain
 {
