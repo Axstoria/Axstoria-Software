@@ -1,7 +1,7 @@
 using System.IO;
 using UnityEngine;
 
-namespace HexGrid.IO
+namespace Edition.IO
 {
     /// Fallback when no native dialog is available (uses persistentDataPath).
     public class FallbackFileDialogService : IFileDialogService

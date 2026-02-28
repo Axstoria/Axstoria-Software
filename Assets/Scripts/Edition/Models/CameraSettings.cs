@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace HexGrid.Models
+namespace Edition.Models
 {
     [CreateAssetMenu(fileName = "CameraSettings", menuName = "HexGrid/Camera Settings")]
     public class CameraSettings : ScriptableObject

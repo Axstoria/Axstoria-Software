@@ -1,4 +1,4 @@
-namespace HexGrid.IO
+namespace Edition.IO
 {
     public interface IFileDialogService
     {

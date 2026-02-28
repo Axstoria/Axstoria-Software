@@ -3,10 +3,10 @@ using UnityEngine.UIElements;
 using Fab.UITKDropdown;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using HexGrid.Systems;
-using HexGrid.IO;
-using HexGrid.Models;
-using HexGrid.Persistence;
+using Edition.Systems;
+using Edition.IO;
+using Edition.Models;
+using Edition.Persistence;
 using System.IO;
 
 public class EditionToolbarUIManager : MonoBehaviour, IUIManager

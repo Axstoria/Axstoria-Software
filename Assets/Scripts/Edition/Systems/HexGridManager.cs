@@ -1,80 +1,101 @@
 using System.Collections.Generic;
-using HexGrid.Models;
+using Edition.Models;
 using UnityEngine;
-// using Controler.Editor.ViewModels;
+using Controler.Editor.ViewModels;
+using Domain;
 
-namespace HexGrid.Systems
+namespace Edition.Systems
 {
     /// Manages hex grid data: tile storage, placement, removal and lookup.
     public class HexGridManager
     {
         /// Dictionary for O(1) tile lookup by cell position.
-        private readonly Dictionary<Vector3Int, GameObject> _byCell = new();
-        private readonly Grid _grid;
-        private readonly List<GameObject> _tilePrefabs;
-        // private HexTerrainLayoutViewModel _terrainViewModel;
+        private readonly Dictionary<Vector3Int, GameObject> byCell = new();
+        private readonly Grid grid;
+        private readonly List<GameObject> tilePrefabs;
+        private TerrainLayoutViewModel terrainLayoutViewModel;
 
-        public int PrefabCount => _tilePrefabs?.Count ?? 0;
-        public bool HasGrid => _grid != null;
+        public int PrefabCount => tilePrefabs?.Count ?? 0;
+        public bool HasGrid => grid != null;
 
         public HexGridManager(Grid grid, List<GameObject> tilePrefabs)
         {
-            _grid = grid;
-            _tilePrefabs = tilePrefabs;
+            this.grid = grid;
+            this.tilePrefabs = tilePrefabs;
         }
+        
+        /// <summary>
+        /// Sets the terrain layout view model and subscribes to its changes
+        /// </summary>
+        /// <param name="viewModel"></param>
+        public void SetTerrainLayout(TerrainLayoutViewModel viewModel)
+        {
+           terrainLayoutViewModel = viewModel;
 
-        // public void SetTerrainViewModel(HexTerrainLayoutViewModel viewModel)
-        // {
-        //     _terrainViewModel = viewModel;
-            
-        //     // Subscribe to tile additions/removals from the view model
-        //     if (_terrainViewModel != null)
-        //     {
-        //         _terrainViewModel.Tiles.CollectionChanged += OnViewModelTilesChanged;
-        //     }
-        // }
+           if (terrainLayoutViewModel != null)
+           {
+               LoadTilesFromTerrainLayout();
+           }
+        }
+        
+        /// <summary>
+        /// Loads existing tiles from the terrain layout model into the grid
+        /// </summary>
+        private void LoadTilesFromTerrainLayout()
+        {
+            var terrainLayout = terrainLayoutViewModel.Model;
+            if (terrainLayout?.Tiles == null || terrainLayout.Tiles.Count == 0) {
+                return;
+            }
 
-        // private void OnViewModelTilesChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        // {
-            
-        // }
+            foreach (var tileData in terrainLayout.Tiles)
+            {
+                var cell = new Vector3Int(tileData.X, tileData.Y, tileData.Z);
+                if (!byCell.ContainsKey(cell))
+                {
+                    PlaceAtCell(cell, tileData.PrefabIndex, tileData.YRotation);
+                }
+            }
+        }
 
         public bool TryGetTileAt(Vector3Int cell, out GameObject tile)
         {
-            return _byCell.TryGetValue(cell, out tile);
+            return byCell.TryGetValue(cell, out tile);
         }
 
         public bool ContainsCell(Vector3Int cell)
         {
-            return _byCell.ContainsKey(cell);
+            return byCell.ContainsKey(cell);
         }
 
         public Vector3 GetCellCenterWorld(Vector3Int cell)
         {
-            return _grid.GetCellCenterWorld(cell);
+            return grid.GetCellCenterWorld(cell);
         }
 
         public Vector3Int WorldToCell(Vector3 worldPos)
         {
-            return _grid.WorldToCell(worldPos);
+            return grid.WorldToCell(worldPos);
         }
 
+        
+        // ReSharper disable Unity.PerformanceAnalysis
         public void PlaceAtCell(Vector3Int cell, int prefabIndex, float yRotation)
         {
-            if (_byCell.ContainsKey(cell)) return;
-            if (_tilePrefabs == null || _tilePrefabs.Count == 0)
+            if (byCell.ContainsKey(cell)) return;
+            if (tilePrefabs == null || tilePrefabs.Count == 0)
             {
                 Debug.LogError("No tile prefabs assigned.");
                 return;
             }
 
-            int idx = Mathf.Clamp(prefabIndex, 0, _tilePrefabs.Count - 1);
-            var prefab = _tilePrefabs[idx];
-            Vector3 world = _grid.GetCellCenterWorld(cell);
+            int idx = Mathf.Clamp(prefabIndex, 0, tilePrefabs.Count - 1);
+            var prefab = tilePrefabs[idx];
+            Vector3 world = grid.GetCellCenterWorld(cell);
 
             var tile = Object.Instantiate(prefab, world, Quaternion.Euler(0f, yRotation, 0f));
             tile.name = $"{prefab.name}_{cell.x}_{cell.y}_{cell.z}";
-            _byCell[cell] = tile;
+            byCell[cell] = tile;
 
             // Add marker component to store tile data for serialization
             var marker = tile.AddComponent<PlacedTile>();
@@ -82,35 +103,40 @@ namespace HexGrid.Systems
             marker.cell = cell;
             marker.yRotation = yRotation;
 
-            // if (_terrainViewModel != null)
-            // {
-            //     var hexTile = new HexTile
-            //     {
-            //       PrefabIndex = idx,
-            //       X = cell.x,
-            //       Y = cell.y,
-            //       Z = cell.z,
-            //       YRotation = yRotation
-            //     };
-            //     _terrainViewModel.AddTile(hexTile);
-            // }
+            if (terrainLayoutViewModel != null)
+            {
+                var terrainLayout = terrainLayoutViewModel.Model as TerrainLayout;
+                if (terrainLayout != null)
+                {
+                    var TilesData = new HexTileData
+                    {
+                        PrefabIndex = idx,
+                        X = cell.x,
+                        Y = cell.y,
+                        Z = cell.z,
+                        YRotation = yRotation,
+                    };
+                    terrainLayout.Tiles.Add(TilesData);
+                }
+            }
         }
 
         public void RemoveAtCell(Vector3Int cell)
         {
-            if (_byCell.TryGetValue(cell, out var obj))
+            if (byCell.TryGetValue(cell, out var obj))
             {
                 Object.Destroy(obj);
-                _byCell.Remove(cell);
-                
-                // if (_terrainViewModel != null)
-                // {
-                //     var tileVM = _terrainViewModel.Tiles.Find(t => t.GetCell() == cell);
-                //     if (tileVM != null)
-                //     {
-                //         _terrainViewModel.RemoveTile(tileVM);
-                //     }
-                // }
+                byCell.Remove(cell);
+
+                if (terrainLayoutViewModel != null)
+                {
+                    var terrainLayout =  terrainLayoutViewModel.Model as TerrainLayout;
+                    if (terrainLayout != null)
+                    {
+                        terrainLayout.Tiles.RemoveAll(t =>
+                            t.X == cell.x && t.Y == cell.y && t.Z == cell.z);
+                    }
+                }
                 return;
             }
 
@@ -128,47 +154,62 @@ namespace HexGrid.Systems
 
         public void UpdateTilePosition(PlacedTile tile, Vector3Int oldCell, Vector3Int newCell)
         {
-            _byCell.Remove(oldCell);
-            _byCell[newCell] = tile.gameObject;
+            byCell.Remove(oldCell);
+            byCell[newCell] = tile.gameObject;
 
-            // if (_terrainViewModel != null)
-            // {
-            //     var tileVM = _terrainViewModel.Tiles.Find(t => t.GetCell() == oldCell);
-            //     if (tileVM != null)
-            //     {
-            //         tileVM.X.Value = newCell.x;
-            //         tileVM.Y.Value = newCell.y;
-            //         tileVM.Z.Value = newCell.z;
-            //     }
-            // }
+            if (terrainLayoutViewModel != null)
+            {
+                var terrainLayout = terrainLayoutViewModel.Model as TerrainLayout;
+                if (terrainLayout != null)
+                {
+                   var tileData = terrainLayout.Tiles.Find(t => 
+                        t.X == oldCell.x && t.Y == oldCell.y && t.Z == oldCell.z);
+
+                   if (tileData != null)
+                   {
+                       tileData.X = newCell.x;
+                       tileData.Y = newCell.y;
+                       tileData.Z = newCell.z;
+                   }
+                }
+            }
         }
 
         public void ClearAll()
         {
-            foreach (var kv in _byCell)
+            foreach (var kv in byCell)
             {
                 if (kv.Value != null) Object.Destroy(kv.Value);
             }
-            _byCell.Clear();
+            byCell.Clear();
 
             var markers = Object.FindObjectsByType<PlacedTile>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
             foreach (var m in markers)
             {
                 if (m != null) Object.Destroy(m.gameObject);
             }
-            // _terrainViewModel?.ClearAllTiles();
+            
+            if (terrainLayoutViewModel != null)
+            {
+                var terrainLayout = terrainLayoutViewModel.Model as TerrainLayout;
+                if (terrainLayout != null)
+                {
+                    terrainLayout.Tiles.Clear();
+                }
+            }
+
         }
 
         /// Rebuilds grid from saved map data (used when loading).
         public void RebuildFrom(MapDataDTO data)
         {
             if (data?.tiles == null) return;
-            if (_tilePrefabs == null || _tilePrefabs.Count == 0)
+            if (tilePrefabs == null || tilePrefabs.Count == 0)
             {
                 Debug.LogError("No tile prefabs assigned.");
                 return;
             }
-            if (_grid == null)
+            if (grid == null)
             {
                 Debug.LogError("Grid is null.");
                 return;
@@ -177,20 +218,37 @@ namespace HexGrid.Systems
             int placed = 0;
             foreach (var t in data.tiles)
             {
-                int idx = Mathf.Clamp(t.prefabIndex, 0, _tilePrefabs.Count - 1);
-                var prefab = _tilePrefabs[idx];
+                int idx = Mathf.Clamp(t.prefabIndex, 0, tilePrefabs.Count - 1);
+                var prefab = tilePrefabs[idx];
                 var cell = new Vector3Int(t.x, t.y, t.z);
-                var world = _grid.GetCellCenterWorld(cell);
+                var world = grid.GetCellCenterWorld(cell);
                 var rot = Quaternion.Euler(0f, t.yRotation, 0f);
 
                 var tile = Object.Instantiate(prefab, world, rot);
                 tile.name = $"{prefab.name}_{cell.x}_{cell.y}_{cell.z}";
-                _byCell[cell] = tile;
+                byCell[cell] = tile;
 
                 var marker = tile.AddComponent<PlacedTile>();
                 marker.prefabIndex = idx;
                 marker.cell = cell;
                 marker.yRotation = t.yRotation;
+
+                if (terrainLayoutViewModel != null)
+                {
+                    var terrainLayout = terrainLayoutViewModel.Model as TerrainLayout;
+                    if (terrainLayout != null)
+                    {
+                        var TileData = new HexTileData
+                        {
+                            PrefabIndex = idx,
+                            X = cell.x,
+                            Y = cell.y,
+                            Z = cell.z,
+                            YRotation = t.yRotation,
+                        };
+                        terrainLayout.Tiles.Add(TileData);
+                    }
+                }
                 placed++;
             }
             Debug.Log($"HexGridManager: Rebuilt {placed} tiles.");

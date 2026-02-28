@@ -1,7 +1,7 @@
 #if UNITY_EDITOR
 using UnityEditor;
 
-namespace HexGrid.IO
+namespace Edition.IO
 {
     public class EditorFileDialogService : IFileDialogService
     {

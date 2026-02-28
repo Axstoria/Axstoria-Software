@@ -1,9 +1,11 @@
 using System.Collections.Generic;
-using HexGrid.Models;
+using Controler.Editor.ViewModels;
+using Domain;
+using Edition.Models;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace HexGrid.Systems
+namespace Edition.Systems
 {
     /// Main controller for hex tile placement, selection and interaction.
     public class HexPlacementSystem : MonoBehaviour
@@ -11,7 +13,7 @@ namespace HexGrid.Systems
         [Header("Grid & Prefabs")]
         [SerializeField] private Grid grid;
         [SerializeField] private List<GameObject> tilePrefabs = new();
-        [SerializeField] private int currentPrefabIndex = 0;
+        [SerializeField] private int currentPrefabIndex;
 
         [Header("Placement")]
         [SerializeField] private LayerMask groundMask;
@@ -23,26 +25,26 @@ namespace HexGrid.Systems
         [SerializeField] private Material rotateSelectionMaterial;
 
         /// External callback to block input (e.g., when hovering UI).
-        public System.Func<bool> ShouldBlockInput;
+        public System.Func<bool> shouldBlockInput;
 
         private const float HEX_ROTATION_ANGLE = 60f;
         private const float RAYCAST_MAX_DISTANCE = 1000f;
         private const int MAX_KEYBOARD_MOVE_ATTEMPTS = 10;
 
-        private HexGridManager _gridManager;
-        private TilePreviewManager _previewManager;
-        private TileSelectionManager _selectionManager;
-        // private HexTerrainLayoutViewModel _terrainViewModel;
+        private HexGridManager gridManager;
+        private TilePreviewManager previewManager;
+        private TileSelectionManager selectionManager;
+
         private Vector2 lastMousePosition;
 
         [Header("Keyboard Movement")]
         [SerializeField] private float initialKeyDelay = 0.3f;
         [SerializeField] private float keyRepeatInterval = 0.1f;
-        private float keyRepeatTimer = 0f;
-        private Vector3Int? lastKeyDirection = null;
+        private float keyRepeatTimer;
+        private Vector3Int? lastKeyDirection;
 
-        public int PrefabCount => _gridManager?.PrefabCount ?? 0;
-        public bool HasGrid => _gridManager?.HasGrid ?? false;
+        public int PrefabCount => gridManager?.PrefabCount ?? 0;
+        public bool HasGrid => gridManager?.HasGrid ?? false;
 
         [Header("Map Bounds (recommended)")]
         [SerializeField] private Collider mapBoundsCollider; // drag your Plane collider here
@@ -51,11 +53,17 @@ namespace HexGrid.Systems
 
         private void Awake()
         {
-            // var hexTerrainLayout = new HexterrainLayout{ Width = 100, Height = 100 };
-            // _terrainViewModel = new HexTerrainLayoutViewModel(hexTerrainLayout);
-            _gridManager = new HexGridManager(grid, tilePrefabs);
-            _previewManager = new TilePreviewManager(preview, _gridManager);
-            _selectionManager = new TileSelectionManager(_gridManager, _previewManager, moveSelectionMaterial, rotateSelectionMaterial, preview);
+            gridManager = new HexGridManager(grid, tilePrefabs);
+            var terrainLayout = new TerrainLayout
+            {
+                Width = 100,
+                Height = 100,
+            };
+            var terrainLayoutVm = new TerrainLayoutViewModel(terrainLayout);
+            
+            gridManager.SetTerrainLayout(terrainLayoutVm);
+            previewManager = new TilePreviewManager(preview, gridManager);
+            selectionManager = new TileSelectionManager(gridManager, previewManager, moveSelectionMaterial, rotateSelectionMaterial, preview);
         }
 
         /// Handles key repeat timing for smooth continuous keyboard input.
@@ -90,7 +98,7 @@ namespace HexGrid.Systems
 
         private void Update()
         {
-            if (ShouldBlockInput != null && ShouldBlockInput()) return;
+            if (shouldBlockInput != null && shouldBlockInput()) return;
 
             // Block tile interaction when camera controls are active
             bool cameraModifierPressed = Keyboard.current.leftAltKey.isPressed ||
@@ -99,7 +107,7 @@ namespace HexGrid.Systems
                                          Keyboard.current.rightShiftKey.isPressed;
             if (cameraModifierPressed)
             {
-                _previewManager.SetPreviewsVisibility(false, _selectionManager.SelectionCount);
+                previewManager.SetPreviewsVisibility(false, selectionManager.SelectionCount);
                 return;
             }
 
@@ -111,9 +119,9 @@ namespace HexGrid.Systems
 
             Vector2 mouse = Mouse.current.position.ReadValue();
 
-            if (_previewManager.HidePreviewsUntilMouseMove && mouse != lastMousePosition)
+            if (previewManager.HidePreviewsUntilMouseMove && mouse != lastMousePosition)
             {
-                _previewManager.HidePreviewsUntilMouseMove = false;
+                previewManager.HidePreviewsUntilMouseMove = false;
             }
             lastMousePosition = mouse;
 
@@ -123,8 +131,8 @@ namespace HexGrid.Systems
             if ((groundMask & (1 << hit.collider.gameObject.layer)) == 0) return;
             if (!HasGrid) { Debug.LogError("HexPlacementSystem: Grid is null."); return; }
 
-            Vector3Int cell = _gridManager.WorldToCell(hit.point);
-            Vector3 world = _gridManager.GetCellCenterWorld(cell);
+            Vector3Int cell = gridManager.WorldToCell(hit.point);
+            Vector3 world = gridManager.GetCellCenterWorld(cell);
 
             HandleMouseInput(cell, world);
         }
@@ -133,11 +141,11 @@ namespace HexGrid.Systems
         {
             if (Keyboard.current.digit1Key.wasPressedThisFrame)
             {
-                _selectionManager.SwitchSelectionMode(SelectionMode.Move);
+                selectionManager.SwitchSelectionMode(SelectionMode.Move);
             }
             else if (Keyboard.current.digit2Key.wasPressedThisFrame)
             {
-                _selectionManager.SwitchSelectionMode(SelectionMode.Rotate);
+                selectionManager.SwitchSelectionMode(SelectionMode.Rotate);
             }
         }
 
@@ -145,13 +153,13 @@ namespace HexGrid.Systems
         {
             if (Keyboard.current.escapeKey.wasPressedThisFrame || Keyboard.current.enterKey.wasPressedThisFrame)
             {
-                _selectionManager.DeselectAllTiles();
+                selectionManager.DeselectAllTiles();
                 return true;
             }
 
-            if (Keyboard.current.deleteKey.wasPressedThisFrame && _selectionManager.SelectionCount > 0)
+            if (Keyboard.current.deleteKey.wasPressedThisFrame && selectionManager.SelectionCount > 0)
             {
-                _selectionManager.RemoveSelectedTiles();
+                selectionManager.RemoveSelectedTiles();
                 return true;
             }
 
@@ -160,9 +168,9 @@ namespace HexGrid.Systems
 
         private bool HandleKeyboardMovement()
         {
-            if (_selectionManager.SelectionCount > 0)
+            if (selectionManager.SelectionCount > 0)
             {
-                if (_selectionManager.CurrentMode == SelectionMode.Move)
+                if (selectionManager.CurrentMode == SelectionMode.Move)
                 {
                     Vector3Int? currentDirection = null;
                     if (Keyboard.current.upArrowKey.isPressed) currentDirection = new Vector3Int(0, 1, 0);
@@ -170,12 +178,16 @@ namespace HexGrid.Systems
                     else if (Keyboard.current.rightArrowKey.isPressed) currentDirection = new Vector3Int(1, 0, 0);
                     else if (Keyboard.current.leftArrowKey.isPressed) currentDirection = new Vector3Int(-1, 0, 0);
 
-                    if (HandleKeyRepeat(currentDirection, () => _selectionManager.MoveInDirection(currentDirection.Value, MAX_KEYBOARD_MOVE_ATTEMPTS)))
+                    if (HandleKeyRepeat(currentDirection, () =>
+                        {
+                            if (currentDirection != null)
+                                selectionManager.MoveInDirection(currentDirection.Value, MAX_KEYBOARD_MOVE_ATTEMPTS);
+                        }))
                     {
                         return true;
                     }
                 }
-                else if (_selectionManager.CurrentMode == SelectionMode.Rotate)
+                else if (selectionManager.CurrentMode == SelectionMode.Rotate)
                 {
                     float? currentRotation = null;
                     if (Keyboard.current.leftArrowKey.isPressed) currentRotation = -HEX_ROTATION_ANGLE;
@@ -185,7 +197,10 @@ namespace HexGrid.Systems
                         ? new Vector3Int(currentRotation.Value > 0 ? 1 : -1, 0, 0)
                         : null;
 
-                    if (HandleKeyRepeat(fakeDirection, () => _selectionManager.RotateSelectedTiles(currentRotation.Value)))
+                    if (HandleKeyRepeat(fakeDirection, () =>
+                        {
+                            if (currentRotation != null) selectionManager.RotateSelectedTiles(currentRotation.Value);
+                        }))
                     {
                         return true;
                     }
@@ -202,108 +217,108 @@ namespace HexGrid.Systems
 
         private void HandleMouseInput(Vector3Int cell, Vector3 world)
         {
-            if (_selectionManager.CurrentMode == SelectionMode.Move)
+            if (selectionManager.CurrentMode == SelectionMode.Move)
             {
-                _previewManager.SetPreviewPosition(world);
+                previewManager.SetPreviewPosition(world);
 
-                bool canPlaceAll = _selectionManager.CanPlaceAllAtCell(cell, ignoreSelectedTiles: false);
+                bool canPlaceAll = selectionManager.CanPlaceAllAtCell(cell, ignoreSelectedTiles: false);
 
-                if (!_previewManager.HidePreviewsUntilMouseMove)
+                if (!previewManager.HidePreviewsUntilMouseMove)
                 {
-                    _previewManager.SetPreviewsVisibility(canPlaceAll, _selectionManager.SelectionCount);
-                    _previewManager.UpdateAdditionalPreviews(cell, _selectionManager.SelectedTiles, _selectionManager.ReferenceTile);
+                    previewManager.SetPreviewsVisibility(canPlaceAll, selectionManager.SelectionCount);
+                    previewManager.UpdateAdditionalPreviews(cell, selectionManager.SelectedTiles, selectionManager.ReferenceTile);
                 }
             }
-            else if (_selectionManager.CurrentMode == SelectionMode.Rotate)
+            else if (selectionManager.CurrentMode == SelectionMode.Rotate)
             {
-                _previewManager.SetPreviewsVisibility(false, _selectionManager.SelectionCount);
+                previewManager.SetPreviewsVisibility(false, selectionManager.SelectionCount);
             }
 
             if (Mouse.current.leftButton.wasPressedThisFrame)
             {
                 bool ctrlHeld = Keyboard.current.leftCtrlKey.isPressed || Keyboard.current.rightCtrlKey.isPressed;
 
-                if (_gridManager.TryGetTileAt(cell, out GameObject tileObj))
+                if (gridManager.TryGetTileAt(cell, out GameObject tileObj))
                 {
                     PlacedTile clickedTile = tileObj.GetComponent<PlacedTile>();
                     if (clickedTile != null)
                     {
                         if (ctrlHeld)
                         {
-                            if (_selectionManager.Contains(clickedTile))
+                            if (selectionManager.Contains(clickedTile))
                             {
-                                _selectionManager.DeselectTile(clickedTile);
+                                selectionManager.DeselectTile(clickedTile);
                             }
                             else
                             {
-                                _selectionManager.SelectTile(clickedTile);
+                                selectionManager.SelectTile(clickedTile);
                             }
                         }
                         else
                         {
-                            if (_selectionManager.SelectionCount == 1 && _selectionManager.Contains(clickedTile))
+                            if (selectionManager.SelectionCount == 1 && selectionManager.Contains(clickedTile))
                             {
-                                _selectionManager.DeselectAllTiles();
+                                selectionManager.DeselectAllTiles();
                             }
                             else
                             {
-                                _selectionManager.DeselectAllTiles(resetModeToMove: false);
-                                _selectionManager.SelectTile(clickedTile);
+                                selectionManager.DeselectAllTiles(resetModeToMove: false);
+                                selectionManager.SelectTile(clickedTile);
                             }
                         }
                     }
                 }
                 else
                 {
-                    if (_selectionManager.SelectionCount > 0)
+                    if (selectionManager.SelectionCount > 0)
                     {
-                        if (_selectionManager.CurrentMode == SelectionMode.Move)
+                        if (selectionManager.CurrentMode == SelectionMode.Move)
                         {
-                            _selectionManager.MoveTilesToCell(cell, validateCollisions: true, hidePreviewsAfter: false);
+                            selectionManager.MoveTilesToCell(cell, validateCollisions: true, hidePreviewsAfter: false);
                         }
                     }
                     else
                     {
-                        _gridManager.PlaceAtCell(cell, currentPrefabIndex, _previewManager.GetPreviewYRotation());
+                        gridManager.PlaceAtCell(cell, currentPrefabIndex, previewManager.GetPreviewYRotation());
                     }
                 }
             }
 
             if (allowDeleteWithRightClick && Mouse.current.rightButton.wasPressedThisFrame)
             {
-                if (_gridManager.TryGetTileAt(cell, out GameObject clickedObj))
+                if (gridManager.TryGetTileAt(cell, out GameObject clickedObj))
                 {
                     PlacedTile clickedTile = clickedObj.GetComponent<PlacedTile>();
-                    if (clickedTile != null && _selectionManager.Contains(clickedTile))
+                    if (clickedTile != null && selectionManager.Contains(clickedTile))
                     {
-                        _selectionManager.RemoveSelectedTiles();
+                        selectionManager.RemoveSelectedTiles();
                     }
                     else
                     {
-                        _gridManager.RemoveAtCell(cell);
+                        gridManager.RemoveAtCell(cell);
                     }
                 }
-                else if (_selectionManager.SelectionCount > 0)
+                else if (selectionManager.SelectionCount > 0)
                 {
-                    _selectionManager.DeselectAllTiles();
+                    selectionManager.DeselectAllTiles();
                 }
                 else
                 {
-                    _gridManager.RemoveAtCell(cell);
+                    gridManager.RemoveAtCell(cell);
                 }
             }
         }
 
         public void ClearAll()
         {
-            _selectionManager.DeselectAllTiles();
-            _gridManager.ClearAll();
+            selectionManager.DeselectAllTiles();
+            gridManager.ClearAll();
         }
 
         public void RebuildFrom(MapDataDTO data)
         {
-            _selectionManager.DeselectAllTiles();
-            _gridManager.RebuildFrom(data);
+            selectionManager.DeselectAllTiles();
+            gridManager.RebuildFrom(data);
         }
     }
 }

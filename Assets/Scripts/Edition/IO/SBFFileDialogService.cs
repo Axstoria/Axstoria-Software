@@ -1,7 +1,7 @@
 #if USE_SFB
 using SFB;
 
-namespace HexGrid.IO
+namespace Edition.IO
 {
     /// Runtime OS dialogs via StandaloneFileBrowser (define USE_SFB).
     public class SFBFileDialogService : IFileDialogService

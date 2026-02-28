@@ -1,7 +1,7 @@
-using HexGrid.Models;
+using Edition.Models;
 using UnityEngine;
 
-namespace HexGrid.Systems
+namespace Edition.Systems
 {
     /// Manages camera pan movement around a pivot point on the XZ plane.
     public class CameraMovementManager
