@@ -16,6 +16,7 @@ public class EditionToolbarUIManager : MonoBehaviour, IUIManager
     private VisualElement managedUI;
     private const string UIName = "Toolbar";
     private HexPlacementSystem placementSystem;
+    private AssetImportManager assetImportManager;
 
     private Dropdown dropdown;
 
@@ -27,6 +28,7 @@ public class EditionToolbarUIManager : MonoBehaviour, IUIManager
     private List<IUIManager> toggleableUIs = new List<IUIManager>();
     private IMapSerializer _serializer;
     private IFileDialogService _dialog;
+    private GltfImporter _gltfImporter;
 
     string IUIManager.Name => UIName;
 
@@ -42,6 +44,11 @@ public class EditionToolbarUIManager : MonoBehaviour, IUIManager
         placementSystem = system;
     }
 
+    public void SetAssetImportManager(AssetImportManager manager)
+    {
+        assetImportManager = manager;
+    }
+
     public void AddToggleableUI(IUIManager element)
     {
         toggleableUIs.Add(element);
@@ -50,6 +57,7 @@ public class EditionToolbarUIManager : MonoBehaviour, IUIManager
     private void Awake()
     {
         _serializer = new JsonMapSerializer();
+        _gltfImporter = new GltfImporter();
 
 #if UNITY_EDITOR
         _dialog = new EditorFileDialogService();
@@ -71,7 +79,7 @@ public class EditionToolbarUIManager : MonoBehaviour, IUIManager
         fileMenu = new DropdownMenu();
         fileMenu.AppendAction("Save", OnSaveClicked);
         fileMenu.AppendAction("Import Map", OnLoadClicked);
-        fileMenu.AppendAction("Import Asset", null);
+        fileMenu.AppendAction("Import Asset", OnImportAssetClicked);
         fileMenu.AppendAction("Open/Rules", null);
         fileMenu.AppendAction("Open/Sheets", null);
         fileMenu.AppendAction("Link to object/Notes", null);
@@ -188,6 +196,45 @@ public class EditionToolbarUIManager : MonoBehaviour, IUIManager
         placementSystem.ClearAll();
         placementSystem.RebuildFrom(data);
         Debug.Log($"Loaded {data.tiles.Count} tiles from {path}");
+    }
+    
+    private void OnImportAssetClicked(DropdownMenuAction action)
+    {
+        if (assetImportManager == null)
+        {
+            Debug.LogError("EditionToolbarUIManager: AssetImportManager is not assigned.");
+            return;
+        }
+
+        // Open file dialog for glTF/GLB files
+        string path = _dialog.OpenFile("Import 3D Asset", new[] { "gltf", "glb" });
+        
+        if (string.IsNullOrEmpty(path))
+        {
+            Debug.Log("Import cancelled by user.");
+            return;
+        }
+
+        if (!File.Exists(path))
+        {
+            Debug.LogError($"File not found: {path}");
+            return;
+        }
+
+        Debug.Log($"Importing asset: {Path.GetFileName(path)}...");
+
+        // Use the glTF importer to load the asset
+        _gltfImporter.ImportModeAsync(path, (loadedAsset) =>
+        {
+            if (loadedAsset != null)
+            {
+                assetImportManager.OnAssetLoaded(loadedAsset, path);
+            }
+            else
+            {
+                Debug.LogError("Failed to import asset.");
+            }
+        });
     }
 
     void IUIManager.ToggleUI(DropdownMenuAction action)

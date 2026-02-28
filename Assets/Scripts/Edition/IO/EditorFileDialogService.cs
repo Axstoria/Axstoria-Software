@@ -18,6 +18,12 @@ namespace Edition.IO
             var path = EditorUtility.OpenFilePanel(title, "", extension);
             return string.IsNullOrEmpty(path) ? null : path;
         }
+
+        public string OpenFile(string title, string[] extensions)
+        {
+            var path = EditorUtility.OpenFilePanel(title, "", string.Join(",", extensions));
+            return string.IsNullOrEmpty(path) ? null : path;
+        }
     }
 }
 #endif

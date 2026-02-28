@@ -392,6 +392,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HexGrid.Systems.CameraController
   settings: {fileID: 11400000, guid: fcc889d8b7bb14545ba0d586ead6734f, type: 2}
   cameraTransform: {fileID: 0}
+--- !u!1 &825899830
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 825899832}
+  - component: {fileID: 825899831}
+  m_Layer: 0
+  m_Name: AssetImportManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &825899831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 825899830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24fd5cffb1764349a5c305384fa69847, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Edition.Systems.AssetImportManager
+  assetContainer: {fileID: 0}
+--- !u!4 &825899832
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 825899830}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 15.76352, y: 0.05, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &986007664
 GameObject:
   m_ObjectHideFlags: 0
@@ -925,6 +970,10 @@ PrefabInstance:
       propertyPath: placementSystem
       value: 
       objectReference: {fileID: 1454533599}
+    - target: {fileID: 2225280617837686807, guid: 0b2f1f6fd1285cf49bea011e2fb0e222, type: 3}
+      propertyPath: assetImportManager
+      value: 
+      objectReference: {fileID: 825899831}
     - target: {fileID: 2682817083089393720, guid: 0b2f1f6fd1285cf49bea011e2fb0e222, type: 3}
       propertyPath: m_Name
       value: EditionUIManager
@@ -988,3 +1037,4 @@ SceneRoots:
   - {fileID: 1292108271}
   - {fileID: 47677889}
   - {fileID: 2042821330}
+  - {fileID: 825899832}

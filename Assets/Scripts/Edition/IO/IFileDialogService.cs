@@ -4,5 +4,6 @@ namespace Edition.IO
     {
         string SaveFile(string title, string defaultName, string extension); // returns full path or null
         string OpenFile(string title, string extension);                     // returns full path or null
+        string OpenFile(string title, string[] extension);
     }
 }

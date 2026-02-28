@@ -19,6 +19,13 @@ namespace Edition.IO
             var paths = StandaloneFileBrowser.OpenFilePanel(title, "", filters, false);
             return (paths == null || paths.Length == 0) ? null : paths[0];
         }
+        
+        public string OpenFile(string title, string[] extensions)
+        {
+            var filters = new[] { new ExtensionFilter("3D Models", extensions) };
+            var paths = StandaloneFileBrowser.OpenFilePanel(title, "", filters, false);
+            return (paths == null || paths.Length == 0) ? null : paths[0];
+        }
     }
 }
 #endif
