@@ -1,47 +1,47 @@
 # Axstoria
 
-Un moteur de jeu spécialisé dans les **jeux de rôles virtuels**, développé sous **Unity**, pensé pour offrir une **expérience intuitive**, modulable, et **facile d’utilisation**.  
-Ce projet a été réalisé dans le cadre d’un **projet de fin d’études** par une équipe de 6 étudiants.
+A game engine specialized in **Virtual Table Top RPGs**, developed with **Unity**, designed to be **intuitive**, modular, and **easy to use**.
+This project has been realized in the context of an **end of studies project** by a team of 6 students.
 
 ---
 
-## 📚 Sommaire
+## 📚 Table of Contents
 
 - [Axstoria](#axstoria)
-  - [📚 Sommaire](#-sommaire)
-  - [🎯 À propos](#-à-propos)
-  - [✨ Fonctionnalités](#-fonctionnalités)
-  - [👥 Équipe](#-équipe)
+  - [📚 Table of Contents](#-table-of-contents)
+  - [🎯 About Axstoria](#-about-axstoria)
+  - [✨ Functionalities](#-functionalities)
+  - [👥 Team](#-team)
 
 ---
 
-## 🎯 À propos
+## 🎯 About Axstoria
 
-Ce projet est né d'un simple constat : les outils existants sont trop limités.  
-Nous avons donc imaginé une plateforme :
+This project was born from a simple analysis: the existing ones are too limited/pricey.
+As a result we imagined a platform:
 
-- Facile à prendre en main
-- Hautement personnalisable
-- Accompagnée de documentation claire, tutoriels vidéo, et support communautaire
+- Easy to learn
+- Highly modular
+- With a lot of explicit documentation, video tutorials and community support
 
 ---
 
-## ✨ Fonctionnalités
+## ✨ Functionalities
 
-- Création de campagnes, scènes, et fiches de personnages
-- Outils intégrés (ex: lancer de dés)
-- Mode en ligne multijoueur en hébergement local
-- Documentation complète + tutoriels vidéo intégrés
+- Campaigns, sheets and rule creation
+- Integrated Tools (ex: dice rolls)
+- Peer to peer online multiplayer
+- Complete documentation + video tutorials integrated
 
-## 👥 Équipe
+## 👥 Team
 
-Projet réalisé par une équipe de 6 étudiants :
+This project is developed by a team of 6 students:
 
-| Nom               | GitHub                            |
+| Pseudo            | GitHub                            |
 |-------------------|-----------------------------------|
-| Alexandre Ramain      | [@ShireXela2](https://github.com/ShireXela2) |
-| Sofiane Larbi      | [@Sofiane-Larbi](https://github.com/Sofiane-Larbi) |
-| Maksen Mofredj      | [@MaksenM](https://github.com/MaksenM) |
-| Clément Monnoire   | [@Clemmonoire](https://github.com/Clemmonoire) |
-| Newen Calle       | [@NewenC](https://github.com/Newenc) |
-| Arthur Lassausaie     | [@Kayuranium](https://github.com/Kayuranium) |
+| ShireXela      | [@ShireXela2](https://github.com/ShireXela2) |
+| Sosœ       | [@Sofiane-Larbi](https://github.com/Sofiane-Larbi) |
+| Héri      | [@Heririsson](https://github.com/Heririsson) |
+| Morbus   | [@Clemmonoire](https://github.com/Clemmonoire) |
+| Silvior       | [@NewenC](https://github.com/Newenc) |
+| Kayuranium     | [@Kayuranium](https://github.com/Kayuranium) |
