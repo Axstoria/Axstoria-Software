@@ -1,13 +1,12 @@
 using System.IO;
-using HexGrid.IO;
-using HexGrid.Models;
-using HexGrid.Persistence;
-using HexGrid.Systems;
+using Edition.IO;
+using Edition.Models;
+using Edition.Persistence;
+using Edition.Systems;
 using UnityEngine;
 using UnityEngine.UIElements;
-using HexGrid.IO;
 
-namespace HexGrid.UI
+namespace Edition.UI
 {
     /// Wires UI Toolkit buttons to Save/Load; blocks placement when hovering UI.
     [RequireComponent(typeof(UIDocument))]
@@ -47,7 +46,7 @@ namespace HexGrid.UI
             if (_load != null) _load.clicked += OnLoadClicked; else Debug.LogWarning($"Button '{loadButtonName}' not found.");
 
             if (placementSystem != null)
-                placementSystem.ShouldBlockInput = UIToolkitHoverBlock.IsPointerOverAnyButton;
+                placementSystem.shouldBlockInput = UIToolkitHoverBlock.IsPointerOverAnyButton;
 
             if (cameraController != null)
                 cameraController.ShouldBlockInput = UIToolkitHoverBlock.IsPointerOverAnyButton;
@@ -59,7 +58,7 @@ namespace HexGrid.UI
             if (_load != null) _load.clicked -= OnLoadClicked;
 
             if (placementSystem != null)
-                placementSystem.ShouldBlockInput = null;
+                placementSystem.shouldBlockInput = null;
 
             if (cameraController != null)
                 cameraController.ShouldBlockInput = null;

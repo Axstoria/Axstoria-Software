@@ -1,9 +1,9 @@
 using System;
-using HexGrid.Models;
+using Edition.Models;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace HexGrid.Systems
+namespace Edition.Systems
 {
     /// Main controller for editor camera: coordinates zoom, pan and orbit managers.
     public class CameraController : MonoBehaviour

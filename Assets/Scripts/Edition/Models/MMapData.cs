@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace HexGrid.Models
+namespace Edition.Models
 {
     [Serializable]
     public class PlacedTileDTO

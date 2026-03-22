@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using HexGrid.Models;
+using Edition.Models;
 using UnityEngine;
 
-namespace HexGrid.Systems
+namespace Edition.Systems
 {
     /// Manages preview GameObjects for tile placement and multi-selection.
     public class TilePreviewManager

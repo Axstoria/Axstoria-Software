@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace HexGrid.Models
+namespace Edition.Models
 {
     public class PlacedTile : MonoBehaviour
     {

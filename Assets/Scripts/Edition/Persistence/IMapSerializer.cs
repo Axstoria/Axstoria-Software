@@ -1,6 +1,6 @@
-using HexGrid.Models;
+using Edition.Models;
 
-namespace HexGrid.Persistence
+namespace Edition.Persistence
 {
     public interface IMapSerializer
     {

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace HexGrid.UI
+namespace Edition.UI
 {
     /// Detects hover over interactive UI controls. Here: Buttons only.
     public static class UIToolkitHoverBlock

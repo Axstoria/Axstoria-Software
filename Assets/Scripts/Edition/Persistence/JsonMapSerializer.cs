@@ -1,7 +1,7 @@
-using HexGrid.Models;
+using Edition.Models;
 using UnityEngine;
 
-namespace HexGrid.Persistence
+namespace Edition.Persistence
 {
     public class JsonMapSerializer : IMapSerializer
     {

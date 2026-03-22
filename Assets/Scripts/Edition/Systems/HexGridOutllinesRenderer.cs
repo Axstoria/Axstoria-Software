@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace HexGrid.Systems
+namespace Edition.Systems
 {
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
     public class HexGridOutlineRenderer : MonoBehaviour

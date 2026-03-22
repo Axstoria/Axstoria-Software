@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.atteneder.gltfast": "https://github.com/atteneder/glTFast.git",
     "com.fab.uitk-runtime-dropdown": "https://github.com/fabSchneider/fab.uitk-runtime-dropdown.git#upm",
     "com.unity.ai.navigation": "2.0.9",
     "com.unity.cinemachine": "3.1.5",

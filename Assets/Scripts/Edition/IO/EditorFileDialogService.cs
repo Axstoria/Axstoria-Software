@@ -1,7 +1,7 @@
 #if UNITY_EDITOR
 using UnityEditor;
 
-namespace HexGrid.IO
+namespace Edition.IO
 {
     public class EditorFileDialogService : IFileDialogService
     {
@@ -16,6 +16,12 @@ namespace HexGrid.IO
         public string OpenFile(string title, string extension)
         {
             var path = EditorUtility.OpenFilePanel(title, "", extension);
+            return string.IsNullOrEmpty(path) ? null : path;
+        }
+
+        public string OpenFile(string title, string[] extensions)
+        {
+            var path = EditorUtility.OpenFilePanel(title, "", string.Join(",", extensions));
             return string.IsNullOrEmpty(path) ? null : path;
         }
     }

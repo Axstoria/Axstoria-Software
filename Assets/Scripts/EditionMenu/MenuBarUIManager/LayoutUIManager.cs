@@ -1,13 +1,14 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
-using HexGrid.Systems;
+using Edition.Systems;
 
 public class LayoutUIManager : MonoBehaviour
 {
     public UIDocument uiDoc;
     [Header("References")]
     [SerializeField] private HexPlacementSystem placementSystem;
+    [SerializeField] private AssetImportManager assetImportManager;
     private EditionToolbarUIManager toolbarManager;
     private ViewportUIManager viewportManager;
     private ThemeStyleSheet theme;
@@ -28,6 +29,7 @@ public class LayoutUIManager : MonoBehaviour
         toolbarManager = this.AddComponent<EditionToolbarUIManager>();
         toolbarManager.Init(root, toolbar, theme);
         toolbarManager.SetPlacementSystem(placementSystem);
+        toolbarManager.SetAssetImportManager(assetImportManager) ;
 
         VisualTreeAsset viewportAsset = Resources.Load<VisualTreeAsset>("Viewport/Viewport");
         VisualElement viewport = viewportAsset.Instantiate();
