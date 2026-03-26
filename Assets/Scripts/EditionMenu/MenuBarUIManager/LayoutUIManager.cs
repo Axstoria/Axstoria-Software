@@ -38,5 +38,10 @@ public class LayoutUIManager : MonoBehaviour
         viewportManager.Init(root, viewport, theme);
         // Add the Viewport UI Manager to the list of UI elements that can be added to or removed from the layout.
         toolbarManager.AddToggleableUI(viewportManager);
+
+        this.AddComponent<ViewSwitcherController>().Init(root);
+        this.AddComponent<ToolsBarController>().Init(root);
+        GetComponentInChildren<BottomPanelController>().Init(root);
+        this.AddComponent<TooltipController>().Init(root);
     }
 }

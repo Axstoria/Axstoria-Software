@@ -94,10 +94,6 @@ public class EditionToolbarUIManager : MonoBehaviour, IUIManager
 
         root.Q<Button>("view-button").clickable.clickedWithEventInfo += evt => dropdown.Open(viewMenu, evt);
 
-        // Create the Tools menu
-        toolsMenu = new DropdownMenu();
-
-        root.Q<Button>("tools-button").clickable.clickedWithEventInfo += evt => dropdown.Open(toolsMenu, evt);
     }
 
     private void BuildViewMenu()

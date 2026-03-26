@@ -179,6 +179,7 @@ GameObject:
   - component: {fileID: 177393110}
   - component: {fileID: 177393109}
   - component: {fileID: 177393112}
+  - component: {fileID: 177393113}
   m_Layer: 5
   m_Name: UI_TilePlacement
   m_TagString: Untagged
@@ -240,6 +241,19 @@ MonoBehaviour:
   loadButtonName: Load
   placementSystem: {fileID: 1454533599}
   cameraController: {fileID: 429844577}
+--- !u!114 &177393113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 177393108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2eb8b5992bb13a040937df3b57c42b51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BottomPanelController
+  _resizeCursor: {fileID: 0}
 --- !u!1 &429844572
 GameObject:
   m_ObjectHideFlags: 0
@@ -392,6 +406,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HexGrid.Systems.CameraController
   settings: {fileID: 11400000, guid: fcc889d8b7bb14545ba0d586ead6734f, type: 2}
   cameraTransform: {fileID: 0}
+--- !u!1 &683710395 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2682817083089393720, guid: 0b2f1f6fd1285cf49bea011e2fb0e222, type: 3}
+  m_PrefabInstance: {fileID: 2042821330}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &683710398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 683710395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2eb8b5992bb13a040937df3b57c42b51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BottomPanelController
+  _resizeCursor: {fileID: 2800000, guid: 61c35b825812919428d758a2f776a1b9, type: 3}
 --- !u!1 &986007664
 GameObject:
   m_ObjectHideFlags: 0
@@ -972,7 +1004,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2682817083089393720, guid: 0b2f1f6fd1285cf49bea011e2fb0e222, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 683710398}
   m_SourcePrefab: {fileID: 100100000, guid: 0b2f1f6fd1285cf49bea011e2fb0e222, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

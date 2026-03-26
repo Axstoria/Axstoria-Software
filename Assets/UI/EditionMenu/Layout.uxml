@@ -1,2 +1,26 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="ViewSwitcher/ViewSwitcher.uss"/>
+    <Style src="ToolsBar/ToolsBar.uss"/>
+    <Style src="Resources/EditionToolbar/EditionToolbarUI.uss"/>
+    <Style src="BottomPanel/BottomPanel.uss"/>
+    <Style src="Tooltip.uss"/>
+    <engine:VisualElement name="tools-bar" class="tools-bar">
+        <engine:Button name="btn-layers" class="tool-btn tool-btn--layers" tooltip="Layers"/>
+        <engine:Button name="btn-move" class="tool-btn tool-btn--move tool-btn--selected" tooltip="Move"/>
+        <engine:Button name="btn-select" class="tool-btn tool-btn--select" tooltip="Select"/>
+        <engine:Button name="btn-fog" class="tool-btn tool-btn--fog" tooltip="Fog of War"/>
+        <engine:Button name="btn-measure" class="tool-btn tool-btn--measure" tooltip="Measure Distance"/>
+        <engine:Button name="btn-visibility" class="tool-btn tool-btn--visibility" tooltip="Visibility"/>
+    </engine:VisualElement>
+    <engine:VisualElement name="bottom-panel" class="bottom-panel">
+        <engine:VisualElement name="bottom-panel-resize-handle" class="bottom-panel__resize-handle"/>
+        <engine:VisualElement name="bottom-panel-toggle-bar" class="bottom-panel__toggle-bar">
+            <engine:Button name="bottom-panel-toggle-btn" class="bottom-panel__toggle-btn"/>
+        </engine:VisualElement>
+        <engine:VisualElement name="bottom-panel-content" class="bottom-panel__content"/>
+    </engine:VisualElement>
+    <engine:VisualElement name="view-switcher" class="view-switcher">
+        <engine:Button name="btn-iso-view" class="view-btn view-btn--iso view-btn--selected" tooltip="Isometric View"/>
+        <engine:Button name="btn-top-view" class="view-btn view-btn--top" tooltip="Top View"/>
+    </engine:VisualElement>
 </engine:UXML>
