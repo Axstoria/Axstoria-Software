@@ -4,5 +4,6 @@
         <ui:Button text="File" name="file-button" class="toolbar__button" />
         <ui:Button text="Edit" name="edit-button" class="toolbar__button" />
         <ui:Button text="View" name="view-button" class="toolbar__button" />
+        <ui:Button text="Help" name="help-button" class="toolbar__button" />
     </ui:VisualElement>
 </ui:UXML>
