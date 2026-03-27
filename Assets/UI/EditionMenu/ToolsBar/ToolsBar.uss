@@ -22,7 +22,7 @@
 }
 
 .tool-btn:hover {
-    background-color: rgb(210, 210, 210);
+    background-color: rgb(255, 255, 250);
 }
 
 .tool-btn--selected {

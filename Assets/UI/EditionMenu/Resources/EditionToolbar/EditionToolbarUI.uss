@@ -1,8 +1,8 @@
 :root {
-    --text-color: rgb(20, 20, 20);
+    --text-color: rgb(5, 5, 5);
     --button-color: rgb(220, 255, 255);
     --button-open-color: rgb(188, 188, 188);
-    --button-color-hover: rgb(208, 208, 208);
+    --button-color-hover: rgb(222, 222, 222);
     --button-color-active: rgb(255, 255, 255);
     --button-border-color: rgb(192, 192, 192);
     --button-border-radius: 0;

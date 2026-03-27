@@ -1,21 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
   <!-- Eye shape -->
   <path d="M128 72c-50 0-92 36-108 56 16 20 58 56 108 56s92-36 108-56c-16-20-58-56-108-56z"
-        fill="none" stroke="black" stroke-width="14" stroke-linejoin="round"/>
+        fill="none" stroke="#3c3c3c" stroke-width="14" stroke-linejoin="round"/>
 
   <!-- Outer circle of iris -->
-  <circle cx="128" cy="128" r="30" fill="none" stroke="black" stroke-width="14"/>
+  <circle cx="128" cy="128" r="30" fill="none" stroke="#3c3c3c" stroke-width="14"/>
 
   <!-- Inner pupil -->
-  <circle cx="128" cy="128" r="12" fill="black"/>
+  <circle cx="128" cy="128" r="12" fill="#3c3c3c"/>
 
   <!-- Top rays -->
-  <line x1="128" y1="52" x2="128" y2="28" stroke="black" stroke-width="12" stroke-linecap="round"/>
-  <line x1="92" y1="60" x2="80" y2="36" stroke="black" stroke-width="12" stroke-linecap="round"/>
-  <line x1="164" y1="60" x2="176" y2="36" stroke="black" stroke-width="12" stroke-linecap="round"/>
+  <line x1="128" y1="52" x2="128" y2="28" stroke="#3c3c3c" stroke-width="12" stroke-linecap="round"/>
+  <line x1="92" y1="60" x2="80" y2="36" stroke="#3c3c3c" stroke-width="12" stroke-linecap="round"/>
+  <line x1="164" y1="60" x2="176" y2="36" stroke="#3c3c3c" stroke-width="12" stroke-linecap="round"/>
 
   <!-- Bottom rays -->
-  <line x1="128" y1="204" x2="128" y2="228" stroke="black" stroke-width="12" stroke-linecap="round"/>
-  <line x1="92" y1="196" x2="80" y2="220" stroke="black" stroke-width="12" stroke-linecap="round"/>
-  <line x1="164" y1="196" x2="176" y2="220" stroke="black" stroke-width="12" stroke-linecap="round"/>
+  <line x1="128" y1="204" x2="128" y2="228" stroke="#3c3c3c" stroke-width="12" stroke-linecap="round"/>
+  <line x1="92" y1="196" x2="80" y2="220" stroke="#3c3c3c" stroke-width="12" stroke-linecap="round"/>
+  <line x1="164" y1="196" x2="176" y2="220" stroke="#3c3c3c" stroke-width="12" stroke-linecap="round"/>
 </svg>
