@@ -1,8 +1,15 @@
 using UnityEngine;
 
-namespace HexGrid.Models
+namespace AxstoriaGlobal.Models
 {
-    [CreateAssetMenu(fileName = "CameraSettings", menuName = "HexGrid/Camera Settings")]
+
+    public enum CameraControlMode
+    {
+        EditorMode = 0,
+        GameMode = 1
+    }
+
+    [CreateAssetMenu(fileName = "CameraSettings", menuName = "Axstoria/Camera Settings")]
     public class CameraSettings : ScriptableObject
     {
         [Header("Zoom")]
@@ -40,5 +47,7 @@ namespace HexGrid.Models
         public float defaultYaw = 0f;
         [Tooltip("Default zoom distance")]
         public float defaultZoom = 20f;
+        [Tooltip("Camera Control Mode")]
+        public CameraControlMode controlMode = CameraControlMode.EditorMode;
     }
 }

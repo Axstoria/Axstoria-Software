@@ -1,7 +1,7 @@
-using HexGrid.Models;
+using AxstoriaGlobal.Models;
 using UnityEngine;
 
-namespace HexGrid.Systems
+namespace AxstoriaGlobal.Systems
 {
     /// Manages camera orbit rotation (pitch = vertical angle, yaw = horizontal angle).
     public class CameraOrbitManager

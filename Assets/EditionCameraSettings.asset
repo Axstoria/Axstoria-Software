@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3ce34d626e4e29741b411d2d0a6bae38, type: 3}
-  m_Name: CameraSettings
+  m_Name: EditionCameraSettings
   m_EditorClassIdentifier: Assembly-CSharp::HexGrid.Models.CameraSettings
   zoomMin: 5
   zoomMax: 50
@@ -26,3 +26,4 @@ MonoBehaviour:
   defaultPitch: 45
   defaultYaw: 0
   defaultZoom: 20
+  controlMode: 0

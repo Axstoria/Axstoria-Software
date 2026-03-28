@@ -1,9 +1,9 @@
 using System;
-using HexGrid.Models;
+using AxstoriaGlobal.Models;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace HexGrid.Systems
+namespace AxstoriaGlobal.Systems
 {
     /// Main controller for editor camera: coordinates zoom, pan and orbit managers.
     public class CameraController : MonoBehaviour
@@ -66,6 +66,7 @@ namespace HexGrid.Systems
         private void HandleZoomInput()
         {
             float scroll = Mouse.current.scroll.ReadValue().y;
+
             if (!Mathf.Approximately(scroll, 0f))
             {
                 _zoomManager.ProcessZoomInput(scroll * 0.01f);
@@ -75,9 +76,21 @@ namespace HexGrid.Systems
         /// Pan: middle mouse or Shift+left click (trackpad alternative).
         private void HandlePanInput()
         {
-            bool shiftPressed = Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed;
-            bool panStarted = Mouse.current.middleButton.wasPressedThisFrame ||
-                              (shiftPressed && Mouse.current.leftButton.wasPressedThisFrame);
+            bool shiftPressed = Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed; ;
+            bool panStarted = false;
+
+            switch (settings.controlMode)
+            {
+                case CameraControlMode.EditorMode:
+                    panStarted = Mouse.current.middleButton.wasPressedThisFrame ||
+                                      (shiftPressed && Mouse.current.leftButton.wasPressedThisFrame);
+                    break;
+                case CameraControlMode.GameMode:
+                    panStarted = Mouse.current.leftButton.wasPressedThisFrame;
+                    break;
+                default:
+                    break;
+            }
 
             if (panStarted && !_orbitManager.IsOrbiting)
             {
@@ -86,8 +99,19 @@ namespace HexGrid.Systems
 
             if (_movementManager.IsPanning)
             {
-                bool panHeld = Mouse.current.middleButton.isPressed ||
-                               (shiftPressed && Mouse.current.leftButton.isPressed);
+                bool panHeld = false;
+
+                switch (settings.controlMode)
+                {
+                    case CameraControlMode.EditorMode:
+                        panHeld = Mouse.current.middleButton.isPressed || (shiftPressed && Mouse.current.leftButton.isPressed);
+                        break;
+                    case CameraControlMode.GameMode:
+                        panHeld = Mouse.current.leftButton.isPressed;
+                        break;
+                    default:
+                        break;
+                }
 
                 if (panHeld)
                 {
@@ -108,15 +132,42 @@ namespace HexGrid.Systems
         private void HandleOrbitInput()
         {
             bool altPressed = Keyboard.current.leftAltKey.isPressed || Keyboard.current.rightAltKey.isPressed;
+            bool orbitStarted = false;
 
-            if (altPressed && Mouse.current.leftButton.wasPressedThisFrame && !_movementManager.IsPanning)
+            switch (settings.controlMode)
+            {
+                case CameraControlMode.EditorMode:
+                    orbitStarted = altPressed && Mouse.current.leftButton.wasPressedThisFrame && !_movementManager.IsPanning;
+                    break; 
+                case CameraControlMode.GameMode:
+                    orbitStarted = Mouse.current.rightButton.wasPressedThisFrame && !_movementManager.IsPanning;
+                    break;
+                default:
+                    break;
+            }
+
+            if (orbitStarted)
             {
                 _orbitManager.StartOrbit(Mouse.current.position.ReadValue());
             }
 
             if (_orbitManager.IsOrbiting)
             {
-                if (altPressed && Mouse.current.leftButton.isPressed)
+                bool orbitHeld = false;
+                
+                switch (settings.controlMode)
+                {
+                    case CameraControlMode.EditorMode:
+                        orbitHeld = altPressed && Mouse.current.leftButton.isPressed;
+                        break;
+                    case CameraControlMode.GameMode:
+                        orbitHeld = Mouse.current.rightButton.isPressed;
+                        break;
+                    default:
+                        break;
+                }
+
+                if (orbitHeld)
                 {
                     _orbitManager.UpdateOrbit(Mouse.current.position.ReadValue());
                 }
@@ -175,5 +226,7 @@ namespace HexGrid.Systems
             _zoomManager.SetDistance(settings.defaultZoom);
             _orbitManager.SetRotation(settings.defaultPitch, settings.defaultYaw);
         }
+
+
     }
 }

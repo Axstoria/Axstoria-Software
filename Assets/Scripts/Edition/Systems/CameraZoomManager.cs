@@ -1,7 +1,7 @@
-using HexGrid.Models;
+using AxstoriaGlobal.Models;
 using UnityEngine;
 
-namespace HexGrid.Systems
+namespace AxstoriaGlobal.Systems
 {
     /// Manages camera zoom with smooth interpolation between current and target distance.
     public class CameraZoomManager
