@@ -41,6 +41,7 @@ public class LayoutUIManager : MonoBehaviour
 
         this.AddComponent<ViewSwitcherController>().Init(root);
         this.AddComponent<ToolsBarController>().Init(root);
+        this.AddComponent<MoveFlyoutController>().Init(root);
         GetComponentInChildren<BottomPanelController>().Init(root);
         this.AddComponent<TooltipController>().Init(root);
     }

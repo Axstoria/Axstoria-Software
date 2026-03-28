@@ -6,7 +6,14 @@
     <Style src="Tooltip.uss"/>
     <engine:VisualElement name="tools-bar" class="tools-bar">
         <engine:Button name="btn-layers" class="tool-btn tool-btn--layers" tooltip="Layers"/>
-        <engine:Button name="btn-move" class="tool-btn tool-btn--move tool-btn--selected" tooltip="Move"/>
+        <engine:VisualElement name="move-tool-wrapper" class="move-tool-wrapper">
+            <engine:Button name="btn-move" class="tool-btn tool-btn--move tool-btn--selected" tooltip="Move"/>
+            <engine:VisualElement name="move-flyout" class="move-flyout">
+                <engine:Button name="btn-flyout-move" class="tool-btn tool-btn--move" tooltip="Move"/>
+                <engine:Button name="btn-flyout-rotate" class="tool-btn tool-btn--rotate" tooltip="Rotate"/>
+                <engine:Button name="btn-flyout-scale" class="tool-btn tool-btn--scale" tooltip="Scale"/>
+            </engine:VisualElement>
+        </engine:VisualElement>
         <engine:Button name="btn-select" class="tool-btn tool-btn--select" tooltip="Select"/>
         <engine:Button name="btn-fog" class="tool-btn tool-btn--fog" tooltip="Fog of War"/>
         <engine:Button name="btn-measure" class="tool-btn tool-btn--measure" tooltip="Measure Distance"/>

@@ -8,6 +8,7 @@
     border-color: rgb(120, 120, 120);
     border-radius: 4px;
     padding: 2px;
+    overflow: visible;
 }
 
 .tool-btn {
@@ -55,4 +56,42 @@
 
 .tool-btn--visibility {
     background-image: url("visibility.png");
+}
+
+.tool-btn--rotate {
+    background-image: url("rotate.png");
+}
+
+.tool-btn--scale {
+    background-image: url("scale.png");
+}
+
+.move-tool-wrapper {
+    flex-direction: row;
+    overflow: visible;
+}
+
+.move-flyout {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    left: 40px;
+    top: 0;
+    background-color: rgb(192, 192, 192);
+    border-width: 1px;
+    border-color: rgb(120, 120, 120);
+    border-radius: 3px;
+    padding: 1px;
+}
+
+.move-flyout .tool-btn {
+    width: 30px;
+    height: 30px;
+    padding: 4px;
+    margin: 1px 0;
+    border-radius: 3px;
+}
+
+.move-flyout--visible {
+    display: flex;
 }
