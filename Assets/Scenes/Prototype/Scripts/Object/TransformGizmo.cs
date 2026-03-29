@@ -131,7 +131,32 @@ namespace VTT
 
             if (_dragging != Axis.None)
             {
-                if (Input.GetMouseButtonUp(0)) { _dragging = Axis.None; UpdateHover(); }
+                if (Input.GetMouseButtonUp(0))
+            {
+                // Record undo command — only if transform actually changed
+                if (Selected != null)
+                {
+                    var t = Selected.transform;
+                    bool changed = t.position    != _dragPosStart ||
+                                   t.rotation    != _dragRotStart ||
+                                   t.localScale  != _dragScaleStart;
+                    if (changed)
+                    {
+                        string label = Mode switch
+                        {
+                            GizmoMode.Rotate => $"Rotate {Selected.displayName}",
+                            GizmoMode.Scale  => $"Scale {Selected.displayName}",
+                            _                => $"Move {Selected.displayName}"
+                        };
+                        CommandHistory.Instance?.Record(new TransformCommand(
+                            t,
+                            _dragPosStart,   _dragRotStart,   _dragScaleStart,
+                            t.position,      t.rotation,      t.localScale,
+                            label));
+                    }
+                }
+                _dragging = Axis.None; UpdateHover();
+            }
                 else                            ContinueDrag();
             }
             else
@@ -369,7 +394,15 @@ namespace VTT
         public void DeleteSelected()
         {
             if (Selected == null) return;
-            var d = Selected; Deselect(); d.Delete();
+            var d = Selected;
+            // Record BEFORE deleting so the command holds a live reference
+            CommandHistory.Instance?.Record(new DeleteCommand(d));
+            Deselect();
+            // Park the GO inactive instead of destroying — DeleteCommand needs it for Undo
+            var ps = Grid.PlacementSystem.Instance;
+            var po = d.GetComponent<Grid.PlaceableObject>();
+            if (ps != null && po != null) ps.Remove(po);
+            d.gameObject.SetActive(false);
         }
 
         // ── Axis math helpers ─────────────────────────────────────────────────

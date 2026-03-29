@@ -124,14 +124,27 @@ public class TerrainBuilder : MonoBehaviour
         mesh.RecalculateBounds();
 
         MeshRenderer renderer = GetComponent<MeshRenderer>();
-        
-        // This creates a temporary basic material if one doesn't exist 
-        // and sets it to your terrainColor
-        if (renderer.material == null || renderer.material.shader.name.Contains("InternalErrorShader"))
+
+        // Apply terrainColor to the correct material slot.
+        // The renderer has two materials: [0] ProceduralGrid, [1] Terrain.
+        // renderer.material only returns index 0 — we must use renderer.materials[].
+        var mats = renderer.materials;
+        // Find the Terrain material by name (index 1), fall back to last slot.
+        int terrainMatIndex = mats.Length - 1;
+        for (int i = 0; i < mats.Length; i++)
+            if (mats[i] != null && mats[i].name.Contains("Terrain"))
+            { terrainMatIndex = i; break; }
+
+        if (mats[terrainMatIndex] != null)
         {
-            renderer.material = new Material(Shader.Find("Standard")); 
+            // Works for Standard, URP Lit, and any shader with _BaseColor or _Color
+            if (mats[terrainMatIndex].HasProperty("_BaseColor"))
+                mats[terrainMatIndex].SetColor("_BaseColor", terrainColor);
+            if (mats[terrainMatIndex].HasProperty("_Color"))
+                mats[terrainMatIndex].SetColor("_Color", terrainColor);
         }
-        renderer.material.color = terrainColor;
+        // Write the array back — required, Unity copies on read
+        renderer.materials = mats;
 
         GetComponent<MeshFilter>().mesh = mesh;
         GetComponent<MeshCollider>().sharedMesh = mesh;

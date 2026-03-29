@@ -128,9 +128,9 @@ namespace VTT.UI
         private void Start()
         {
             if (cameraVTT        == null) cameraVTT        = Camera.main?.GetComponent<CameraVTT>();
-            if (directionalLight == null) directionalLight  = FindObjectOfType<Light>();
-            if (terrainBuilder   == null) terrainBuilder    = FindObjectOfType<TerrainBuilder>();
-            if (gridInput        == null) gridInput         = FindObjectOfType<GridInput>();
+            if (directionalLight == null) directionalLight  = FindFirstObjectByType<Light>();
+            if (terrainBuilder   == null) terrainBuilder    = FindFirstObjectByType<TerrainBuilder>();
+            if (gridInput        == null) gridInput         = FindFirstObjectByType<GridInput>();
             if (gridRenderer     == null && terrainBuilder != null)
                 gridRenderer = terrainBuilder.GetComponent<MeshRenderer>();
 
@@ -254,8 +254,21 @@ namespace VTT.UI
             GUI.color = new Color(0.07f, 0.07f, 0.09f, 1f);
             GUI.DrawTexture(new Rect(sw - panelWidth, 0, panelWidth, 36), Texture2D.whiteTexture);
             GUI.color = Color.white;
-            GUI.Label(new Rect(sw - panelWidth + 12, 0, panelWidth - 48, 36),
+            GUI.Label(new Rect(sw - panelWidth + 12, 0, panelWidth - 100, 36),
                 "VTT SETTINGS", _sGroupLbl);
+
+            // Undo / Redo buttons in header
+            var hist = CommandHistory.Instance;
+            float hbw = 28f;
+            GUI.enabled = hist != null && hist.CanUndo;
+            if (GUI.Button(new Rect(sw - panelWidth + (_iw > 0 ? _iw : panelWidth - 16) - hbw * 2 - 10, 6, hbw, 24),
+                "↩", new GUIStyle(_sBtnSmall) { fontSize = 13 }))
+                hist?.Undo();
+            GUI.enabled = hist != null && hist.CanRedo;
+            if (GUI.Button(new Rect(sw - panelWidth + (_iw > 0 ? _iw : panelWidth - 16) - hbw - 6, 6, hbw, 24),
+                "↪", new GUIStyle(_sBtnSmall) { fontSize = 13 }))
+                hist?.Redo();
+            GUI.enabled = true;
 
             // Accent line under header
             GUI.color = C_MUTED * 0.5f;
@@ -391,6 +404,32 @@ namespace VTT.UI
         private void DrawTerrain()
         {
             _cy += 6;
+
+            // ── Save / Load ───────────────────────────────────────────────────
+            var sl = Persistence.MapSaveLoad.Instance;
+            if (sl == null)
+            {
+                Muted("Add MapSaveLoad component to enable Save/Load.");
+            }
+            else
+            {
+                bool busy = sl.IsBusy;
+                GUI.enabled = !busy;
+
+                float hw = (_iw - 18) / 2f;
+                if (GUI.Button(new Rect(8, _cy, hw, 26), busy ? "…" : "Save Map", _sBtn))
+                    sl.SaveWithDialog();
+                if (GUI.Button(new Rect(10 + hw, _cy, hw, 26), busy ? "…" : "Load Map", _sBtn))
+                    sl.LoadWithDialog();
+                GUI.enabled = true;
+                _cy += 30;
+
+                if (!string.IsNullOrEmpty(sl.Status))
+                    Muted(sl.Status);
+            }
+
+            Sep();
+
             if (terrainBuilder != null)
             {
                 GroupLbl("Terrain");
@@ -401,11 +440,22 @@ namespace VTT.UI
                 IntRow("Thickness", ref _terrainThick);
                 if (Btn("Regenerate Map"))
                 {
-                    tb.width     = Mathf.Max(1, _terrainW);
-                    tb.depth     = Mathf.Max(1, _terrainD);
-                    tb.thickness = Mathf.Max(1, _terrainThick);
+                    // Capture before state for undo
+                    int   prevW  = tb.width, prevD = tb.depth;
+                    int   prevTh = Mathf.RoundToInt(tb.thickness);
+                    float prevY  = tb.baseHeight;
+                    Color prevC  = tb.terrainColor;
+
+                    tb.width        = Mathf.Max(1, _terrainW);
+                    tb.depth        = Mathf.Max(1, _terrainD);
+                    tb.thickness    = Mathf.Max(1, _terrainThick);
                     tb.terrainColor = _terrainColor;
                     tb.GenerateTerrain();
+
+                    CommandHistory.Instance?.Record(new TerrainCommand(tb,
+                        prevW, prevD, prevTh, prevY, prevC,
+                        tb.width, tb.depth, Mathf.RoundToInt(tb.thickness),
+                        tb.baseHeight, tb.terrainColor));
                 }
                 Sep();
             }
@@ -654,8 +704,19 @@ namespace VTT.UI
             decor.gridCell        = new Vector2Int(cell.X, cell.Z);
             decor.category        = _currentPlacingCategory;
 
+            // Mark as imported if this prefab came from AssetImportManager
+            var aim = AssetImportManager.Instance;
+            if (aim != null && System.Linq.Enumerable.Contains(aim.ImportedAssets, _placingPrefab))
+            {
+                decor.isImported = true;
+                decor.importPath = aim.GetImportPath(_placingPrefab);
+            }
+
             // Register with grid (occupies cell, marks it as blocked for pathfinding)
             PlacementSystem.Instance?.Place(po, new Vector2Int(cell.X, cell.Z));
+
+            // Record undo command
+            CommandHistory.Instance?.Record(new PlaceCommand(inst, decor, po, new Vector2Int(cell.X, cell.Z)));
 
             CancelPlacement();
         }

@@ -36,6 +36,7 @@ namespace VTT
         private readonly GltfImporter         _importer = new();
         private readonly IFileDialogService   _dialog   = FileDialogServiceFactory.Create();
         private readonly List<GameObject>     _assets   = new();
+        private readonly Dictionary<GameObject, string> _importPaths = new();
 
         // The live category entry in VTTPanelUI (injected at Start)
         private PrefabCategory _importCategory;
@@ -73,7 +74,7 @@ namespace VTT
         /// </summary>
         private void RegisterImportCategory()
         {
-            var panel = FindObjectOfType<VTTPanelUI>();
+            var panel = FindFirstObjectByType<VTTPanelUI>();
             if (panel == null)
             {
                 Debug.LogWarning("[VTT] AssetImportManager: VTTPanelUI not found — " +
@@ -151,6 +152,7 @@ namespace VTT
             EnsureColliders(go);
 
             _assets.Add(go);
+            _importPaths[go] = sourcePath;
 
             // Add to the "Imported" folder in the prefab browser
             if (_importCategory != null)
@@ -174,6 +176,10 @@ namespace VTT
 
         // ── Accessors ─────────────────────────────────────────────────────────
         public IReadOnlyList<GameObject> ImportedAssets => _assets;
+
+        /// <summary>Returns the original file path for an imported asset.</summary>
+        public string GetImportPath(GameObject go) =>
+            _importPaths.TryGetValue(go, out var p) ? p : "";
         public bool                      IsImporting    => _importing;
         public string                    ImportStatus   => _importStatus;
 

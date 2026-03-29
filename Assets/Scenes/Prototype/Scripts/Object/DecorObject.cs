@@ -20,6 +20,12 @@ namespace VTT
         [Tooltip("Original prefab name — set automatically on placement.")]
         public string prefabName = "";
 
+        [Tooltip("True if this object was imported at runtime (glTF/GLB).")]
+        public bool   isImported = false;
+
+        [Tooltip("Absolute file path of the source model — used to re-import on load.")]
+        public string importPath = "";
+
         [Tooltip("Grid cell this object occupies — set automatically on placement.")]
         public Vector2Int gridCell;
 

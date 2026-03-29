@@ -80,7 +80,7 @@ namespace VTT.IO
             try
             {
                 var gltf    = new GltfImport();
-                bool success = await gltf.LoadGltfBinary(data);
+                bool success = await gltf.Load(data);
                 if (!success) { Debug.LogError("[VTT] Failed to parse glTF binary data."); return null; }
                 return await Instantiate(gltf, modelName);
             }

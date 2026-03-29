@@ -8,11 +8,10 @@ public class LayoutUIManager : MonoBehaviour
     public UIDocument uiDoc;
     [Header("References")]
     [SerializeField] private HexPlacementSystem placementSystem;
-    [SerializeField] private AssetImportManager assetImportManager;
     private EditionToolbarUIManager toolbarManager;
     private ViewportUIManager viewportManager;
     private ThemeStyleSheet theme;
-
+    
     void Start()
     {
         VisualElement root = uiDoc.rootVisualElement;
@@ -29,7 +28,6 @@ public class LayoutUIManager : MonoBehaviour
         toolbarManager = this.AddComponent<EditionToolbarUIManager>();
         toolbarManager.Init(root, toolbar, theme);
         toolbarManager.SetPlacementSystem(placementSystem);
-        toolbarManager.SetAssetImportManager(assetImportManager) ;
 
         VisualTreeAsset viewportAsset = Resources.Load<VisualTreeAsset>("Viewport/Viewport");
         VisualElement viewport = viewportAsset.Instantiate();
