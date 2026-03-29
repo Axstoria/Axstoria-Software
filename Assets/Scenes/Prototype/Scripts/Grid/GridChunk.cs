@@ -1,17 +1,14 @@
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace VTT.Grid
 {
     /// <summary>
-    /// A fixed-size block of GridCells. Chunks are created on demand
-    /// as players explore or place objects in new areas.
+    /// Fixed-size block of GridCells. Created on demand as the world is explored.
     /// </summary>
     public class GridChunk
     {
         public const int CHUNK_SIZE = 16; // cells per side
 
-        // Chunk coordinate (not world coordinate)
         public int ChunkX { get; private set; }
         public int ChunkZ { get; private set; }
 
@@ -30,7 +27,9 @@ namespace VTT.Grid
                 _cells[x, z] = new GridCell(originX + x, originZ + z);
         }
 
-        /// <summary>Get a cell by its LOCAL index within this chunk.</summary>
+        /// <summary>
+        /// Returns null if local coords are out of bounds
+        /// </summary>
         public GridCell GetLocalCell(int localX, int localZ)
         {
             if (localX < 0 || localX >= CHUNK_SIZE || localZ < 0 || localZ >= CHUNK_SIZE)
@@ -38,7 +37,6 @@ namespace VTT.Grid
             return _cells[localX, localZ];
         }
 
-        /// <summary>Iterate all cells in this chunk.</summary>
         public IEnumerable<GridCell> AllCells()
         {
             for (int x = 0; x < CHUNK_SIZE; x++)

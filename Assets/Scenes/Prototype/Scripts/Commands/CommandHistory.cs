@@ -1,23 +1,28 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using VTT.UI;
 
 namespace VTT
 {
     /// <summary>
-    /// Central undo/redo stack. Ctrl+Z = Undo | Ctrl+Y / Ctrl+Shift+Z = Redo.
+    /// Undo/redo stack. Call Record() to execute and store a command.
+    /// Ctrl+Z = Undo, Ctrl+Y / Ctrl+Shift+Z = Redo.
+    /// TODO: replace keyboard shortcuts with configurable InputAction asset.
     /// </summary>
     [AddComponentMenu("VTT/Command History")]
     public class CommandHistory : MonoBehaviour
     {
         public static CommandHistory Instance { get; private set; }
 
+        [Tooltip("Maximum number of steps kept in the undo stack. Older entries are discarded.")]
         [SerializeField] private int maxHistory = 100;
 
         private readonly Stack<ICommand> _undoStack = new();
         private readonly Stack<ICommand> _redoStack = new();
 
+        /// <summary>
+        /// Fires on any stack change.
+        /// </summary>
         public event Action OnHistoryChanged;
 
         public bool   CanUndo   => _undoStack.Count > 0;
@@ -35,27 +40,27 @@ namespace VTT
 
         private void Update()
         {
-            if (VTTPanelUI.IsMouseOverUI) return;
             bool ctrl  = Input.GetKey(KeyCode.LeftControl)  || Input.GetKey(KeyCode.RightControl);
             bool shift = Input.GetKey(KeyCode.LeftShift)    || Input.GetKey(KeyCode.RightShift);
-            if (ctrl && !shift && Input.GetKeyDown(KeyCode.Z)) Undo();
-            if (ctrl && (Input.GetKeyDown(KeyCode.Y) || (shift && Input.GetKeyDown(KeyCode.Z)))) Redo();
+
+            // TODO: replace with a configurable InputAction asset when input remapping is added.
+            if (ctrl && !shift && Input.GetKeyDown(KeyCode.Z))                          Undo();
+            if (ctrl && (Input.GetKeyDown(KeyCode.Y) || shift && Input.GetKeyDown(KeyCode.Z))) Redo();
         }
 
+        // ── Public API ────────────────────────────────────────────────────────
+
+        /// <summary>
+        /// Execute a command and push it onto the undo stack.
+        /// </summary>
         public void Record(ICommand cmd)
         {
+            cmd.Execute();
+
             _undoStack.Push(cmd);
-            _redoStack.Clear();
+            _redoStack.Clear(); // a new action invalidates the redo branch
 
-            if (_undoStack.Count > maxHistory)
-            {
-                var tmp = new Stack<ICommand>(_undoStack);
-                _undoStack.Clear();
-                int keep = 0;
-                foreach (var c in tmp)
-                    if (keep++ < maxHistory) _undoStack.Push(c);
-            }
-
+            EnforceHistoryLimit();
             OnHistoryChanged?.Invoke();
         }
 
@@ -79,11 +84,27 @@ namespace VTT
             Debug.Log($"[VTT] Redo: {cmd.Label}");
         }
 
+        /// <summary>
+        /// Wipe both stacks
+        /// </summary>
         public void Clear()
         {
             _undoStack.Clear();
             _redoStack.Clear();
             OnHistoryChanged?.Invoke();
+        }
+
+        /// <summary>
+        /// Enforce the max history limit by discarding the oldest entries in the undo stack.
+        /// </summary>
+        private void EnforceHistoryLimit()
+        {
+            if (_undoStack.Count <= maxHistory) return;
+            var tmp = new Stack<ICommand>(_undoStack);
+            _undoStack.Clear();
+            int kept = 0;
+            foreach (var c in tmp)
+                if (kept++ < maxHistory) _undoStack.Push(c);
         }
     }
 }

@@ -7,7 +7,8 @@ using VTT.IO;
 namespace VTT.Persistence
 {
     /// <summary>
-    /// Handles the async load coroutine for MapSaveLoad.
+    /// Async load coroutine for MapSaveLoad.
+    /// Added automatically by MapSaveLoad — do not add manually.
     /// </summary>
     public class MapLoader : MonoBehaviour
     {
@@ -18,12 +19,11 @@ namespace VTT.Persistence
             Transform decorContainer, PrefabRegistry registry,
             MapSerializer serializer)
         {
-            // ── Parse ─────────────────────────────────────────────────────────
             MapData data = null;
             try
             {
                 if (!File.Exists(path)) throw new FileNotFoundException($"File not found: {path}");
-                data = UnityEngine.JsonUtility.FromJson<MapData>(File.ReadAllText(path));
+                data = JsonUtility.FromJson<MapData>(File.ReadAllText(path));
                 if (data == null) throw new Exception("JSON null — file may be corrupt.");
             }
             catch (Exception e)
@@ -33,16 +33,13 @@ namespace VTT.Persistence
                 yield break;
             }
 
-            // ── Apply terrain & grid ──────────────────────────────────────────
             serializer.ApplyTerrain(data.terrain, tb);
             serializer.ApplyGrid(data.grid, gr);
             yield return null;
 
-            // ── Clear existing objects ────────────────────────────────────────
             MapSerializer.ClearDecorObjects();
             yield return null;
 
-            // ── Restore objects ───────────────────────────────────────────────
             int ok = 0, fail = 0;
             foreach (var od in data.objects)
             {
@@ -60,21 +57,19 @@ namespace VTT.Persistence
 
             owner.SetStatus(
                 $"Loaded: {data.mapName}  ({ok} objects{(fail > 0 ? $", {fail} failed" : "")})",
-                busy: false,
-                mapName: data.mapName);
+                busy: false, mapName: data.mapName);
             Debug.Log($"[VTT] Map loaded — {ok} ok, {fail} failed");
         }
-
-        // ── Helpers ───────────────────────────────────────────────────────────
 
         private static bool RestorePrefab(DecorObjectData od, PrefabRegistry registry,
             MapSerializer serializer, Transform container)
         {
             var prefab = registry?.Find(od.prefabName);
 
+            // Fallback: search the prefab browser categories.
             if (prefab == null)
             {
-                var panel = FindObjectOfType<UI.VTTPanelUI>();
+                var panel = FindFirstObjectByType<UI.VTTPanelUI>();
                 if (panel != null)
                     foreach (var cat in panel.Categories)
                         if (cat?.prefabs != null)
@@ -85,7 +80,7 @@ namespace VTT.Persistence
 
             if (prefab == null)
             {
-                Debug.LogWarning($"[VTT] Prefab '{od.prefabName}' not found.");
+                Debug.LogWarning($"[VTT] Prefab '{od.prefabName}' not found — skipping.");
                 return false;
             }
 
@@ -96,6 +91,7 @@ namespace VTT.Persistence
         private IEnumerator RestoreImported(DecorObjectData od, PrefabRegistry registry,
             MapSerializer serializer, Transform container, Action<bool> onDone)
         {
+            // Already imported this session — reuse the cached template.
             var existing = registry?.Find(od.prefabName);
             if (existing != null)
             {

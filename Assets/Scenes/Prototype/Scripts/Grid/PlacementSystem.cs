@@ -1,21 +1,16 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace VTT.Grid
 {
-    /// <summary>
-    /// Handles placing and removing objects on the grid.
-    /// </summary>
     [AddComponentMenu("VTT/Placement System")]
     public class PlacementSystem : MonoBehaviour
     {
         public static PlacementSystem Instance { get; private set; }
 
-        [Header("Preview Materials")]
         [SerializeField] private Material validPreviewMaterial;
         [SerializeField] private Material invalidPreviewMaterial;
 
-        private GameObject     _previewObject;
+        private GameObject      _previewObject;
         private PlaceableObject _pendingPlaceable;
 
         public event System.Action<PlaceableObject, Vector2Int> OnObjectPlaced;
@@ -27,8 +22,6 @@ namespace VTT.Grid
             Instance = this;
         }
 
-        // ── Validation ────────────────────────────────────────────────────────
-
         public bool CanPlace(PlaceableObject placeable, Vector2Int origin)
         {
             var gm = GridManager.Instance;
@@ -39,8 +32,6 @@ namespace VTT.Grid
             }
             return true;
         }
-
-        // ── Place / Remove ────────────────────────────────────────────────────
 
         public bool Place(PlaceableObject placeable, Vector2Int origin)
         {
@@ -81,8 +72,6 @@ namespace VTT.Grid
             OnObjectRemoved?.Invoke(placeable, origin);
         }
 
-        // ── Preview ───────────────────────────────────────────────────────────
-
         public void BeginPreview(PlaceableObject placeable, GameObject previewPrefab)
         {
             _pendingPlaceable = placeable;
@@ -93,15 +82,15 @@ namespace VTT.Grid
         {
             if (_previewObject == null || _pendingPlaceable == null) return;
             _previewObject.transform.position = GridManager.Instance.GridToWorld(hoveredCell);
-            bool valid = CanPlace(_pendingPlaceable, hoveredCell);
-            SetPreviewMaterial(valid ? validPreviewMaterial : invalidPreviewMaterial);
+            SetPreviewMaterial(CanPlace(_pendingPlaceable, hoveredCell)
+                ? validPreviewMaterial : invalidPreviewMaterial);
         }
 
         public bool ConfirmPreview(Vector2Int origin)
         {
-            bool success = Place(_pendingPlaceable, origin);
+            bool ok = Place(_pendingPlaceable, origin);
             CancelPreview();
-            return success;
+            return ok;
         }
 
         public void CancelPreview()

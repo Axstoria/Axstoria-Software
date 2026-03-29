@@ -1,9 +1,13 @@
 using UnityEngine;
 using UnityEngine.Events;
-using VTT.UI;
 
 namespace VTT.Grid
 {
+    /// <summary>
+    /// Raycasts each frame and fires UnityEvents on hover/click.
+    /// Wire the events to game logic in the Inspector.
+    /// UI blocking is handled by Unity's EventSystem — no code dependency needed.
+    /// </summary>
     public class GridInput : MonoBehaviour
     {
         [Header("Raycast")]
@@ -17,6 +21,12 @@ namespace VTT.Grid
 
         private GridCell _lastHovered;
 
+        public GridCell HoveredCell => _lastHovered;
+        public Vector3 HoveredWorldPosition =>
+            _lastHovered != null
+                ? GridManager.Instance.GridToWorld(_lastHovered.X, _lastHovered.Z)
+                : Vector3.zero;
+
         private void Awake()
         {
             if (gridCamera == null) gridCamera = Camera.main;
@@ -24,18 +34,14 @@ namespace VTT.Grid
 
         private void Update()
         {
-            // Never raycast / fire clicks while the cursor is over the settings panel
-            if (VTTPanelUI.IsMouseOverUI) return;
-
             if (!Physics.Raycast(gridCamera.ScreenPointToRay(Input.mousePosition),
-                                 out RaycastHit hit, Mathf.Infinity, terrainLayer))
-                return;
+                                 out RaycastHit hit, Mathf.Infinity, terrainLayer)) return;
 
-            GridManager gm = GridManager.Instance;
+            var gm = GridManager.Instance;
             if (gm == null) return;
 
-            Vector2Int coords = gm.WorldToGrid(hit.point);
-            GridCell   cell   = gm.GetCell(coords.x, coords.y);
+            var coords = gm.WorldToGrid(hit.point);
+            var cell   = gm.GetCell(coords.x, coords.y);
 
             if (cell != _lastHovered)
             {
@@ -46,11 +52,5 @@ namespace VTT.Grid
             if (Input.GetMouseButtonDown(0)) OnCellClicked?.Invoke(cell);
             if (Input.GetMouseButtonDown(1)) OnCellRightClicked?.Invoke(cell);
         }
-
-        public GridCell HoveredCell          => _lastHovered;
-        public Vector3  HoveredWorldPosition =>
-            _lastHovered != null
-                ? GridManager.Instance.GridToWorld(_lastHovered.X, _lastHovered.Z)
-                : Vector3.zero;
     }
 }

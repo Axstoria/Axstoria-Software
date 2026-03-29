@@ -1,152 +1,128 @@
 using UnityEngine;
 using System.Collections.Generic;
+using VTT.Grid;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider))]
 public class TerrainBuilder : MonoBehaviour
 {
     [Header("Map Generation Settings")]
-    public int width = 20;
-    public int depth = 20;
-    public float baseHeight = 0f;
-    public float thickness = 3f; 
-    public Color terrainColor = new Color(0.6f, 0.4f, 0.2f); // Bright Brown
+    public int   width       = 20;
+    public int   depth       = 20;
+    public float baseHeight  = 0f;
+    public float thickness   = 3f;
+    public Color terrainColor = new Color(0.6f, 0.4f, 0.2f);
 
     [Header("Table Settings")]
-    public Transform tableTransform; 
-    public float tableThickness = 1f;
-    public float tablePadding = 0.1f; 
+    public Transform tableTransform;
+    public float     tableThickness = 1f;
+    public float     tablePadding   = 0.1f;
 
-    private Mesh mesh;
-    private Vector3[] vertices;
-    private Color[] colors; // Added for vertex coloring
-    private float[] heights;
+    private Mesh      _mesh;
+    private Vector3[] _vertices;
+    private Color[]   _colors;
+    private float[]   _heights;
 
-    void Start()
-    {
-        GenerateTerrain();
-        mesh.vertices = vertices;
-        mesh.colors = colors; 
-    }
+    private void Start() => GenerateTerrain();
 
     public void GenerateTerrain()
     {
-        mesh = new Mesh();
-        mesh.name = "CenteredTerrainCube";
+        _mesh      = new Mesh { name = "TerrainCube" };
+        int gw     = width + 1;
+        int gd     = depth + 1;
+        int topVerts = gw * gd;
 
-        int gridWidth = width + 1;
-        int gridDepth = depth + 1;
-        int topVertCount = gridWidth * gridDepth;
-        
-        vertices = new Vector3[topVertCount * 2];
-        colors = new Color[vertices.Length]; // Initialize color array
-        heights = new float[topVertCount];
-        List<int> triangles = new List<int>();
+        _vertices = new Vector3[topVerts * 2];
+        _colors   = new Color[_vertices.Length];
+        _heights  = new float[topVerts];
 
-        float offsetX = width / 2f;
-        float offsetZ = depth / 2f;
+        float ox = width  / 2f;
+        float oz = depth  / 2f;
 
-        for (int z = 0; z < gridDepth; z++)
+        for (int z = 0; z < gd; z++)
+        for (int x = 0; x < gw; x++)
         {
-            for (int x = 0; x < gridWidth; x++)
-            {
-                int i = z * gridWidth + x;
-                
-                // Top Vertex
-                vertices[i] = new Vector3(x - offsetX, baseHeight, z - offsetZ);
-                colors[i] = terrainColor; // Assign Color
-                heights[i] = baseHeight;
-                
-                // Bottom Vertex
-                vertices[i + topVertCount] = new Vector3(x - offsetX, baseHeight - thickness, z - offsetZ);
-                colors[i + topVertCount] = terrainColor; // Assign Color
-            }
+            int i = z * gw + x;
+            _vertices[i]            = new Vector3(x - ox, baseHeight,           z - oz);
+            _vertices[i + topVerts] = new Vector3(x - ox, baseHeight - thickness, z - oz);
+            _colors[i] = _colors[i + topVerts] = terrainColor;
+            _heights[i] = baseHeight;
         }
 
-        // Triangle Generation (Face & Sides)
+        var tris = new List<int>();
         for (int z = 0; z < depth; z++)
+        for (int x = 0; x < width; x++)
         {
-            for (int x = 0; x < width; x++)
-            {
-                int i = z * gridWidth + x;
-                triangles.Add(i); triangles.Add(i + gridWidth); triangles.Add(i + 1);
-                triangles.Add(i + 1); triangles.Add(i + gridWidth); triangles.Add(i + gridWidth + 1);
-                
-                if (x == 0) AddQuad(triangles, i + gridWidth, i, i + topVertCount + gridWidth, i + topVertCount);
-                if (x == width - 1) AddQuad(triangles, i + 1, i + 1 + gridWidth, i + 1 + topVertCount, i + 1 + topVertCount + gridWidth);
-                if (z == 0) AddQuad(triangles, i, i + 1, i + topVertCount, i + 1 + topVertCount);
-                if (z == depth - 1) AddQuad(triangles, i + gridWidth + 1, i + gridWidth, i + topVertCount + gridWidth + 1, i + topVertCount + gridWidth);
-            }
+            int i = z * gw + x;
+            // Top face
+            tris.Add(i); tris.Add(i + gw); tris.Add(i + 1);
+            tris.Add(i + 1); tris.Add(i + gw); tris.Add(i + gw + 1);
+            // Side faces
+            if (x == 0)         AddQuad(tris, i + gw, i, i + topVerts + gw, i + topVerts);
+            if (x == width - 1) AddQuad(tris, i + 1, i + 1 + gw, i + 1 + topVerts, i + 1 + topVerts + gw);
+            if (z == 0)         AddQuad(tris, i, i + 1, i + topVerts, i + 1 + topVerts);
+            if (z == depth - 1) AddQuad(tris, i + gw + 1, i + gw, i + topVerts + gw + 1, i + topVerts + gw);
         }
 
-        mesh.vertices = vertices;
-        mesh.colors = colors; // Push colors to mesh
-        mesh.triangles = triangles.ToArray();
-        
-        UpdateMesh();
-        UpdateTable(); 
+        _mesh.vertices  = _vertices;
+        _mesh.colors    = _colors;
+        _mesh.triangles = tris.ToArray();
+
+        ApplyMesh();
+        UpdateTable();
+
+        // Inform GridManager of new surface Y level
+        GridManager.Instance?.SetSurface(baseHeight);
+    }
+
+    public void Sculpt(Vector3 worldPoint, float radius, float intensity)
+    {
+        int topVerts = (width + 1) * (depth + 1);
+        for (int i = 0; i < topVerts; i++)
+        {
+            float dist = Vector3.Distance(worldPoint, transform.TransformPoint(_vertices[i]));
+            if (dist >= radius) continue;
+            float falloff = 1f - (dist / radius);
+            _heights[i]    += intensity * falloff;
+            _vertices[i].y  = _heights[i];
+        }
+        ApplyMesh();
+    }
+
+    private void ApplyMesh()
+    {
+        _mesh.vertices = _vertices;
+        _mesh.colors   = _colors;
+        _mesh.RecalculateNormals();
+        _mesh.RecalculateBounds();
+
+        GetComponent<MeshFilter>().mesh         = _mesh;
+        GetComponent<MeshCollider>().sharedMesh = _mesh;
+
+        // Update terrain color in material
+        var renderer = GetComponent<MeshRenderer>();
+        var mats     = renderer.materials;
+        int slot     = mats.Length - 1;
+        for (int i = 0; i < mats.Length; i++)
+            if (mats[i] != null && mats[i].name.Contains("Terrain")) { slot = i; break; }
+
+        if (mats[slot] != null)
+        {
+            if (mats[slot].HasProperty("_BaseColor")) mats[slot].SetColor("_BaseColor", terrainColor);
+            if (mats[slot].HasProperty("_Color"))     mats[slot].SetColor("_Color",     terrainColor);
+        }
+        renderer.materials = mats;
     }
 
     private void UpdateTable()
     {
         if (tableTransform == null) return;
-        float tableY = baseHeight - thickness - (tableThickness / 2f);
-        tableTransform.localPosition = new Vector3(0, tableY, 0);
-        tableTransform.localScale = new Vector3(width + tablePadding, tableThickness, depth + tablePadding);
+        tableTransform.localPosition = new Vector3(0, baseHeight - thickness - tableThickness * 0.5f, 0);
+        tableTransform.localScale    = new Vector3(width + tablePadding, tableThickness, depth + tablePadding);
     }
 
-    void AddQuad(List<int> tris, int v1, int v2, int v3, int v4)
+    private static void AddQuad(List<int> tris, int v1, int v2, int v3, int v4)
     {
         tris.Add(v1); tris.Add(v2); tris.Add(v3);
         tris.Add(v3); tris.Add(v2); tris.Add(v4);
-    }
-
-    public void Sculpt(Vector3 point, float radius, float intensity)
-    {
-        int topVertCount = (width + 1) * (depth + 1);
-        for (int i = 0; i < topVertCount; i++)
-        {
-            float dist = Vector3.Distance(point, transform.TransformPoint(vertices[i]));
-            if (dist < radius)
-            {
-                float falloff = 1f - (dist / radius);
-                heights[i] += intensity * falloff;
-                vertices[i].y = heights[i];
-            }
-        }
-        UpdateMesh();
-    }
-
-    void UpdateMesh()
-    {
-        mesh.vertices = vertices;
-        mesh.colors = colors; 
-        mesh.RecalculateNormals();
-        mesh.RecalculateBounds();
-
-        MeshRenderer renderer = GetComponent<MeshRenderer>();
-
-        // Apply terrainColor to the correct material slot.
-        // The renderer has two materials: [0] ProceduralGrid, [1] Terrain.
-        // renderer.material only returns index 0 — we must use renderer.materials[].
-        var mats = renderer.materials;
-        // Find the Terrain material by name (index 1), fall back to last slot.
-        int terrainMatIndex = mats.Length - 1;
-        for (int i = 0; i < mats.Length; i++)
-            if (mats[i] != null && mats[i].name.Contains("Terrain"))
-            { terrainMatIndex = i; break; }
-
-        if (mats[terrainMatIndex] != null)
-        {
-            // Works for Standard, URP Lit, and any shader with _BaseColor or _Color
-            if (mats[terrainMatIndex].HasProperty("_BaseColor"))
-                mats[terrainMatIndex].SetColor("_BaseColor", terrainColor);
-            if (mats[terrainMatIndex].HasProperty("_Color"))
-                mats[terrainMatIndex].SetColor("_Color", terrainColor);
-        }
-        // Write the array back — required, Unity copies on read
-        renderer.materials = mats;
-
-        GetComponent<MeshFilter>().mesh = mesh;
-        GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 }

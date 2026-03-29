@@ -2,21 +2,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using VTT.UI;
 
+// TODO: REDO GIZMO AS A SINGLE MESH WITH SUBMESHES
+
 namespace VTT
 {
     /// <summary>
     /// Full 3D transform gizmo for DecorObjects.
-    ///
-    /// BUGS FIXED vs previous version:
-    ///   1. Pink materials  → shader detection now tries URP/Unlit before Standard
-    ///   2. Inverted motion → GetAxisOffset sign was negated, now correct
-    ///   3. Z arrow         → Euler(-90,0,0) confirmed correct for +Z
-    ///
-    /// NEW:
-    ///   • Hover outline  (scaled-up bright mesh child per handle)
-    ///   • Center sphere  (XYZ translate on view-plane | uniform scale)
-    ///   • Dual-axis planes  XY / XZ / YZ (small quads, blend two axes)
-    ///
     /// Keyboard: W = Translate | E = Rotate | R = Scale | Q = Local/World | Del = Delete
     /// </summary>
     [AddComponentMenu("VTT/Transform Gizmo")]

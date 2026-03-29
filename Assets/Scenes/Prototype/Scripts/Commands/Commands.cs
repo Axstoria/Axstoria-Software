@@ -4,9 +4,32 @@ using VTT.Grid;
 
 namespace VTT
 {
-    // ── Place ─────────────────────────────────────────────────────────────────
+    /// <summary>
+    /// Command pattern for undo/redo system.
+    /// </summary>
+    /// TODO : Refacto to reduce code duplication between similar commands (e.g. PlaceCommand and DeleteCommand have a lot of overlap).
+    ///        Split into separate files if this one gets too large.
 
-    /// <summary>Records placing a new DecorObject on the grid.</summary>
+    // Skeleton for new commands:
+    //
+    //   public class MyCommand : ICommand
+    //   {
+    //       public string Label => "My action";
+    //       public MyCommand(...) { /* capture before-state */ }
+    //       public void Execute() { /* do the thing */ }
+    //       public void Undo()    { /* revert */ }
+    //       public void Redo()    => Execute();
+    //   }
+
+
+    // ── Placement ─────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Placing a DecorObject on the grid.
+    /// Undo hides it and frees its cell; Redo restores it.
+    /// The object is never destroyed — it is parked inactive so undo can restore it.
+    /// TODO: TEST memory and reference management for edge cases (e.g. place, delete, undo delete, undo place).
+    /// </summary>
     public class PlaceCommand : ICommand
     {
         public string Label { get; }
@@ -32,10 +55,11 @@ namespace VTT
             Label     = $"Place {decor.displayName}";
         }
 
+        public void Execute() { }
+
         public void Undo()
         {
-            var ps = PlacementSystem.Instance;
-            if (ps != null && _po != null) ps.Remove(_po);
+            PlacementSystem.Instance?.Remove(_po);
             _instance.SetActive(false);
         }
 
@@ -45,14 +69,17 @@ namespace VTT
             _instance.transform.SetPositionAndRotation(_worldPos, _rotation);
             _instance.transform.localScale = _scale;
             if (_parent != null) _instance.transform.SetParent(_parent, true);
-            var ps = PlacementSystem.Instance;
-            if (ps != null && _po != null) ps.Place(_po, _cell);
+            PlacementSystem.Instance?.Place(_po, _cell);
         }
     }
 
-    // ── Delete ────────────────────────────────────────────────────────────────
 
-    /// <summary>Records deleting a DecorObject (parks it inactive instead of destroying).</summary>
+    // ── Deletion ──────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Parks the object inactive instead of destroying it so Undo can restore it.
+    /// Capture state before calling Record() — Execute() deactivates immediately.
+    /// </summary>
     public class DeleteCommand : ICommand
     {
         public string Label { get; }
@@ -77,27 +104,31 @@ namespace VTT
             Label     = $"Delete {decor.displayName}";
         }
 
+        public void Execute()
+        {
+            PlacementSystem.Instance?.Remove(_po);
+            _instance.SetActive(false);
+        }
+
         public void Undo()
         {
             _instance.SetActive(true);
             _instance.transform.SetPositionAndRotation(_worldPos, _rotation);
             _instance.transform.localScale = _scale;
             if (_parent != null) _instance.transform.SetParent(_parent, true);
-            var ps = PlacementSystem.Instance;
-            if (ps != null && _po != null) ps.Place(_po, _cell);
+            PlacementSystem.Instance?.Place(_po, _cell);
         }
 
-        public void Redo()
-        {
-            var ps = PlacementSystem.Instance;
-            if (ps != null && _po != null) ps.Remove(_po);
-            _instance.SetActive(false);
-        }
+        public void Redo() => Execute();
     }
 
-    // ── Transform ─────────────────────────────────────────────────────────────
 
-    /// <summary>Records a completed gizmo drag (translate, rotate, or scale).</summary>
+    // ── Single-object transform ───────────────────────────────────────────────
+
+    /// <summary>
+    /// A completed gizmo drag on a single object (translate, rotate, or scale).
+    /// For multi-object drags, use GroupTransformCommand instead. (NOT WORKING YET — TODO)
+    /// </summary>
     public class TransformCommand : ICommand
     {
         public string Label { get; }
@@ -119,59 +150,26 @@ namespace VTT
             Label        = label;
         }
 
-        public void Undo()
-        {
-            if (_target == null) return;
-            _target.SetPositionAndRotation(_posBefore, _rotBefore);
-            _target.localScale = _scaleBefore;
-        }
+        // The drag already completed before Record() is called.
+        public void Execute() { }
+        public void Undo()    => Apply(_posBefore, _rotBefore, _scaleBefore);
+        public void Redo()    => Apply(_posAfter,  _rotAfter,  _scaleAfter);
 
-        public void Redo()
+        private void Apply(Vector3 pos, Quaternion rot, Vector3 sca)
         {
             if (_target == null) return;
-            _target.SetPositionAndRotation(_posAfter, _rotAfter);
-            _target.localScale = _scaleAfter;
+            _target.SetPositionAndRotation(pos, rot);
+            _target.localScale = sca;
         }
     }
 
-    // ── Terrain ───────────────────────────────────────────────────────────────
 
-    /// <summary>Records a terrain regeneration (size / color change).</summary>
-    public class TerrainCommand : ICommand
-    {
-        public string Label => "Regenerate terrain";
-
-        private readonly TerrainBuilder _tb;
-        private readonly int   _wB, _dB, _thB; private readonly float _yB; private readonly Color _cB;
-        private readonly int   _wA, _dA, _thA; private readonly float _yA; private readonly Color _cA;
-
-        public TerrainCommand(TerrainBuilder tb,
-            int wB, int dB, int thB, float yB, Color cB,
-            int wA, int dA, int thA, float yA, Color cA)
-        {
-            _tb = tb;
-            _wB = wB; _dB = dB; _thB = thB; _yB = yB; _cB = cB;
-            _wA = wA; _dA = dA; _thA = thA; _yA = yA; _cA = cA;
-        }
-
-        public void Undo() => Apply(_wB, _dB, _thB, _yB, _cB);
-        public void Redo() => Apply(_wA, _dA, _thA, _yA, _cA);
-
-        private void Apply(int w, int d, int th, float y, Color c)
-        {
-            if (_tb == null) return;
-            _tb.width = w; _tb.depth = d;
-            _tb.thickness = th; _tb.baseHeight = y;
-            _tb.terrainColor = c;
-            _tb.GenerateTerrain();
-        }
-    }
-
-    // ── Group Transform ───────────────────────────────────────────────────────
+    // ── Group transform ───────────────────────────────────────────────────────
 
     /// <summary>
-    /// Records a gizmo drag on a multi-object selection.
-    /// Captures before/after for every object in one undo step.
+    /// Completed gizmo drag on a multi-object selection.
+    /// One undo step restores every object in the group simultaneously.
+    /// (NOT WORKING YET — TODO)
     /// </summary>
     public class GroupTransformCommand : ICommand
     {
@@ -182,12 +180,13 @@ namespace VTT
         private readonly Quaternion[] _rotB, _rotA;
         private readonly Vector3[]    _scaB, _scaA;
 
+        /// <param name="posBefore">Positions at drag start — captured before the drag.</param>
         public GroupTransformCommand(
             IReadOnlyList<DecorObject> group,
             Vector3[]    posBefore,
             Quaternion[] rotBefore,
             Vector3[]    scaleBefore,
-            string label)
+            string       label)
         {
             int n    = group.Count;
             _targets = new Transform[n];
@@ -201,7 +200,6 @@ namespace VTT
                 _posB[i]    = posBefore[i];
                 _rotB[i]    = rotBefore[i];
                 _scaB[i]    = scaleBefore[i];
-                // Capture current (after) state at record time
                 _posA[i]    = _targets[i].position;
                 _rotA[i]    = _targets[i].rotation;
                 _scaA[i]    = _targets[i].localScale;
@@ -210,8 +208,9 @@ namespace VTT
             Label = label;
         }
 
-        public void Undo() => Apply(_posB, _rotB, _scaB);
-        public void Redo() => Apply(_posA, _rotA, _scaA);
+        public void Execute() { }
+        public void Undo()    => Apply(_posB, _rotB, _scaB);
+        public void Redo()    => Apply(_posA, _rotA, _scaA);
 
         private void Apply(Vector3[] pos, Quaternion[] rot, Vector3[] sca)
         {
@@ -224,4 +223,40 @@ namespace VTT
         }
     }
 
+
+    // ── Terrain regeneration ─────────────────────────────────────────────────
+
+    /// <summary>
+    /// Terrain rebuild with new dimensions or color.
+    /// </summary>
+    public class TerrainCommand : ICommand
+    {
+        public string Label => "Regenerate terrain";
+
+        private readonly TerrainBuilder _tb;
+        private readonly int   _wB, _dB, _thB; private readonly float _yB; private readonly Color _cB;
+        private readonly int   _wA, _dA, _thA; private readonly float _yA; private readonly Color _cA;
+
+        public TerrainCommand(TerrainBuilder tb,
+            int wB, int dB, int thB, float yB, Color cB,   // before
+            int wA, int dA, int thA, float yA, Color cA)   // after
+        {
+            _tb = tb;
+            _wB = wB; _dB = dB; _thB = thB; _yB = yB; _cB = cB;
+            _wA = wA; _dA = dA; _thA = thA; _yA = yA; _cA = cA;
+        }
+
+        public void Execute() => Apply(_wA, _dA, _thA, _yA, _cA);
+        public void Undo()    => Apply(_wB, _dB, _thB, _yB, _cB);
+        public void Redo()    => Execute();
+
+        private void Apply(int w, int d, int th, float y, Color c)
+        {
+            if (_tb == null) return;
+            _tb.width = w; _tb.depth = d;
+            _tb.thickness = th; _tb.baseHeight = y;
+            _tb.terrainColor = c;
+            _tb.GenerateTerrain();
+        }
+    }
 }

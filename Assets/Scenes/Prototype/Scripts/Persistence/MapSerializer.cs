@@ -1,21 +1,15 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 using VTT.Grid;
-using VTT.IO;
-using VTT.UI;
 
 namespace VTT.Persistence
 {
     /// <summary>
-    /// Handles collecting scene state into MapData
-    /// and applying MapData back to the scene.
+    /// Converts scene state ↔ MapData.
+    /// Added automatically by MapSaveLoad — do not add manually.
     /// </summary>
     public class MapSerializer : MonoBehaviour
     {
-        // ── Shader IDs ────────────────────────────────────────────────────────
         private static readonly int SH_CellSize = Shader.PropertyToID("_Cell_Size");
         private static readonly int SH_Thick    = Shader.PropertyToID("_Grid_Thickness");
         private static readonly int SH_BgCol    = Shader.PropertyToID("_Background_Color");
@@ -99,11 +93,11 @@ namespace VTT.Persistence
             if (gr == null) return;
             var mat = gr.material;
             mat.SetVector(SH_CellSize, new Vector4(gd.cellSizeX, gd.cellSizeY));
-            mat.SetFloat(SH_Thick,    gd.gridThickness);
-            mat.SetColor(SH_BgCol,    gd.bgColor.ToColor());
-            mat.SetColor(SH_GridCol,  gd.gridColor.ToColor());
-            mat.SetFloat(SH_Opacity,  gd.gridOpacity);
-            mat.SetFloat(SH_Transp,   gd.transparent ? 1f : 0f);
+            mat.SetFloat(SH_Thick,   gd.gridThickness);
+            mat.SetColor(SH_BgCol,   gd.bgColor.ToColor());
+            mat.SetColor(SH_GridCol, gd.gridColor.ToColor());
+            mat.SetFloat(SH_Opacity, gd.gridOpacity);
+            mat.SetFloat(SH_Transp,  gd.transparent ? 1f : 0f);
         }
 
         public static void ClearDecorObjects()

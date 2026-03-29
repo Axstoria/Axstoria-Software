@@ -350,7 +350,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LayoutUIManager
   uiDoc: {fileID: 776260624}
   placementSystem: {fileID: 0}
-  assetImportManager: {fileID: 0}
 --- !u!1 &776260623
 GameObject:
   m_ObjectHideFlags: 0

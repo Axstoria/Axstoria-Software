@@ -6,17 +6,11 @@ using VTT.UI;
 
 namespace VTT.Persistence
 {
-    /// <summary>
-    /// Public entry point for saving and loading maps.
-    /// Delegates serialization to MapSerializer and async loading to MapLoader.
-    /// Add this component to any persistent GameObject.
-    /// </summary>
-    [AddComponentMenu("VTT/Map Save Load")]
     public class MapSaveLoad : MonoBehaviour
     {
         public static MapSaveLoad Instance { get; private set; }
 
-        [Header("Scene References (auto-found if empty)")]
+        [Header("Scene References")]
         [SerializeField] private TerrainBuilder terrainBuilder;
         [SerializeField] private MeshRenderer   gridRenderer;
         [SerializeField] private Transform      decorContainer;
@@ -35,7 +29,7 @@ namespace VTT.Persistence
         private void Awake()
         {
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
-            Instance = this;
+            Instance    = this;
             _serializer = gameObject.AddComponent<MapSerializer>();
             _loader     = gameObject.AddComponent<MapLoader>();
         }
@@ -50,9 +44,9 @@ namespace VTT.Persistence
             if (panel != null && prefabRegistry != null)
                 prefabRegistry.RegisterFromCategories(panel.Categories);
 
-            var aim = AssetImportManager.Instance;
-            if (aim != null)
-                aim.OnAssetImported += go => prefabRegistry?.Register(go.name, go);
+            // Register imported assets as they arrive.
+            if (AssetImportManager.Instance != null)
+                AssetImportManager.Instance.OnAssetImported += go => prefabRegistry?.Register(go.name, go);
         }
 
         // ── Save ──────────────────────────────────────────────────────────────
@@ -60,7 +54,7 @@ namespace VTT.Persistence
         public void SaveWithDialog()
         {
             if (IsBusy) return;
-            string path = _dialog.SaveFile("Save Map", CurrentMapName, "json");
+            var path = _dialog.SaveFile("Save Map", CurrentMapName, "json");
             if (!string.IsNullOrEmpty(path)) SaveToPath(path);
         }
 
@@ -94,7 +88,7 @@ namespace VTT.Persistence
         public void LoadWithDialog()
         {
             if (IsBusy) return;
-            string path = _dialog.OpenFile("Load Map", "json");
+            var path = _dialog.OpenFile("Load Map", "json");
             if (!string.IsNullOrEmpty(path)) LoadFromPath(path);
         }
 
@@ -108,7 +102,9 @@ namespace VTT.Persistence
                 prefabRegistry, _serializer));
         }
 
-        /// <summary>Called by MapLoader when the coroutine finishes.</summary>
+        /// <summary>
+        /// Called by MapLoader at coroutine end
+        /// </summary>
         public void SetStatus(string status, bool busy, string mapName = null)
         {
             Status = status;

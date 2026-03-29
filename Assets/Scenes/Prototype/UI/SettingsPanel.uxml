@@ -1,0 +1,69 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <ui:ScrollView class="settings-panel" mode="Vertical">
+
+        <!-- Camera -->
+        <ui:Foldout text="Camera" name="camera-foldout" class="section-foldout">
+            <ui:Slider label="Orbit Sensitivity" name="orbit-sensitivity" low-value="0.05" high-value="2" />
+            <ui:Slider label="Pan Sensitivity" name="pan-sensitivity" low-value="0.01" high-value="0.2" />
+            <ui:Slider label="Zoom Speed" name="zoom-speed" low-value="1" high-value="20" />
+            <ui:Slider label="Orbit Smoothing" name="orbit-smoothing" low-value="1" high-value="30" />
+            <ui:Slider label="Zoom Smoothing" name="zoom-smoothing" low-value="1" high-value="30" />
+            <ui:Slider label="Pan Smoothing" name="pan-smoothing" low-value="1" high-value="30" />
+            <ui:Label text="LIMITS" class="sub-header" />
+            <ui:Slider label="Min Pitch" name="min-pitch" low-value="0" high-value="45" />
+            <ui:Slider label="Max Pitch" name="max-pitch" low-value="45" high-value="90" />
+            <ui:Slider label="Min Zoom" name="min-zoom" low-value="1" high-value="20" />
+            <ui:Slider label="Max Zoom" name="max-zoom" low-value="20" high-value="200" />
+            <ui:Button text="Reset View (F)" name="reset-view-btn" class="action-btn" />
+        </ui:Foldout>
+
+        <!-- Directional Light -->
+        <ui:Foldout text="Directional Light" name="light-foldout" class="section-foldout">
+            <ui:Slider label="Intensity" name="light-intensity" low-value="0" high-value="5" />
+            <ui:ColorField label="Color" name="light-color" />
+            <ui:Label text="DIRECTION" class="sub-header" />
+            <ui:Slider label="Pitch (X)" name="light-pitch" low-value="-180" high-value="180" />
+            <ui:Slider label="Yaw (Y)" name="light-yaw" low-value="-180" high-value="180" />
+            <ui:Slider label="Shadow Strength" name="shadow-strength" low-value="0" high-value="1" />
+            <ui:Label text="AMBIENT" class="sub-header" />
+            <ui:Slider label="Intensity" name="ambient-intensity" low-value="0" high-value="2" />
+            <ui:ColorField label="Ambient Color" name="ambient-color" />
+        </ui:Foldout>
+
+        <!-- Terrain & Grid -->
+        <ui:Foldout text="Terrain &amp; Grid" name="terrain-foldout" class="section-foldout">
+            <ui:VisualElement class="row-buttons">
+                <ui:Button text="Save Map" name="save-map-btn" class="action-btn half" />
+                <ui:Button text="Load Map" name="load-map-btn" class="action-btn half" />
+            </ui:VisualElement>
+            <ui:Label text="TERRAIN" class="sub-header" />
+            <ui:ColorField label="Terrain Color" name="terrain-color" />
+            <ui:IntegerField label="Width" name="terrain-width" />
+            <ui:IntegerField label="Depth" name="terrain-depth" />
+            <ui:IntegerField label="Thickness" name="terrain-thickness" />
+            <ui:Button text="Regenerate Map" name="regen-btn" class="action-btn accent" />
+            <ui:Label text="GRID SHADER" class="sub-header" />
+            <ui:FloatField label="Cell Size X" name="cell-size-x" />
+            <ui:FloatField label="Cell Size Y" name="cell-size-y" />
+            <ui:FloatField label="Grid Thickness" name="grid-thickness" />
+            <ui:ColorField label="Background" name="bg-color" />
+            <ui:ColorField label="Grid Color" name="grid-color" />
+            <ui:Slider label="Grid Opacity" name="grid-opacity" low-value="0" high-value="1" />
+            <ui:Toggle label="Transparent Sides" name="transparent-toggle" />
+        </ui:Foldout>
+
+        <!-- Prefabs -->
+        <ui:Foldout text="Prefabs" name="prefabs-foldout" class="section-foldout">
+            <ui:Button text="Import glTF / GLB" name="import-btn" class="action-btn accent" />
+            <ui:Label name="import-status" class="status-label" />
+            <ui:VisualElement name="prefab-grid" class="prefab-grid" />
+        </ui:Foldout>
+
+        <!-- Outliner -->
+        <ui:Foldout text="Outliner" name="outliner-foldout" class="section-foldout">
+            <ui:ListView name="outliner-list" class="outliner-list"
+                item-height="28" virtualization-method="DynamicHeight" />
+        </ui:Foldout>
+
+    </ui:ScrollView>
+</ui:UXML>

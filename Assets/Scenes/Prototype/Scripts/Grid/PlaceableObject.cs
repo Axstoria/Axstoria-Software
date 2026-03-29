@@ -4,11 +4,11 @@ using UnityEngine;
 namespace VTT.Grid
 {
     /// <summary>
-    /// Attach to any VTT token or prop to make it placeable on the grid.
+    /// Marks a token or prop as grid-placeable and defines its cell footprint.
     /// </summary>
     public class PlaceableObject : MonoBehaviour
     {
-        [Tooltip("Cell offsets relative to origin. (0,0) = origin cell.")]
+        [Tooltip("Cell offsets relative to the origin cell.")]
         public List<Vector2Int> FootprintOffsets = new() { Vector2Int.zero };
 
         public bool       IsPlaced       { get; private set; }
