@@ -26,8 +26,18 @@ namespace VTT
         [Tooltip("Absolute file path of the source model — used to re-import on load.")]
         public string importPath = "";
 
-        [Tooltip("Grid cell this object occupies — set automatically on placement.")]
-        public Vector2Int gridCell;
+        // ── Persistent identity ───────────────────────────────────────────────
+        [SerializeField, HideInInspector] private string _guid = "";
+
+        /// <summary>Stable GUID that persists across save/load sessions.</summary>
+        public string Guid
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_guid)) _guid = System.Guid.NewGuid().ToString();
+                return _guid;
+            }
+        }
 
         // ── Global registry ───────────────────────────────────────────────────
         private static readonly List<DecorObject> _all = new();

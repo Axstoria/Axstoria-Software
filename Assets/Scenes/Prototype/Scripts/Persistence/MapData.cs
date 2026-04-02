@@ -46,7 +46,9 @@ namespace VTT.Persistence
         public string category    = "Uncategorized";
         public string prefabName  = "";
         public bool   isImported  = false;
-        /// <summary>Absolute path — used to re-import glTF/GLB on load.</summary>
+
+
+        // Absolute path — used to re-import glTF/GLB on load
         public string importPath  = "";
 
         public SVector3 position = new();
@@ -57,8 +59,7 @@ namespace VTT.Persistence
         public int gridCellZ = 0;
     }
 
-    // JsonUtility can't serialize Vector3/Color directly, so we use these wrappers.
-
+    // Helper structs for serializing Unity types not natively supported by JsonUtility
     [Serializable]
     public class SColor
     {

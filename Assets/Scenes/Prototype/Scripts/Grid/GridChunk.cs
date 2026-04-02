@@ -7,7 +7,7 @@ namespace VTT.Grid
     /// </summary>
     public class GridChunk
     {
-        public const int CHUNK_SIZE = 16; // cells per side
+        public const int CHUNK_SIZE = 16; // Maybe change chunk size later, for dynamic cell sizes or something.
 
         public int ChunkX { get; private set; }
         public int ChunkZ { get; private set; }

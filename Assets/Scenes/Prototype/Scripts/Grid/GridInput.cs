@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Events;
 
 namespace VTT.Grid
@@ -34,8 +35,18 @@ namespace VTT.Grid
 
         private void Update()
         {
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            {
+                if (_lastHovered != null) { _lastHovered = null; OnCellHovered?.Invoke(null); }
+                return;
+            }
+
             if (!Physics.Raycast(gridCamera.ScreenPointToRay(Input.mousePosition),
-                                 out RaycastHit hit, Mathf.Infinity, terrainLayer)) return;
+                                 out RaycastHit hit, Mathf.Infinity, terrainLayer))
+            {
+                if (_lastHovered != null) { _lastHovered = null; OnCellHovered?.Invoke(null); }
+                return;
+            }
 
             var gm = GridManager.Instance;
             if (gm == null) return;

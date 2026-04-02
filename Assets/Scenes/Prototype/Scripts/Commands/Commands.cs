@@ -96,7 +96,7 @@ namespace VTT
         {
             _instance = decor.gameObject;
             _po       = decor.GetComponent<PlaceableObject>();
-            _cell     = decor.gridCell;
+            _cell     = _po != null ? _po.OccupiedOrigin : Vector2Int.zero;
             _worldPos = decor.transform.position;
             _rotation = decor.transform.rotation;
             _scale    = decor.transform.localScale;

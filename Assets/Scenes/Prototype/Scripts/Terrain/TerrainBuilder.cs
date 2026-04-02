@@ -2,6 +2,9 @@ using UnityEngine;
 using System.Collections.Generic;
 using VTT.Grid;
 
+namespace VTT
+{
+
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider))]
 public class TerrainBuilder : MonoBehaviour
 {
@@ -126,3 +129,5 @@ public class TerrainBuilder : MonoBehaviour
         tris.Add(v3); tris.Add(v2); tris.Add(v4);
     }
 }
+
+} // namespace VTT

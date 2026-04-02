@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using UnityEngine;
+using VTT;
 using VTT.IO;
 using VTT.UI;
 

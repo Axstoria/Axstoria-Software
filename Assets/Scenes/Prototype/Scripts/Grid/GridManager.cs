@@ -15,11 +15,10 @@ namespace VTT.Grid
         [Tooltip("Must match Cell Size X on the ProceduralGrid material.")]
         [SerializeField] private float cellSize = 1f;
 
+        public float CellSize => cellSize;
+
         [Tooltip("Y position of the top of the terrain.")]
         [SerializeField] private float worldY = 0f;
-
-        public float CellSize => cellSize;
-        public float WorldY   => worldY;
 
         /// <summary>
         /// Called by TerrainBuilder after each generation to keep surface Y in sync

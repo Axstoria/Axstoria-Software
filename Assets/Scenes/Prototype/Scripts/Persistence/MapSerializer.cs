@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using VTT;
 using VTT.Grid;
 
 namespace VTT.Persistence
@@ -57,10 +58,11 @@ namespace VTT.Persistence
             foreach (var decor in DecorObject.All)
             {
                 if (decor == null) continue;
-                var t = decor.transform;
+                var t  = decor.transform;
+                var po = decor.GetComponent<PlaceableObject>();
                 list.Add(new DecorObjectData
                 {
-                    guid        = decor.GetInstanceID().ToString(),
+                    guid        = decor.Guid,
                     displayName = decor.displayName,
                     category    = decor.category,
                     prefabName  = decor.prefabName,
@@ -69,8 +71,8 @@ namespace VTT.Persistence
                     position    = SVector3.From(t.position),
                     rotation    = SVector3.From(t.eulerAngles),
                     scale       = SVector3.From(t.localScale),
-                    gridCellX   = decor.gridCell.x,
-                    gridCellZ   = decor.gridCell.y,
+                    gridCellX   = po != null ? po.OccupiedOrigin.x : 0,
+                    gridCellZ   = po != null ? po.OccupiedOrigin.y : 0,
                 });
             }
         }
@@ -124,10 +126,10 @@ namespace VTT.Persistence
             decor.prefabName  = od.prefabName;
             decor.isImported  = od.isImported;
             decor.importPath  = od.importPath;
-            decor.gridCell    = new Vector2Int(od.gridCellX, od.gridCellZ);
 
             var po = inst.GetComponent<PlaceableObject>() ?? inst.AddComponent<PlaceableObject>();
-            PlacementSystem.Instance?.Place(po, decor.gridCell);
+            po.ComputeFootprint(GridManager.Instance != null ? GridManager.Instance.CellSize : 1f);
+            PlacementSystem.Instance?.Place(po, new Vector2Int(od.gridCellX, od.gridCellZ));
         }
     }
 }

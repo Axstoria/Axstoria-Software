@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.IO;
 using UnityEngine;
+using VTT;
 using VTT.IO;
 
 namespace VTT.Persistence

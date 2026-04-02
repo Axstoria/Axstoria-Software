@@ -14,9 +14,6 @@ namespace VTT
     {
         public static CommandHistory Instance { get; private set; }
 
-        [Tooltip("Maximum number of steps kept in the undo stack. Older entries are discarded.")]
-        [SerializeField] private int maxHistory = 100;
-
         private readonly Stack<ICommand> _undoStack = new();
         private readonly Stack<ICommand> _redoStack = new();
 
@@ -60,7 +57,6 @@ namespace VTT
             _undoStack.Push(cmd);
             _redoStack.Clear(); // a new action invalidates the redo branch
 
-            EnforceHistoryLimit();
             OnHistoryChanged?.Invoke();
         }
 
@@ -94,17 +90,5 @@ namespace VTT
             OnHistoryChanged?.Invoke();
         }
 
-        /// <summary>
-        /// Enforce the max history limit by discarding the oldest entries in the undo stack.
-        /// </summary>
-        private void EnforceHistoryLimit()
-        {
-            if (_undoStack.Count <= maxHistory) return;
-            var tmp = new Stack<ICommand>(_undoStack);
-            _undoStack.Clear();
-            int kept = 0;
-            foreach (var c in tmp)
-                if (kept++ < maxHistory) _undoStack.Push(c);
-        }
     }
 }

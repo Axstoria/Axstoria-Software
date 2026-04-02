@@ -680,8 +680,9 @@ namespace VTT.UI
 
             // PlaceableObject needed for CanPlace checks — do NOT call PlacementSystem.BeginPreview
             // (that would spawn a second preview object)
-            if (_placingPreview.GetComponent<PlaceableObject>() == null)
-                _placingPreview.AddComponent<PlaceableObject>();
+            var previewPo = _placingPreview.GetComponent<PlaceableObject>()
+                         ?? _placingPreview.AddComponent<PlaceableObject>();
+            previewPo.ComputeFootprint(GridManager.Instance != null ? GridManager.Instance.CellSize : 1f);
         }
 
         private void ConfirmPlacement()
@@ -696,12 +697,12 @@ namespace VTT.UI
             var inst = Instantiate(_placingPrefab, worldPos, _placingPrefab.transform.rotation);
             inst.SetActive(true);  // activate — prefab may be inactive (imported asset)
             var po   = inst.GetComponent<PlaceableObject>() ?? inst.AddComponent<PlaceableObject>();
+            po.ComputeFootprint(GridManager.Instance != null ? GridManager.Instance.CellSize : 1f);
 
             // Tag as a DecorObject so it appears in Outliner and is selectable by Gizmo
             var decor             = inst.GetComponent<DecorObject>() ?? inst.AddComponent<DecorObject>();
             decor.displayName     = _placingPrefab.name;
             decor.prefabName      = _placingPrefab.name;
-            decor.gridCell        = new Vector2Int(cell.X, cell.Z);
             decor.category        = _currentPlacingCategory;
 
             // Mark as imported if this prefab came from AssetImportManager
