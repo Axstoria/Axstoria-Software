@@ -1,40 +1,31 @@
-﻿using Domain;
+using Domain;
 using Loxodon.Framework.Observables;
 
 namespace Controler.Editor.ViewModels
 {
-    /// <summary>
-    /// View model for managing terrain and height-map elements within the map editor.
-    /// Extends SceneViewModel to handle terrain layout properties such as width and height.
-    /// </summary>
-    /// <remarks>
-    /// This view model handles the presentation and binding of terrain layout data to the UI,
-    /// allowing editors to configure and manage the geographical features of the map.
-    /// </remarks>
-    public class TerrainLayoutViewModel : SceneViewModel
+    public class TerrainLayoutViewModel : ObservableObject
     {
-        /// <summary>
-        /// The underlying TerrainLayout model that this view model represents.
-        /// </summary>
-        private readonly TerrainLayout _terrainLayout;
-        
-        /// <summary>
-        /// Gets the underlying TerrainLayout model.
-        /// </summary>
-        public TerrainLayout Model => _terrainLayout;
+        private readonly TerrainLayout _model;
+        public TerrainLayout Model => _model;
 
-        /// <summary>
-        /// Initializes a new instance of the TerrainLayoutViewModel class.
-        /// </summary>
-        /// <param name="terrainLayout">The TerrainLayout model to be wrapped by this view model.</param>
-        /// <remarks>
-        /// This constructor initializes the view model with the terrain layout's data.
-        /// Additional observable properties for Width and Height can be added as needed
-        /// if direct UI binding to these properties is required.
-        /// </remarks>
-        public TerrainLayoutViewModel(TerrainLayout terrainLayout) : base(terrainLayout)
+        public ObservableProperty<int>   Width     { get; } = new();
+        public ObservableProperty<int>   Depth     { get; } = new();
+        public ObservableProperty<int>   Thickness { get; } = new();
+        public ObservableProperty<float> Height    { get; } = new();
+
+        public TerrainLayoutViewModel(TerrainLayout model)
         {
-            _terrainLayout = terrainLayout;
+            _model = model;
+
+            Width.Value     = _model.Width;
+            Depth.Value     = _model.Depth;
+            Thickness.Value = _model.Thickness;
+            Height.Value    = _model.Height;
+
+            Width.ValueChanged     += (_, __) => _model.Width     = Width.Value;
+            Depth.ValueChanged     += (_, __) => _model.Depth     = Depth.Value;
+            Thickness.ValueChanged += (_, __) => _model.Thickness = Thickness.Value;
+            Height.ValueChanged    += (_, __) => _model.Height    = Height.Value;
         }
     }
 }

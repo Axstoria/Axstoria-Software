@@ -3,8 +3,8 @@
   "references": [
     "Controler",
     "Domain",
-    "Loxodon.Framework",
-    "Loxodon.Framework.Editor"
-  ],
-  "includePlatforms": ["Editor"]
+    "App",
+    "Infrastructure",
+    "Loxodon.Framework"
+  ]
 }

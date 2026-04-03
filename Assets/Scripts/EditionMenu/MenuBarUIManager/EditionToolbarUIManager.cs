@@ -3,10 +3,6 @@ using UnityEngine.UIElements;
 using Fab.UITKDropdown;
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using Edition.Systems;
-using Edition.IO;
-using Edition.Models;
-using Edition.Persistence;
 using System.IO;
 // ADDED: bring in the prototype namespaces
 using VTT;
@@ -18,7 +14,6 @@ public class EditionToolbarUIManager : MonoBehaviour, IUIManager
     private VisualElement root;
     private VisualElement managedUI;
     private const string UIName = "Toolbar";
-    private HexPlacementSystem placementSystem;
 
     private Dropdown dropdown;
 
@@ -28,9 +23,6 @@ public class EditionToolbarUIManager : MonoBehaviour, IUIManager
     private DropdownMenu toolsMenu;
 
     private List<IUIManager> toggleableUIs = new List<IUIManager>();
-    private IMapSerializer _serializer;
-    private IFileDialogService _dialog;
-    private GltfImporter _gltfImporter;
 
     string IUIManager.Name => UIName;
 
@@ -42,28 +34,9 @@ public class EditionToolbarUIManager : MonoBehaviour, IUIManager
         transform.position = Vector3.one;
     }
 
-    public void SetPlacementSystem(HexPlacementSystem system)
-    {
-        placementSystem = system;
-    }
-
     public void AddToggleableUI(IUIManager element)
     {
         toggleableUIs.Add(element);
-    }
-
-    private void Awake()
-    {
-        _serializer   = new JsonMapSerializer();
-        _gltfImporter = new GltfImporter();
-
-#if UNITY_EDITOR
-        _dialog = new EditorFileDialogService();
-#elif USE_SFB
-        _dialog = new SFBFileDialogService();
-#else
-        _dialog = new FallbackFileDialogService();
-#endif
     }
 
     private void Start()
@@ -71,8 +44,8 @@ public class EditionToolbarUIManager : MonoBehaviour, IUIManager
         dropdown = new Dropdown(root);
 
         fileMenu = new DropdownMenu();
-        fileMenu.AppendAction("Save",              OnSaveClicked);
-        fileMenu.AppendAction("Import Map",        OnLoadClicked);
+        fileMenu.AppendAction("Save", null);
+        fileMenu.AppendAction("Import Map", null);
         fileMenu.AppendAction("Import Asset",      OnImportAssetClicked);
         fileMenu.AppendAction("Open/Rules",        null);
         fileMenu.AppendAction("Open/Sheets",       null);
@@ -107,86 +80,6 @@ public class EditionToolbarUIManager : MonoBehaviour, IUIManager
     {
         for (int i = 0; i < toggleableUIs.Count; i++)
             viewMenu.AppendAction(toggleableUIs[i].Name, toggleableUIs[i].ToggleUI);
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    // ADDED: Map saving/loading
-    private void OnSaveClicked(DropdownMenuAction action)
-    {
-        // Prototype map system (DecorObjects + terrain + grid shader)
-        var msl = MapSaveLoad.Instance;
-        if (msl != null)
-        {
-            msl.SaveWithDialog();
-            return;          // MapSaveLoad opens its own dialog
-        }
-
-        // Fallback: old hex-tile serializer
-        if (placementSystem == null)
-        {
-            Debug.LogError("EditionToolbarUIManager: PlacementSystem is not assigned.");
-            return;
-        }
-
-        var markers = Object.FindObjectsByType<PlacedTile>(
-            FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-        var data = new MapDataDTO();
-
-        foreach (var m in markers)
-        {
-            data.tiles.Add(new PlacedTileDTO
-            {
-                prefabIndex = Mathf.Clamp(m.prefabIndex, 0, placementSystem.PrefabCount - 1),
-                x = m.cell.x, y = m.cell.y, z = m.cell.z,
-                yRotation = m.yRotation
-            });
-        }
-
-        var path = _dialog.SaveFile("Save Map As", "map.json", "json");
-        if (string.IsNullOrEmpty(path)) { Debug.Log("Save cancelled."); return; }
-
-        File.WriteAllText(path, _serializer.Serialize(data, true));
-        Debug.Log($"Saved {data.tiles.Count} tiles to {path}");
-    }
-
-    // ── File → Import Map ─────────────────────────────────────────────────────
-    private void OnLoadClicked(DropdownMenuAction action)
-    {
-        // Prototype map system
-        var msl = MapSaveLoad.Instance;
-        if (msl != null)
-        {
-            msl.LoadWithDialog();
-            return;
-        }
-
-        // Fallback
-        if (placementSystem == null)
-        {
-            Debug.LogError("EditionToolbarUIManager: PlacementSystem is not assigned.");
-            return;
-        }
-        if (!placementSystem.HasGrid)
-        {
-            Debug.LogError("EditionToolbarUIManager: Grid not set on PlacementSystem.");
-            return;
-        }
-        if (placementSystem.PrefabCount <= 0)
-        {
-            Debug.LogError("EditionToolbarUIManager: No prefabs set on PlacementSystem.");
-            return;
-        }
-
-        var path = _dialog.OpenFile("Open Map", "json");
-        if (string.IsNullOrEmpty(path)) { Debug.Log("Load cancelled."); return; }
-        if (!File.Exists(path))         { Debug.LogError($"File not found: {path}"); return; }
-
-        var data = _serializer.Deserialize(File.ReadAllText(path));
-        if (data?.tiles == null)        { Debug.LogWarning("Load failed: invalid JSON."); return; }
-
-        placementSystem.ClearAll();
-        placementSystem.RebuildFrom(data);
-        Debug.Log($"Loaded {data.tiles.Count} tiles from {path}");
     }
 
     // ── File → Import Asset ───────────────────────────────────────────────────

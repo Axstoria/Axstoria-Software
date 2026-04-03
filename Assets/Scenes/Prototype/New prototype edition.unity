@@ -179,7 +179,7 @@ MonoBehaviour:
   gizmoLayer: 30
   selectLayer:
     serializedVersion: 2
-    m_Bits: 384
+    m_Bits: 128
   screenSizeScale: 0.14
   shaftRadius: 0.04
   arrowTipH: 0.26
@@ -349,7 +349,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LayoutUIManager
   uiDoc: {fileID: 776260624}
-  placementSystem: {fileID: 0}
 --- !u!1 &776260623
 GameObject:
   m_ObjectHideFlags: 0
@@ -1120,6 +1119,8 @@ MonoBehaviour:
   - name: Prefabs
     prefabs:
     - {fileID: 5679900585067106708, guid: 69b13ea45f4482946b3e8e6aaea5bb7d, type: 3}
+    - {fileID: 155126, guid: 768db4196158480498ebf16d0efaf8e2, type: 3}
+    - {fileID: 142096, guid: 99845cf08fe12824d8a3530f5a4455e4, type: 3}
   previewLayer: 31
   panelWidth: 280
   minPanelWidth: 200
