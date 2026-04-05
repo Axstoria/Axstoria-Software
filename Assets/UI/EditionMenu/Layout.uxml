@@ -5,7 +5,16 @@
     <Style src="BottomPanel/BottomPanel.uss"/>
     <Style src="Tooltip.uss"/>
     <engine:VisualElement name="tools-bar" class="tools-bar">
-        <engine:Button name="btn-layers" class="tool-btn tool-btn--layers" tooltip="Layers"/>
+        <engine:VisualElement name="layers-tool-wrapper" class="layers-tool-wrapper">
+            <engine:Button name="btn-layers" class="tool-btn tool-btn--layers" tooltip="All Layers"/>
+            <engine:VisualElement name="layers-flyout" class="layers-flyout">
+                <engine:Button name="btn-flyout-all-layers" class="tool-btn tool-btn--layers" tooltip="All Layers"/>
+                <engine:Button name="btn-flyout-terrain" class="tool-btn tool-btn--terrain" tooltip="Terrain"/>
+                <engine:Button name="btn-flyout-buildings" class="tool-btn tool-btn--buildings" tooltip="Buildings"/>
+                <engine:Button name="btn-flyout-objects" class="tool-btn tool-btn--objects" tooltip="Objects"/>
+                <engine:Button name="btn-flyout-pawns" class="tool-btn tool-btn--pawns" tooltip="Pawns"/>
+            </engine:VisualElement>
+        </engine:VisualElement>
         <engine:VisualElement name="move-tool-wrapper" class="move-tool-wrapper">
             <engine:Button name="btn-move" class="tool-btn tool-btn--move tool-btn--selected" tooltip="Move"/>
             <engine:VisualElement name="move-flyout" class="move-flyout">

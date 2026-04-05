@@ -66,6 +66,52 @@
     background-image: url("scale.png");
 }
 
+.tool-btn--terrain {
+    background-image: url("terrain.png");
+}
+
+.tool-btn--buildings {
+    background-image: url("buildings.png");
+}
+
+.tool-btn--objects {
+    background-image: url("objects.png");
+}
+
+.tool-btn--pawns {
+    background-image: url("pawns.png");
+}
+
+.layers-tool-wrapper {
+    flex-direction: row;
+    overflow: visible;
+}
+
+.layers-flyout {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    left: 40px;
+    top: 0;
+    background-color: rgb(192, 192, 192);
+    border-width: 1px;
+    border-color: rgb(120, 120, 120);
+    border-radius: 3px;
+    padding: 1px;
+}
+
+.layers-flyout .tool-btn {
+    width: 30px;
+    height: 30px;
+    padding: 4px;
+    margin: 1px 0;
+    border-radius: 3px;
+}
+
+.layers-flyout--visible {
+    display: flex;
+}
+
 .move-tool-wrapper {
     flex-direction: row;
     overflow: visible;

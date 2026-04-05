@@ -41,7 +41,12 @@ public class LayoutUIManager : MonoBehaviour
 
         this.AddComponent<ViewSwitcherController>().Init(root);
         this.AddComponent<ToolsBarController>().Init(root);
-        this.AddComponent<MoveFlyoutController>().Init(root);
+        var moveFlyout = this.AddComponent<MoveFlyoutController>();
+        var layersFlyout = this.AddComponent<LayersFlyoutController>();
+        moveFlyout.Init(root);
+        layersFlyout.Init(root);
+        moveFlyout.OnFlyoutOpened = () => layersFlyout.HideImmediately();
+        layersFlyout.OnFlyoutOpened = () => moveFlyout.HideImmediately();
         GetComponentInChildren<BottomPanelController>().Init(root);
         this.AddComponent<TooltipController>().Init(root);
     }

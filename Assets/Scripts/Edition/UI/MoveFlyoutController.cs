@@ -36,10 +36,19 @@ public class MoveFlyoutController : MonoBehaviour
         _btnMove.AddToClassList(SelectedClass);
     }
 
+    public System.Action OnFlyoutOpened;
+
     private void ShowFlyout()
     {
         CancelHide();
+        OnFlyoutOpened?.Invoke();
         _flyout.AddToClassList(FlyoutVisibleClass);
+    }
+
+    public void HideImmediately()
+    {
+        CancelHide();
+        _flyout.RemoveFromClassList(FlyoutVisibleClass);
     }
 
     private void ScheduleHideFlyout()
