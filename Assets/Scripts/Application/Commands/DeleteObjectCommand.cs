@@ -31,7 +31,8 @@ namespace App.Commands
         public void Undo()
         {
             _map.AddObject(_obj);
-            _grid.PlaceOccupant(_obj.Id, _footprint, _origin);
+            if (_footprint != null)
+                _grid.PlaceOccupant(_obj.Id, _footprint, _origin);
         }
 
         public void Redo() => Execute();

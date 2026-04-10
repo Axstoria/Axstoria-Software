@@ -17,6 +17,12 @@ namespace Controler.Editor.Views
             _vm = Context.GetApplicationContext()
                          .GetContainer()
                          .Resolve<MapEditorViewModel>();
+
+            if (_vm == null)
+            {
+                Debug.LogError("[CommandHistoryInputView] MapEditorViewModel not found.");
+                enabled = false;
+            }
         }
 
         private void Update()
@@ -24,7 +30,7 @@ namespace Controler.Editor.Views
             bool ctrl  = Input.GetKey(KeyCode.LeftControl)  || Input.GetKey(KeyCode.RightControl);
             bool shift = Input.GetKey(KeyCode.LeftShift)    || Input.GetKey(KeyCode.RightShift);
 
-            if (ctrl && !shift && Input.GetKeyDown(KeyCode.Z))                               _vm.Undo();
+            if (ctrl && !shift && Input.GetKeyDown(KeyCode.Z))                                _vm.Undo();
             if (ctrl && (Input.GetKeyDown(KeyCode.Y) || shift && Input.GetKeyDown(KeyCode.Z))) _vm.Redo();
         }
     }

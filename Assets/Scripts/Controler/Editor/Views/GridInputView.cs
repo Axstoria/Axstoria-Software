@@ -32,6 +32,13 @@ namespace Controler.Editor.Views
                          .GetContainer()
                          .Resolve<MapEditorViewModel>();
 
+            if (_vm == null)
+            {
+                Debug.LogError("[GridInputView] MapEditorViewModel not found.");
+                enabled = false;
+                return;
+            }
+
             if (gridCamera == null) gridCamera = Camera.main;
         }
 
@@ -46,8 +53,7 @@ namespace Controler.Editor.Views
                 return;
             }
 
-            if (!Physics.Raycast(gridCamera.ScreenPointToRay(Input.mousePosition),
-                                 out RaycastHit hit, Mathf.Infinity, terrainLayer))
+            if (!Physics.Raycast(gridCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, terrainLayer))
             {
                 if (_lastHovered != null) { _lastHovered = null; OnCellHovered?.Invoke(null); }
                 return;

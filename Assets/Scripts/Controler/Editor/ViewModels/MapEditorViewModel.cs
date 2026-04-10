@@ -16,8 +16,9 @@ namespace Controler.Editor.ViewModels
 
         // ── Sub-ViewModels ────────────────────────────────────────────────────
 
-        public MapViewModel Map  { get; }
-        public Grid         Grid => Map.Terrain?.Model?.Grid;
+        public MapViewModel    Map    { get; }
+        public CameraViewModel Camera { get; }
+        public Grid            Grid   => Map.Terrain?.Model?.Grid;
 
         // ── Observable state ──────────────────────────────────────────────────
 
@@ -41,19 +42,21 @@ namespace Controler.Editor.ViewModels
         // ── Constructor ───────────────────────────────────────────────────────
 
         public MapEditorViewModel(
-            Domain.Map          map,
-            CommandHistory      history,
-            PlaceObjectUseCase  placeObject,
-            DeleteObjectUseCase deleteObject,
+            Domain.Map             map,
+            CameraState            cameraState,
+            CommandHistory         history,
+            PlaceObjectUseCase     placeObject,
+            DeleteObjectUseCase    deleteObject,
             TransformObjectUseCase transformObject,
             GenerateTerrainUseCase generateTerrain,
-            SaveMapUseCase      saveMap,
-            LoadMapUseCase      loadMap,
-            ImportAssetUseCase  importAsset)
+            SaveMapUseCase         saveMap,
+            LoadMapUseCase         loadMap,
+            ImportAssetUseCase     importAsset)
         {
             _history = history;
 
             Map             = new MapViewModel(map);
+            Camera          = new CameraViewModel(cameraState);
             PlaceObject     = placeObject;
             DeleteObject    = deleteObject;
             TransformObject = transformObject;
@@ -70,6 +73,12 @@ namespace Controler.Editor.ViewModels
 
         public void Undo() => _history.Undo();
         public void Redo() => _history.Redo();
+
+        public void Dispose()
+        {
+            _history.OnHistoryChanged -= SyncHistoryState;
+            Map.Dispose();
+        }
 
         // ── Registration ──────────────────────────────────────────────────────
 

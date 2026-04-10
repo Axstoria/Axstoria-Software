@@ -1,3 +1,4 @@
+using System;
 using Domain.Math;
 
 namespace Domain
@@ -13,8 +14,16 @@ namespace Domain
     {
         public string         Id        { get; set; }
         public string         ModelPath { get; set; }
-        public TransformModel Transform { get; set; }
         public string         PresetId  { get; set; }
         public virtual string Layer     { get; set; }
+
+        private TransformModel _transform;
+        public TransformModel Transform
+        {
+            get => _transform;
+            set { _transform = value; OnTransformChanged?.Invoke(this, EventArgs.Empty); }
+        }
+
+        public event EventHandler OnTransformChanged;
     }
 }

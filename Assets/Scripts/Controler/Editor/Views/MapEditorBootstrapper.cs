@@ -25,6 +25,13 @@ namespace Controler.Editor.Views
         [SerializeField] private int    mapDepth   = 20;
         [SerializeField] private int    mapThickness = 3;
 
+        private MapEditorViewModel _vm; // not readonly — assigned in Awake, not constructor
+
+        private void OnDestroy()
+        {
+            _vm?.Dispose();
+        }
+
         private void Awake()
         {
             // ── Domain ────────────────────────────────────────────────────────
@@ -47,7 +54,16 @@ namespace Controler.Editor.Views
                 TerrainLayout = terrain
             };
 
-            var history = new CommandHistory();
+            var history     = new CommandHistory();
+            var cameraState = new CameraState
+            {
+                InitialPivotX    = 10f,
+                InitialPivotY    = 0f,
+                InitialPivotZ    = -5f,
+                InitialYaw      = 50f,
+                InitialPitch    = 50f,
+                InitialDistance = 20f
+            };
 
             // ── Infrastructure ────────────────────────────────────────────────
             IMapSerializer     serializer = new JsonMapSerializer();
@@ -57,18 +73,18 @@ namespace Controler.Editor.Views
             var placeObject     = new PlaceObjectUseCase(map, grid, history);
             var deleteObject    = new DeleteObjectUseCase(map, grid, history);
             var transformObject = new TransformObjectUseCase(history);
-            var generateTerrain = new GenerateTerrainUseCase(history);
+            var generateTerrain = new GenerateTerrainUseCase(history, grid, map);
             var saveMap         = new SaveMapUseCase(serializer, dialog);
             var loadMap         = new LoadMapUseCase(serializer, dialog);
-            var importAsset     = new ImportAssetUseCase(map, dialog);
+            var importAsset     = new ImportAssetUseCase(map, history, dialog);
 
             // ── ViewModel ─────────────────────────────────────────────────────
-            var vm = new MapEditorViewModel(
-                map, history,
+            _vm = new MapEditorViewModel(
+                map, cameraState, history,
                 placeObject, deleteObject, transformObject, generateTerrain,
                 saveMap, loadMap, importAsset);
 
-            vm.Register();
+            _vm.Register();
         }
     }
 }

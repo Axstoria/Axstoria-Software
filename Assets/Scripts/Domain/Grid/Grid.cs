@@ -89,6 +89,28 @@ namespace Domain
             return false;
         }
 
+        public void ClearAllOccupants()
+        {
+            foreach (var id in new List<string>(_placements.Keys))
+                RemoveOccupant(id);
+        }
+
+        /// <summary>
+        /// Reconstructs 1×1 grid occupancy from each object's world position.
+        /// Call this after terrain resize or map load so the grid stays in sync.
+        /// </summary>
+        public void RebuildOccupancy(IEnumerable<SceneObject> objects)
+        {
+            ClearAllOccupants();
+            var singleCell = new List<GridCoord> { GridCoord.Zero };
+            foreach (var obj in objects)
+            {
+                if (obj.Transform == null) continue;
+                var (gx, gz) = WorldToGrid(obj.Transform.Position.x, obj.Transform.Position.z);
+                PlaceOccupant(obj.Id, singleCell, new GridCoord(gx, gz));
+            }
+        }
+
         // ── Neighbours (A*) ───────────────────────────────────────────────────
 
         public List<GridCell> GetNeighbours(GridCell cell, bool allowDiagonals = true)

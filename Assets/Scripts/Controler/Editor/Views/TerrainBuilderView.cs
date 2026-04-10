@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Controler.Editor.ViewModels;
 using Loxodon.Framework.Contexts;
@@ -18,25 +19,47 @@ namespace Controler.Editor.Views
         [SerializeField] private float     tableThickness = 1f;
         [SerializeField] private float     tablePadding   = 0.1f;
 
-        private MapEditorViewModel    _vm;
+        private MapEditorViewModel     _vm;
         private TerrainLayoutViewModel _terrain;
-        private Mesh                  _mesh;
+        private Mesh                   _mesh;
+        private EventHandler           _onTerrainChanged;
 
         private void Start()
         {
-            _vm      = Context.GetApplicationContext()
-                              .GetContainer()
-                              .Resolve<MapEditorViewModel>();
-            _terrain = _vm.Map.Terrain;
+            _vm = Context.GetApplicationContext()
+                         .GetContainer()
+                         .Resolve<MapEditorViewModel>();
 
+            if (_vm == null)
+            {
+                Debug.LogError("[TerrainBuilderView] MapEditorViewModel not found.");
+                enabled = false;
+                return;
+            }
+
+            _terrain = _vm.Map.Terrain;
             if (_terrain == null) return;
 
-            _terrain.Width.ValueChanged     += (_, __) => Rebuild();
-            _terrain.Depth.ValueChanged     += (_, __) => Rebuild();
-            _terrain.Thickness.ValueChanged += (_, __) => Rebuild();
-            _terrain.Height.ValueChanged    += (_, __) => Rebuild();
+            _onTerrainChanged = (_, __) => Rebuild();
+            _terrain.Width.ValueChanged     += _onTerrainChanged;
+            _terrain.Depth.ValueChanged     += _onTerrainChanged;
+            _terrain.Thickness.ValueChanged += _onTerrainChanged;
+            _terrain.Height.ValueChanged    += _onTerrainChanged;
 
             Rebuild();
+        }
+
+        private void OnDestroy()
+        {
+            if (_terrain != null && _onTerrainChanged != null)
+            {
+                _terrain.Width.ValueChanged     -= _onTerrainChanged;
+                _terrain.Depth.ValueChanged     -= _onTerrainChanged;
+                _terrain.Thickness.ValueChanged -= _onTerrainChanged;
+                _terrain.Height.ValueChanged    -= _onTerrainChanged;
+            }
+
+            if (_mesh != null) Destroy(_mesh);
         }
 
         private void Rebuild()
@@ -62,6 +85,7 @@ namespace Controler.Editor.Views
 
         private void GenerateMesh(int width, int depth, int thickness, float baseHeight, Color color)
         {
+            if (_mesh != null) Destroy(_mesh);
             _mesh      = new Mesh { name = "Terrain" };
             int gw     = width  + 1;
             int gd     = depth  + 1;
@@ -101,8 +125,11 @@ namespace Controler.Editor.Views
             _mesh.RecalculateNormals();
             _mesh.RecalculateBounds();
 
-            GetComponent<MeshFilter>().mesh         = _mesh;
-            GetComponent<MeshCollider>().sharedMesh = _mesh;
+            GetComponent<MeshFilter>().sharedMesh = _mesh;
+
+            var col = GetComponent<MeshCollider>();
+            col.sharedMesh = null;   // force physics re-cook
+            col.sharedMesh = _mesh;
         }
 
         private void UpdateTable(int width, int depth, int thickness, float baseHeight)

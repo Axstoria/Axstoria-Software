@@ -1,22 +1,26 @@
+using App.Commands;
 using App.Ports;
 using Domain;
 
 namespace App.UseCases
 {
     /// <summary>
-    /// Opens a file dialog for a glTF/GLB asset and registers it as a SceneObject on the Map.
+    /// Opens a file dialog for a glTF/GLB asset and registers it as a SceneObject on the Map
+    /// via the command history so the action is undoable.
     /// The View layer is responsible for the actual Unity GameObject instantiation by observing
     /// Map.Objects for new entries where IsImported == true.
     /// </summary>
     public class ImportAssetUseCase
     {
-        private readonly Map _map;
+        private readonly Map            _map;
+        private readonly CommandHistory _history;
         private readonly IFileDialogService _dialog;
 
-        public ImportAssetUseCase(Map map, IFileDialogService dialog)
+        public ImportAssetUseCase(Map map, CommandHistory history, IFileDialogService dialog)
         {
-            _map    = map;
-            _dialog = dialog;
+            _map     = map;
+            _history = history;
+            _dialog  = dialog;
         }
 
         public SceneObject Execute(string category = "Imported")
@@ -33,7 +37,7 @@ namespace App.UseCases
                 ImportPath  = path
             };
 
-            _map.AddObject(obj);
+            _history.Record(new AddObjectCommand(_map, obj));
             return obj;
         }
     }

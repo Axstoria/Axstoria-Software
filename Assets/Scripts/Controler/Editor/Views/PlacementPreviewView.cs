@@ -1,3 +1,4 @@
+using System; 
 using System.Collections.Generic;
 using Controler.Editor.ViewModels;
 using Domain;
@@ -20,6 +21,9 @@ namespace Controler.Editor.Views
         private MapEditorViewModel _vm;
         private GameObject         _previewInstance;
         private SceneObject        _pendingObject;
+        private List<GridCoord>    _cachedFootprint;
+        private Renderer[]         _cachedRenderers;
+        private EventHandler       _onPlacementModeChanged;
 
         private void Start()
         {
@@ -27,10 +31,24 @@ namespace Controler.Editor.Views
                          .GetContainer()
                          .Resolve<MapEditorViewModel>();
 
-            _vm.IsPlacementMode.ValueChanged += (_, __) =>
+            if (_vm == null)
             {
-                if (!_vm.IsPlacementMode.Value) CancelPreview();
-            };
+                Debug.LogError("[PlacementPreviewView] MapEditorViewModel not found.");
+                enabled = false;
+                return;
+            }
+
+            _onPlacementModeChanged = (_, __) => { if (!_vm.IsPlacementMode.Value) CancelPreview(); };
+            _vm.IsPlacementMode.ValueChanged += _onPlacementModeChanged;
+        }
+
+        private void OnDestroy()
+        {
+            if (_vm != null)
+                _vm.IsPlacementMode.ValueChanged -= _onPlacementModeChanged;
+
+            if (_previewInstance != null)
+                Destroy(_previewInstance);
         }
 
         // Called by UI when user selects an object to place
@@ -39,6 +57,8 @@ namespace Controler.Editor.Views
             CancelPreview();
             _pendingObject   = domainObject;
             _previewInstance = Instantiate(prefab);
+            _cachedRenderers = _previewInstance.GetComponentsInChildren<Renderer>();
+            _cachedFootprint = ComputeFootprint();
             SetPreviewMaterial(invalidMaterial);
             _vm.IsPlacementMode.Value = true;
         }
@@ -48,10 +68,9 @@ namespace Controler.Editor.Views
         {
             if (_previewInstance == null || cell == null) return;
 
-            var footprint                = ComputeFootprint(_previewInstance);
-            var origin                   = new GridCoord(cell.X, cell.Z);
-            var canPlace                 = _vm.PlaceObject.CanPlace(footprint, origin);
-            var (wx, wy, wz)             = _vm.Grid.GridToWorld(cell.X, cell.Z);
+            var origin       = new GridCoord(cell.X, cell.Z);
+            var canPlace     = _vm.PlaceObject.CanPlace(_cachedFootprint, origin);
+            var (wx, wy, wz) = _vm.Grid.GridToWorld(cell.X, cell.Z);
             _previewInstance.transform.position = new Vector3(wx, wy, wz);
             SetPreviewMaterial(canPlace ? validMaterial : invalidMaterial);
         }
@@ -61,30 +80,29 @@ namespace Controler.Editor.Views
         {
             if (_previewInstance == null || _pendingObject == null || cell == null) return;
 
-            var origin    = new GridCoord(cell.X, cell.Z);
-            var footprint = ComputeFootprint(_previewInstance);
-
-            _vm.PlaceObject.Execute(_pendingObject, origin, footprint);
+            _vm.PlaceObject.Execute(_pendingObject, new GridCoord(cell.X, cell.Z), _cachedFootprint);
             CancelPreview();
         }
 
         private void CancelPreview()
         {
             if (_previewInstance != null) Destroy(_previewInstance);
-            _previewInstance          = null;
-            _pendingObject            = null;
-            _vm.IsPlacementMode.Value = false;
+            _previewInstance = null;
+            _pendingObject   = null;
+            _cachedFootprint = null;
+            _cachedRenderers = null;
+            if (_vm != null) _vm.IsPlacementMode.Value = false;
         }
 
-        // Computes grid footprint from the preview object's renderer bounds
-        private List<GridCoord> ComputeFootprint(GameObject obj)
+        // Computes grid footprint from the cached renderers' bounds — call once on BeginPlacement
+        private List<GridCoord> ComputeFootprint()
         {
             float cellSize = _vm.Grid?.CellSize ?? 1f;
-            var renderers  = obj.GetComponentsInChildren<Renderer>();
-            if (renderers.Length == 0) return new List<GridCoord> { GridCoord.Zero };
+            if (_cachedRenderers == null || _cachedRenderers.Length == 0)
+                return new List<GridCoord> { GridCoord.Zero };
 
-            var bounds = renderers[0].bounds;
-            for (int i = 1; i < renderers.Length; i++) bounds.Encapsulate(renderers[i].bounds);
+            var bounds = _cachedRenderers[0].bounds;
+            for (int i = 1; i < _cachedRenderers.Length; i++) bounds.Encapsulate(_cachedRenderers[i].bounds);
 
             int cellsX = Mathf.Max(1, Mathf.RoundToInt(bounds.size.x / cellSize));
             int cellsZ = Mathf.Max(1, Mathf.RoundToInt(bounds.size.z / cellSize));
@@ -101,8 +119,8 @@ namespace Controler.Editor.Views
 
         private void SetPreviewMaterial(Material mat)
         {
-            if (mat == null || _previewInstance == null) return;
-            foreach (var r in _previewInstance.GetComponentsInChildren<Renderer>())
+            if (mat == null || _cachedRenderers == null) return;
+            foreach (var r in _cachedRenderers)
                 r.material = mat;
         }
     }

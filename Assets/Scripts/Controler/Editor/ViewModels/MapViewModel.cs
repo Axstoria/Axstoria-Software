@@ -1,3 +1,4 @@
+using System;
 using Domain;
 using Loxodon.Framework.Observables;
 
@@ -13,6 +14,9 @@ namespace Controler.Editor.ViewModels
         public ObservableList<ObjectViewModel>    Objects    { get; } = new();
 
         public TerrainLayoutViewModel Terrain { get; private set; }
+
+        private readonly Action<SceneObject> _onObjectAdded;
+        private readonly Action<SceneObject> _onObjectRemoved;
 
         public MapViewModel(Map map)
         {
@@ -30,14 +34,20 @@ namespace Controler.Editor.ViewModels
             if (_map.TerrainLayout != null)
                 Terrain = new TerrainLayoutViewModel(_map.TerrainLayout);
 
-            _map.OnObjectAdded   += obj => Objects.Add(new ObjectViewModel(obj));
-            _map.OnObjectRemoved += obj =>
+            _onObjectAdded   = obj => Objects.Add(new ObjectViewModel(obj));
+            _onObjectRemoved = obj =>
             {
                 for (int i = 0; i < Objects.Count; i++)
-                {
                     if (Objects[i].Model == obj) { Objects.RemoveAt(i); return; }
-                }
             };
+            _map.OnObjectAdded   += _onObjectAdded;
+            _map.OnObjectRemoved += _onObjectRemoved;
+        }
+
+        public void Dispose()
+        {
+            _map.OnObjectAdded   -= _onObjectAdded;
+            _map.OnObjectRemoved -= _onObjectRemoved;
         }
     }
 }

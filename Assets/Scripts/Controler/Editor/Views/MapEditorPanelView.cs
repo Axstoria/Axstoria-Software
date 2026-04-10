@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using Controler.Editor.ViewModels;
 using Domain;
 using Loxodon.Framework.Contexts;
@@ -31,6 +32,16 @@ namespace Controler.Editor.Views
         private MapEditorViewModel _vm;
         private VisualElement      _root;
 
+        // Stored handlers for clean unsubscription in OnDestroy
+        private EventHandler                        _onCanUndoChanged;
+        private EventHandler                        _onCanRedoChanged;
+        private NotifyCollectionChangedEventHandler _onObjectsChanged;
+        private TerrainLayoutViewModel              _subscribedTerrain;
+        private EventHandler                        _onWidthChanged;
+        private EventHandler                        _onDepthChanged;
+        private EventHandler                        _onThicknessChanged;
+        private EventHandler                        _onHeightChanged;
+
         private void Start()
         {
             _vm = Context.GetApplicationContext().GetContainer().Resolve<MapEditorViewModel>();
@@ -50,9 +61,28 @@ namespace Controler.Editor.Views
             BindPrefabs();
             BindOutliner();
 
-            _vm.CanUndo.ValueChanged += (_, __) => UpdateUndoRedo();
-            _vm.CanRedo.ValueChanged += (_, __) => UpdateUndoRedo();
-            _vm.Map.Objects.CollectionChanged += (_, __) => RefreshOutliner();
+            _onCanUndoChanged = (_, __) => UpdateUndoRedo();
+            _onCanRedoChanged = (_, __) => UpdateUndoRedo();
+            _onObjectsChanged = (_, __) => RefreshOutliner();
+            _vm.CanUndo.ValueChanged          += _onCanUndoChanged;
+            _vm.CanRedo.ValueChanged          += _onCanRedoChanged;
+            _vm.Map.Objects.CollectionChanged += _onObjectsChanged;
+        }
+
+        private void OnDestroy()
+        {
+            if (_vm == null) return;
+            _vm.CanUndo.ValueChanged          -= _onCanUndoChanged;
+            _vm.CanRedo.ValueChanged          -= _onCanRedoChanged;
+            _vm.Map.Objects.CollectionChanged -= _onObjectsChanged;
+
+            if (_subscribedTerrain != null)
+            {
+                _subscribedTerrain.Width.ValueChanged     -= _onWidthChanged;
+                _subscribedTerrain.Depth.ValueChanged     -= _onDepthChanged;
+                _subscribedTerrain.Thickness.ValueChanged -= _onThicknessChanged;
+                _subscribedTerrain.Height.ValueChanged    -= _onHeightChanged;
+            }
         }
 
         // ── Header ────────────────────────────────────────────────────────────
@@ -93,10 +123,15 @@ namespace Controler.Editor.Views
             if (heightField    != null) heightField.value    = terrain.Height.Value;
 
             // Sync incoming ViewModel changes to fields (e.g. from undo)
-            terrain.Width.ValueChanged     += (_, __) => widthField?.SetValueWithoutNotify(terrain.Width.Value);
-            terrain.Depth.ValueChanged     += (_, __) => depthField?.SetValueWithoutNotify(terrain.Depth.Value);
-            terrain.Thickness.ValueChanged += (_, __) => thicknessField?.SetValueWithoutNotify(terrain.Thickness.Value);
-            terrain.Height.ValueChanged    += (_, __) => heightField?.SetValueWithoutNotify(terrain.Height.Value);
+            _subscribedTerrain  = terrain;
+            _onWidthChanged     = (_, __) => widthField?.SetValueWithoutNotify(terrain.Width.Value);
+            _onDepthChanged     = (_, __) => depthField?.SetValueWithoutNotify(terrain.Depth.Value);
+            _onThicknessChanged = (_, __) => thicknessField?.SetValueWithoutNotify(terrain.Thickness.Value);
+            _onHeightChanged    = (_, __) => heightField?.SetValueWithoutNotify(terrain.Height.Value);
+            terrain.Width.ValueChanged     += _onWidthChanged;
+            terrain.Depth.ValueChanged     += _onDepthChanged;
+            terrain.Thickness.ValueChanged += _onThicknessChanged;
+            terrain.Height.ValueChanged    += _onHeightChanged;
 
             _root.Q<Button>("save-map-btn")?.RegisterCallback<ClickEvent>(_ =>
                 _vm.SaveMap.Execute(_vm.Map.Model));

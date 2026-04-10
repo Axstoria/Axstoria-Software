@@ -26,6 +26,13 @@ namespace Controler.Editor.Views
                          .GetContainer()
                          .Resolve<MapEditorViewModel>();
 
+            if (_vm == null)
+            {
+                Debug.LogError("[GridHighlighterView] MapEditorViewModel not found.");
+                enabled = false;
+                return;
+            }
+
             if (highlightQuad != null)
             {
                 var rend = highlightQuad.GetComponent<Renderer>();

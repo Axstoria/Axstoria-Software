@@ -48,8 +48,9 @@ namespace Infrastructure.Persistence
                 TerrainLayout = TerrainFromDTO(dto.terrain)
             };
 
-            foreach (var objDTO in dto.objects)
-                map.Objects.Add(ObjectFromDTO(objDTO));
+            if (dto.objects != null)
+                foreach (var objDTO in dto.objects)
+                    map.Objects.Add(ObjectFromDTO(objDTO));
 
             return map;
         }
