@@ -4,6 +4,9 @@ using Domain;
 
 namespace App.UseCases
 {
+    /// <summary>
+    /// Use case for placing a new SceneObject on the map at a specific location.
+    /// </summary>
     public class PlaceObjectUseCase
     {
         private readonly Map _map;

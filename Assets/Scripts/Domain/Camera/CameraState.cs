@@ -1,7 +1,7 @@
 namespace Domain
 {
     /// <summary>
-    /// Tunable settings for the editor camera. Pure data — no Unity dependency.
+    /// Tunable settings for the editor camera.
     /// </summary>
     public class CameraSettings
     {
@@ -23,9 +23,7 @@ namespace Domain
     }
 
     /// <summary>
-    /// The target state the camera is interpolating toward.
-    /// The View owns the smoothed current state; this is what the user
-    /// and the UI manipulate. Pure domain data — no Unity dependency.
+    /// Camere state current target values and initial values for reset.
     /// </summary>
     public class CameraState
     {

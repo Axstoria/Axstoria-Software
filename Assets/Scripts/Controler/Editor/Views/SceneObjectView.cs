@@ -6,8 +6,6 @@ namespace Controler.Editor.Views
 {
     /// <summary>
     /// Link component placed on every spawned GameObject.
-    /// Holds the domain SceneObject reference and keeps the Unity Transform
-    /// in sync with it — so undo/redo of transforms updates the visual immediately.
     /// </summary>
     public class SceneObjectView : MonoBehaviour
     {

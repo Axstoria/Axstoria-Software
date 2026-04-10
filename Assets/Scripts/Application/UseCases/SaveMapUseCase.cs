@@ -4,6 +4,9 @@ using Domain;
 
 namespace App.UseCases
 {
+    /// <summary>
+    /// Use case for saving the current map to a file.
+    /// </summary>
     public class SaveMapUseCase
     {
         private readonly IMapSerializer _serializer;

@@ -7,7 +7,6 @@ namespace Controler.Editor.Views
 {
     /// <summary>
     /// Moves a highlight quad to the hovered cell and tints it by cell state.
-    /// Subscribe OnCellHovered to GridInputView.OnCellHovered in the Inspector.
     /// </summary>
     public class GridHighlighterView : MonoBehaviour
     {

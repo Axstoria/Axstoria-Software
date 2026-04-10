@@ -4,6 +4,9 @@ using Loxodon.Framework.Observables;
 
 namespace Controler.Editor.ViewModels
 {
+    /// <summary>
+    /// Main ViewModel for the map editor scene.
+    /// </summary>
     public class MapViewModel : ObservableObject
     {
         private readonly Map _map;

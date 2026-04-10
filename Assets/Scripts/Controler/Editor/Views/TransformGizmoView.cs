@@ -8,14 +8,10 @@ using DomainQuat = Domain.Math.Quaternion;
 namespace Controler.Editor.Views
 {
     /// <summary>
-    /// Renders and handles a 3D transform gizmo for the selected object.
-    /// Uses GizmoRenderer (GL + DrawMeshNow) — no external library required.
-    /// On drag release records an undoable TransformObjectCommand via the ViewModel.
-    ///
-    /// W = Translate  |  E = Rotate  |  R = Scale  |  Q = Local/World  |  Del = Delete
-    ///
-    /// Call Select(go, sceneObject) to attach the gizmo to an object.
+    /// Gizmo for translating, rotating, and scaling the selected object.
+    /// Observes the selected SceneObject and displays handles around it.
     /// </summary>
+    /// NEEDS REWORK
     public class TransformGizmoView : MonoBehaviour
     {
         // ── Enums ─────────────────────────────────────────────────────────────

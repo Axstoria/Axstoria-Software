@@ -2,6 +2,9 @@ using Domain;
 
 namespace App.Commands
 {
+    /// <summary>
+    /// Command to transform a SceneObject by changing its position, rotation, or scale.
+    /// </summary>
     public class TransformObjectCommand : ICommand
     {
         public string Label { get; }

@@ -34,7 +34,7 @@ namespace Controler.Editor.ViewModels
             MinPitch.Value         = model.Settings.MinPitch;
             MaxPitch.Value         = model.Settings.MaxPitch;
 
-            // Write-back: UI changes propagate to domain
+            // Update model when observables change
             OrbitSensitivity.ValueChanged += (_, __) => model.Settings.OrbitSensitivity = OrbitSensitivity.Value;
             PanSensitivity.ValueChanged   += (_, __) => model.Settings.PanSensitivity   = PanSensitivity.Value;
             ZoomSpeed.ValueChanged        += (_, __) => model.Settings.ZoomSpeed        = ZoomSpeed.Value;

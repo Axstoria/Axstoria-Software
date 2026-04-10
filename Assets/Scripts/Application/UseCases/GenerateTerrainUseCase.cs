@@ -3,6 +3,9 @@ using Domain;
 
 namespace App.UseCases
 {
+    /// <summary>
+    /// Use case for generating terrain based on a specified layout and parameters.
+    /// </summary>
     public class GenerateTerrainUseCase
     {
         private readonly CommandHistory _history;

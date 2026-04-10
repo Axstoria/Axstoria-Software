@@ -7,8 +7,7 @@ using UnityEngine.EventSystems;
 namespace Controler.Editor.Views
 {
     /// <summary>
-    /// Orbit camera View. Reads input and writes to CameraState (Domain),
-    /// then applies the smoothed result to the Unity Transform each frame.
+    /// Orbit camera View.
     /// RMB = orbit  |  MMB = pan  |  Scroll = zoom  |  F = reset
     /// </summary>
     public class CameraView : MonoBehaviour

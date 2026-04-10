@@ -9,9 +9,6 @@ namespace Controler.Editor.Views
 {
     /// <summary>
     /// Unity-side adapter for Domain.Grid.
-    /// Wraps tuple-based coordinate methods into Unity Vector3 helpers,
-    /// and relays Grid.OnCellChanged as a UnityEvent for Inspector wiring.
-    /// Other Views should use these helpers instead of converting Domain tuples manually.
     /// </summary>
     public class GridManagerView : MonoBehaviour
     {
@@ -28,6 +25,7 @@ namespace Controler.Editor.Views
 
             if (_vm == null)
             {
+                // Debug logs
                 Debug.LogError("[GridManagerView] MapEditorViewModel not found.");
                 enabled = false;
                 return;

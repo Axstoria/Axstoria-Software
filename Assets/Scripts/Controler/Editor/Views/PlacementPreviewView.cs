@@ -8,10 +8,7 @@ using UnityEngine;
 namespace Controler.Editor.Views
 {
     /// <summary>
-    /// Manages the ghost preview object during placement mode.
-    /// Observes IsPlacementMode on the ViewModel and GridInputView hover events.
-    /// When the user clicks, computes the footprint from renderer bounds
-    /// and calls PlaceObjectUseCase — the only View that touches placement logic.
+    /// Manages the preview object during placement mode.
     /// </summary>
     public class PlacementPreviewView : MonoBehaviour
     {

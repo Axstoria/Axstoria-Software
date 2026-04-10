@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Domain
 {
+    /// <summary>
+    /// Represents a grid-based spatial system for managing occupancy and movement within the game world.
+    /// </summary>
     public class Grid
     {
         public float CellSize { get; set; }
@@ -96,9 +99,9 @@ namespace Domain
         }
 
         /// <summary>
-        /// Reconstructs 1×1 grid occupancy from each object's world position.
-        /// Call this after terrain resize or map load so the grid stays in sync.
+        /// Rebuilds the occupancy grid based on the current positions of scene objects. This is for when loading a map or after bulk changes to objects.
         /// </summary>
+        /// <param name="objects"></param>
         public void RebuildOccupancy(IEnumerable<SceneObject> objects)
         {
             ClearAllOccupants();

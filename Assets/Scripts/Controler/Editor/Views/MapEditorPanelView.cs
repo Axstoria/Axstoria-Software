@@ -17,8 +17,8 @@ namespace Controler.Editor.Views
     }
 
     /// <summary>
-    /// UI Toolkit panel view — mirrors VTTPanelUI but wired to the MVVM architecture.
-    /// Requires a UIDocument with SettingsPanel.uxml on the same GameObject.
+    /// UI Toolkit panel view for map editing.
+    /// (WIP on UI)
     /// </summary>
     [RequireComponent(typeof(UIDocument))]
     public class MapEditorPanelView : MonoBehaviour

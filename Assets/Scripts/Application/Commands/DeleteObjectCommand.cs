@@ -3,6 +3,9 @@ using Domain;
 
 namespace App.Commands
 {
+    /// <summary>
+    /// Command to delete an existing SceneObject from the map.
+    /// </summary>
     public class DeleteObjectCommand : ICommand
     {
         public string Label => $"Delete {_obj.DisplayName}";

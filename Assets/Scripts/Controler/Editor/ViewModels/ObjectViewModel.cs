@@ -3,6 +3,9 @@ using Loxodon.Framework.Observables;
 
 namespace Controler.Editor.ViewModels
 {
+    /// <summary>
+    /// ViewModel for SceneObjects in the map editor.
+    /// </summary>
     public class ObjectViewModel : SceneViewModel
     {
         private readonly SceneObject _object;
@@ -21,7 +24,7 @@ namespace Controler.Editor.ViewModels
             DisplayName.Value    = _object.DisplayName;
             Category.Value       = _object.Category;
             IsImported.Value     = _object.IsImported;
-
+            
             IsInteractable.ValueChanged += (_, __) => _object.IsInteractable = IsInteractable.Value;
             DisplayName.ValueChanged    += (_, __) => _object.DisplayName    = DisplayName.Value;
             Category.ValueChanged       += (_, __) => _object.Category       = Category.Value;

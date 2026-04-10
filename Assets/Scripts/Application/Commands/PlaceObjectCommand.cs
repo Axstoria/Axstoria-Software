@@ -3,6 +3,9 @@ using Domain;
 
 namespace App.Commands
 {
+    /// <summary>
+    /// Command to place a SceneObject on the map at a specific location with command.
+    /// </summary>
     public class PlaceObjectCommand : ICommand
     {
         public string Label => $"Place {_obj.DisplayName}";

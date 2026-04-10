@@ -4,6 +4,9 @@ using Domain;
 
 namespace App.UseCases
 {
+    /// <summary>
+    /// Use case for loading a map.
+    /// </summary>
     public class LoadMapUseCase
     {
         private readonly IMapSerializer _serializer;

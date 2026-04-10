@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Domain
 {
+    /// <summary>
+    /// Manages the history of executed commands, allowing for undo and redo functionality.
+    /// </summary>
     public class CommandHistory
     {
         private readonly Stack<ICommand> _undoStack = new();

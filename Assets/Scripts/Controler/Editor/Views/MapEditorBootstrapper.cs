@@ -12,9 +12,6 @@ namespace Controler.Editor.Views
 {
     /// <summary>
     /// Composition root for the map editor scene.
-    /// Creates and wires all Domain, Infrastructure, Application, and ViewModel objects,
-    /// then registers the MapEditorViewModel in the Loxodon context.
-    /// Must execute before all other Views — keep Script Execution Order above default.
     /// </summary>
     public class MapEditorBootstrapper : MonoBehaviour
     {

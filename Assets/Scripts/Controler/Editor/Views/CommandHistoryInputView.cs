@@ -5,8 +5,7 @@ using UnityEngine;
 namespace Controler.Editor.Views
 {
     /// <summary>
-    /// Intercepts Ctrl+Z / Ctrl+Y keyboard shortcuts and delegates to the ViewModel.
-    /// No logic lives here — just input forwarding.
+    /// Listens for commands inputs and calls the appropriate methods on the ViewModel.
     /// </summary>
     public class CommandHistoryInputView : MonoBehaviour
     {

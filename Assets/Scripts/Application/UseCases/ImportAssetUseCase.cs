@@ -5,10 +5,7 @@ using Domain;
 namespace App.UseCases
 {
     /// <summary>
-    /// Opens a file dialog for a glTF/GLB asset and registers it as a SceneObject on the Map
-    /// via the command history so the action is undoable.
-    /// The View layer is responsible for the actual Unity GameObject instantiation by observing
-    /// Map.Objects for new entries where IsImported == true.
+    /// Use case for importing a 3D asset into the map.
     /// </summary>
     public class ImportAssetUseCase
     {

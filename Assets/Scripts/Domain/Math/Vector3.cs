@@ -1,5 +1,8 @@
 ﻿namespace Domain.Math
 {
+    /// <summary>
+    /// Represents a three-dimensional vector with x, y, and z components, commonly used for positions, directions, and scales in 3D space.
+    /// </summary>
     public class Vector3
     {
         public readonly float x;

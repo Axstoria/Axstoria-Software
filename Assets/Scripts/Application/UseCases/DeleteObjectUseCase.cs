@@ -3,6 +3,9 @@ using Domain;
 
 namespace App.UseCases
 {
+    /// <summary>
+    /// Use case for deleting an existing SceneObject from the map.
+    /// </summary>
     public class DeleteObjectUseCase
     {
         private readonly Map _map;

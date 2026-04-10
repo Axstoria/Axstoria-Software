@@ -1,5 +1,8 @@
 ﻿namespace Domain.Math
 {
+    /// <summary>
+    /// Represents a quaternion for rotation in 3D space, defined by its x, y, z, and w components.
+    /// </summary>
     public class Quaternion
     {
         public readonly float x;

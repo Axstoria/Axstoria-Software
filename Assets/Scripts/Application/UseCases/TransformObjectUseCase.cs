@@ -3,6 +3,9 @@ using Domain;
 
 namespace App.UseCases
 {
+    /// <summary>
+    /// Use case for transforming a SceneObject by changing its position, rotation, or scale.
+    /// </summary>
     public class TransformObjectUseCase
     {
         private readonly CommandHistory _history;

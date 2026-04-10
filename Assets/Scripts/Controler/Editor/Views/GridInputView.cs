@@ -9,8 +9,7 @@ namespace Controler.Editor.Views
 {
     /// <summary>
     /// Raycasts each frame to detect which grid cell the cursor is over.
-    /// Fires events on hover and click — other Views subscribe to react.
-    /// No placement logic lives here, only input detection and forwarding.
+    /// Fires events on events hover and click.
     /// </summary>
     public class GridInputView : MonoBehaviour
     {
@@ -53,7 +52,7 @@ namespace Controler.Editor.Views
                 return;
             }
 
-            if (!Physics.Raycast(gridCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, terrainLayer))
+            if (!Physics.Raycast(gridCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, terrainLayer)) // Mathf.Infinity is fine but not very optimized
             {
                 if (_lastHovered != null) { _lastHovered = null; OnCellHovered?.Invoke(null); }
                 return;
@@ -66,7 +65,7 @@ namespace Controler.Editor.Views
             {
                 _lastHovered = cell;
                 HoveredCell  = cell;
-                OnCellHovered?.Invoke(cell);
+                OnCellHovered?.Invoke(cell);                
             }
 
             if (Input.GetMouseButtonDown(0)) OnCellClicked?.Invoke(cell);

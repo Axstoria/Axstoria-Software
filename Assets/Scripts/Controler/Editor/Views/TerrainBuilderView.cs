@@ -7,9 +7,7 @@ using UnityEngine;
 namespace Controler.Editor.Views
 {
     /// <summary>
-    /// Observes TerrainLayoutViewModel and regenerates the terrain mesh when any property changes.
-    /// Also syncs Grid.SurfaceY after each generation so cell world positions stay correct.
-    /// All mesh geometry lives here — Domain stays Unity-free.
+    /// Procedurally generates the terrain mesh based on TerrainLayoutViewModel properties.
     /// </summary>
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider))]
     public class TerrainBuilderView : MonoBehaviour

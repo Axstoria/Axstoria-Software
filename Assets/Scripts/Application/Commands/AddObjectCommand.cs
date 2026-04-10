@@ -2,6 +2,9 @@ using Domain;
 
 namespace App.Commands
 {
+    /// <summary>
+    /// Command to add a new SceneObject to the map.
+    /// </summary>
     public class AddObjectCommand : ICommand
     {
         public string Label => $"Add {_obj.DisplayName}";

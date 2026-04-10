@@ -2,6 +2,9 @@ using Domain;
 
 namespace App.Commands
 {
+    /// <summary>
+    /// Command to regenerate the terrain layout with new parameters. Implements the ICommand interface.
+    /// </summary>
     public class GenerateTerrainCommand : ICommand
     {
         public string Label => "Regenerate terrain";

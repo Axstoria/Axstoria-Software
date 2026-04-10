@@ -1,5 +1,8 @@
 namespace Domain
 {
+    /// <summary>
+    /// Represents a coordinate in the grid system, defined by its X and Z values. This struct is used for indexing and referencing specific cells within the grid.
+    /// </summary>
     public struct GridCoord
     {
         public int X { get; set; }

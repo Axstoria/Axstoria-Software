@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Domain
 {
+    /// <summary>
+    /// Represents the game map, containing tokens, structures, objects, and terrain layout.
+    /// </summary>
     public class Map
     {
         public string Id   { get; set; }

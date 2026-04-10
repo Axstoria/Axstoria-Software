@@ -1,5 +1,8 @@
 namespace Domain
 {
+    /// <summary>
+    /// Represents a chunk of the grid, containing numbers of cells. It will be useful later for optimization and future features.
+    /// </summary>
     public class GridChunk
     {
         public const int CHUNK_SIZE = 16;

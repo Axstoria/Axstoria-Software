@@ -5,9 +5,10 @@ namespace Controler.Editor.Views
 {
     /// <summary>
     /// Static drawing primitives for the transform gizmo.
-    /// All methods must be called from OnRenderObject() or OnPostRender().
-    /// Meshes and materials are created once and cached.
     /// </summary>
+    /// <remarks>
+    /// Meshes and materials are created once and cached.
+    /// </remarks>
     internal static class GizmoRenderer
     {
         // ── Cached assets ─────────────────────────────────────────────────────

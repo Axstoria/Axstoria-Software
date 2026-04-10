@@ -6,9 +6,8 @@ using Loxodon.Framework.Observables;
 namespace Controler.Editor.ViewModels
 {
     /// <summary>
-    /// Central ViewModel for the map editor scene.
-    /// Registered in the Loxodon context by the Bootstrapper so all Views can resolve it.
-    /// Owns all use cases and exposes the state the UI needs to observe.
+    /// Main ViewModel for the map editor scene.
+    /// Holds references to all sub-ViewModels, exposes observable state for UI binding,
     /// </summary>
     public class MapEditorViewModel : ObservableObject
     {
