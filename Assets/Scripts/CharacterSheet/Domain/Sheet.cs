@@ -1,12 +1,18 @@
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using Shared.Domain;
 
-namespace Domain.Character
+namespace CharacterSheet.Domain
 {
-    public class CharacterSheet
+    public class Sheet
     {
         public string Id { get; }
         public List<SheetWidget> Widgets { get; } = new();
+        public List<Stat> Stats { get; } = new();
+        
+        public Stat GetStat(string statId) => Stats.FirstOrDefault(s => s.Id == statId);
+        public bool HasStat(string statId) => Stats.Any(s => s.Id == statId);
         
         public bool HasBorder { get; set; }
         public float BorderThickness { get; set; }
@@ -14,7 +20,7 @@ namespace Domain.Character
         public Color BackgroundColor { get; set; }
         public string BackgroundImagePath { get; set; }
         
-        public CharacterSheet(string id)
+        public Sheet(string id)
         {
             Id = id;
         }
