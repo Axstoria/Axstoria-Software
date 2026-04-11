@@ -22,39 +22,38 @@ The following features will be shown during the defense
 
 | **Feature ID** | **User role** | **Feature name** | **Short description** |
 |--------------|---------------|-------------------------|--------------------------------------|
-| F1 | Everyone | Free Camera movement | Ability to move the camera freely in a 3D environment |
-| F2 | Everyone | Camera preset angle | Can change smoothly the camera between two preset angles : top and isometric |
-| F3 | Editor | Table Grid Creation | Create a custom 2D grid for map layout at map initialization |
-| F4 | Editor | Tile management | Create, move and delete tiles freely to act as a base for the map layout |
-| F5 | Editor | Object Manipulation | Handle location, rotation and scaling of object on map |
-| F6 | Editor | Object preview | Display a preview of where an object will be placed |
-| F7 | Editor | Fix terrain object on tile | Terrain object must be able to snap on the tile they sit on |
-| F8 | Editor | 3D Object Importation | Can import 3D object as game object to use them to create your map |
-| F9 | Editor | Save and Load map | Can save and load a map's data |
-| F10 | Editor | Free decorative object manipulation | Non-terrain object can be placed freely on the map no matter grid or 2D placement |
-| F11 | Editor | UI panel | User can show or hide different UI panels |
-| F12 | Editor | Character Sheet Creation | User can create a character sheets using the different nodes available and variable parameters |
-| F13 | Editor | Import and Export Sheets | User can import and export the character sheets they created in order to access them during the game |
-| F14 | Game Master | Session hosting and invitation | User can create a lobby room where they can invite their players via steam |
-| F15 | Game Master | Session configuration | During the lobby, the user can change the parameters of the game such as the state of the map's elements and character sheets |
-| F16 | Game Master | Server Authority | If there's a conflictual action, the game master acts as a server and has the authority on the outcome. |
-| F17 | Game Master | Data synchronization | Synchronize the data on the server and send it to the player |
-| F18 | Editor | Custom Metadata | Add custom metadata (notes, tag, link to sheet) to an object |
-| F19 | Game Master | Set Object Visibility | User can set the visibility of an object to a specific or every user |
-| F20 | Game Master | Set Metadata visibility | Change the visibility of an object's metadata for set user (ex: a character's token with a link to the character sheet) |
-| F21 | Game Master | Set Ownership | Can change the ownership of an object to a specific user |
-| F22 | Player | Move Owned object | User can move an object they own |
-| F23 | Player/Game Master | Dice roll | User can throw one or more specific dice through the UI or a command line in chat and the result will display visually and in chat |
-| F24 | Game Master/Player | Hidden rolls | User can chose to hide his dice roll, the result will only display to the user and the game master |
-| F25 | Game Master | Fog of War placement | User can put a volume base fog of war to hide a part of the map |
-| F26 | Game Master | Fog of War depth | User can chose the depth of how much layers of class will be affected by the fog (tokens, objects, terrains, tiles) |
-| F27 | Game Master | Per-Player Fog | User can decide which player will be affected by the fog of war |
-| F28 | Player | Fog of war dissipation | When the user token gets inside the fog of war it reveals part of the world around him |
-| F29 | Game Master | Dissipation power | Set for a token the dissipation power when it enters a the fog of war |
-| F30 | Game Master/Player | Distance tool | Calculate and display the distance between two points in meters |
-| F31 | Game Master/Player | Ping tool | Display a visual marker on the map with the user's color |
-| F32 | Game Master/Player | Line of Sight Tool | Choose two points on the map and display if there's a direct line of sight or not |
-| F33 | Game Master | Save and Load map state | User can save the state of a game during a session in order to load it in the exact same configuration in a future session |
+| F1 | Editor | Table Grid Creation | Create a custom 2D grid for map layout at map initialization |
+| F2 | Editor | UI panel | Show or hide different UI panels |
+| F3 | Everyone | Free Camera movement | Move the camera freely in a 3D environment |
+| F4 | Everyone | Camera preset angle | Change smoothly the camera between two preset angles : top and isometric |
+| F5 | Editor | 3D Object Importation | Import 3D object as game object to use them to create your map |
+| F6 | Editor | Object Manipulation | Handle location, rotation and scaling of object on map |
+| F7 | Editor | Place object freely | Place 3D objects freely on the map |
+| F8 | Editor | Snap object to grid | Place 3D objects on the grid with the snapping tool |
+| F9 | Editor | Object preview | Display a preview of where an object will be placed |
+| F10 | Editor | Custom Metadata | Add custom metadata (notes, tag, link to sheet) to an object |
+| F11 | Editor | Fog of War placement | Place a volume base fog of war to hide a part of the map |
+| F12 | Editor | Fog of War depth | Chose the depth of how much layers of class will be affected by the fog (tokens, objects, terrains, tiles) |
+| F13 | Editor | Character's Tags | Create tags that the GM can use to assign the visibility and permissions on tokens, objects and fog of war |
+| F14 | Editor | Save and Load map | Save and load a map's data |
+| F15 | Editor | Character Sheet Creation | Create a character sheets using the different nodes available and variable parameters |
+| F16 | Editor | Import and Export Sheets | Import and export the character sheets they created in order to access them during the game |
+| F17 | Game Master | Session hosting and invitation | Create a lobby room where they can invite their players via steam |
+| F18 | Game Master | Session configuration | Change the parameters of the game such as the state of the map's elements and character sheets in the lobby |
+| F19 | Game Master | Tags assignation | Assign the character's tags to player's to replicate the visibility and permission parameters |
+| F20 | Game Master | Server Authority | If there's a conflictual action, the game master acts as a server and has the authority on the outcome. |
+| F21 | Game Master | Data synchronization | Synchronize the data on the server and send it to the player |
+| F22 | Game Master | Set Object Visibility | Set the visibility of an object to a specific or every user (can use the tags for this, but it's specifically to let control during the session for last minute changes) |
+| F23 | Game Master | Set Metadata visibility | Change the visibility of an object's metadata for set user (ex: a character's token with a link to the character sheet) (can use the tags for this, but it's specifically to let control during the session for last minute changes) |
+| F24 | Game Master | Set Ownership | Change the ownership of an object to a specific user (can use the tags for this, but it's specifically to let control during the session for last minute changes) |
+| F25 | Editor | Per-Player Fog | Decide which player will be affected by the fog of war (can use the tags for this, but it's specifically to let control during the session for last minute changes) |
+| F26 | Player | Move Owned object | Move an object you own |
+| F27 | Player/Game Master | Dice roll | Throw one or more specific dice through the UI or a command line in chat and the result will display visually and in chat |
+| F28 | Game Master/Player | Hidden rolls | Hide your dice roll, the result will only display to the user and the game master |
+| F29 | Game Master/Player | Distance tool | Calculate and display the distance between two points in meters |
+| F30 | Game Master/Player | Ping tool | Display a visual marker on the map with the user's color |
+| F31 | Game Master/Player | Line of Sight Tool | Choose two points on the map and display if there's a direct line of sight or not |
+| F32 | Game Master | Save and Load map state | User can save the state of a game during a session in order to load it in the exact same configuration in a future session |
 
 ---
 
