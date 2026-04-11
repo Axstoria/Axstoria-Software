@@ -1,7 +1,0 @@
-{
-    "name": "Infrastructure",
-    "references": [
-        "App",
-        "Domain"
-    ]
-}
