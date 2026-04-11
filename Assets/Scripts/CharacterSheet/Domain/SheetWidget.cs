@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Domain.Character
+namespace CharacterSheet.Domain
 {
     public abstract class SheetWidget
     {

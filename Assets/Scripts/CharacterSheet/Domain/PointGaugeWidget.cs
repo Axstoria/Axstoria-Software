@@ -1,4 +1,4 @@
-namespace Domain.Character
+namespace CharacterSheet.Domain
 {
     public class PointGaugeWidget : SheetWidget
     {
