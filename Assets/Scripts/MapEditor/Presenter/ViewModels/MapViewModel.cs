@@ -1,12 +1,11 @@
 using System;
-using Domain;
 using Loxodon.Framework.Observables;
+using MapEditor.Domain;
+using SceneEditor.Domain;
+using SceneEditor.Presenter.ViewModels;
 
-namespace Controler.Editor.ViewModels
+namespace MapEditor.Presenter.ViewModels
 {
-    /// <summary>
-    /// Main ViewModel for the map editor scene.
-    /// </summary>
     public class MapViewModel : ObservableObject
     {
         private readonly Map _map;

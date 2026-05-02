@@ -1,11 +1,9 @@
-using App.Commands;
-using Domain;
+using SceneEditor.App.Command;
+using SceneEditor.Domain;
+using Shared.Domain;
 
-namespace App.UseCases
+namespace SceneEditor.App.UseCase
 {
-    /// <summary>
-    /// Use case for transforming a SceneObject by changing its position, rotation, or scale.
-    /// </summary>
     public class TransformObjectUseCase
     {
         private readonly CommandHistory _history;

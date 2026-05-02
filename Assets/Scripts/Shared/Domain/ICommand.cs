@@ -1,4 +1,4 @@
-namespace Domain
+namespace Shared.Domain
 {
     public interface ICommand
     {

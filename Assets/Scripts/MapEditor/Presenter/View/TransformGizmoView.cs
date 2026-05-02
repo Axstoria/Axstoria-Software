@@ -1,23 +1,15 @@
-using Controler.Editor.ViewModels;
-using Domain;
+using Grid.Domain;
 using Loxodon.Framework.Contexts;
+using MapEditor.Presenter.ViewModels;
+using SceneEditor.Domain;
 using UnityEngine;
-using DomainVec3 = Domain.Math.Vector3;
-using DomainQuat = Domain.Math.Quaternion;
 
-namespace Controler.Editor.Views
+namespace MapEditor.Presenter.View
 {
-    /// <summary>
-    /// Gizmo for translating, rotating, and scaling the selected object.
-    /// Observes the selected SceneObject and displays handles around it.
-    /// </summary>
     /// NEEDS REWORK
     public class TransformGizmoView : MonoBehaviour
     {
-        // ── Enums ─────────────────────────────────────────────────────────────
-
         private enum GizmoMode { Translate, Rotate, Scale }
-
         private enum Handle
         {
             None,
@@ -26,8 +18,6 @@ namespace Controler.Editor.Views
             RotateX, RotateY, RotateZ
         }
 
-        // ── Colors ────────────────────────────────────────────────────────────
-
         private static readonly Color ColX     = new(0.95f, 0.20f, 0.20f);
         private static readonly Color ColY     = new(0.20f, 0.95f, 0.20f);
         private static readonly Color ColZ     = new(0.20f, 0.45f, 1.00f);
@@ -35,8 +25,6 @@ namespace Controler.Editor.Views
         private static readonly Color ColYZ    = new(0.20f, 1.00f, 1.00f, 0.55f);
         private static readonly Color ColXZ    = new(1.00f, 0.20f, 1.00f, 0.55f);
         private static readonly Color ColHover = new(1.00f, 1.00f, 1.00f, 0.95f);
-
-        // ── Sizing (relative to gizmo scale) ──────────────────────────────────
 
         private const float ShaftLength       = 1.00f;
         private const float ShaftRadius       = 0.04f;
@@ -52,10 +40,8 @@ namespace Controler.Editor.Views
         private const float ScaleSensitivity  = 0.005f;
         private const float GizmoScaleFactor  = 0.15f;
 
-        // ── State ─────────────────────────────────────────────────────────────
-
         private MapEditorViewModel _vm;
-        private Camera             _cam;
+        private UnityEngine.Camera _cam;
 
         private GameObject  _target;
         private SceneObject _domainObj;
@@ -67,36 +53,24 @@ namespace Controler.Editor.Views
         private Handle _active  = Handle.None;
         private bool   _isDragging;
 
-        // ── Drag state ────────────────────────────────────────────────────────
-
-        // Axis drag
         private Vector3 _dragAxis;
         private Vector3 _dragStartWorldPoint;
-
-        // Plane drag
         private Vector3 _dragPlaneNormal;
-
-        // Rotate
-        private float      _dragStartMouseX;
+        private float   _dragStartMouseX;
         private Quaternion _dragStartRot;
-
-        // Scale plane
         private Vector2 _dragStartMousePos;
         private int     _scaleAxisA, _scaleAxisB;
 
-        // Object state at drag start (for live reset and undo)
         private Vector3    _positionBefore;
         private Quaternion _rotationBefore;
         private Vector3    _scaleBefore;
         private Vector3    _dragStartPos;
         private Vector3    _dragStartScale;
 
-        // ── Unity lifecycle ───────────────────────────────────────────────────
-
         private void Start()
         {
             _vm  = Context.GetApplicationContext().GetContainer().Resolve<MapEditorViewModel>();
-            _cam = Camera.main;
+            _cam = UnityEngine.Camera.main;
 
             if (_vm == null)
             {
@@ -108,7 +82,7 @@ namespace Controler.Editor.Views
         private void Update()
         {
             if (_target == null) return;
-            if (_cam == null) _cam = Camera.main;
+            if (_cam == null) _cam = UnityEngine.Camera.main;
 
             HandleModeKeys();
 
@@ -132,7 +106,7 @@ namespace Controler.Editor.Views
 
         private void OnRenderObject()
         {
-            if (_target == null || Camera.current == null) return;
+            if (_target == null || UnityEngine.Camera.current == null) return;
 
             Vector3 o = _target.transform.position;
             float   s = GizmoScale();
@@ -144,8 +118,6 @@ namespace Controler.Editor.Views
                 case GizmoMode.Scale:     DrawScaleHandles(o, s);     break;
             }
         }
-
-        // ── Public API ────────────────────────────────────────────────────────
 
         public void Select(GameObject go, SceneObject domainObj)
         {
@@ -161,8 +133,6 @@ namespace Controler.Editor.Views
             _active     = Handle.None;
         }
 
-        // ── Keyboard shortcuts ────────────────────────────────────────────────
-
         private void HandleModeKeys()
         {
             if (Input.GetKeyDown(KeyCode.W)) _mode    = GizmoMode.Translate;
@@ -177,8 +147,6 @@ namespace Controler.Editor.Views
             }
         }
 
-        // ── Hover detection ───────────────────────────────────────────────────
-
         private Handle DetectHover(float s)
         {
             Vector3 o = _target.transform.position;
@@ -191,7 +159,6 @@ namespace Controler.Editor.Views
                 return Handle.None;
             }
 
-            // Plane handles first — they sit inside the axis shafts
             if (HoverPlane(o, WorldAxisX, WorldAxisY, s)) return Handle.PlaneXY;
             if (HoverPlane(o, WorldAxisY, WorldAxisZ, s)) return Handle.PlaneYZ;
             if (HoverPlane(o, WorldAxisX, WorldAxisZ, s)) return Handle.PlaneXZ;
@@ -205,24 +172,20 @@ namespace Controler.Editor.Views
 
         private bool HoverAxis(Vector3 origin, Vector3 worldAxis, float s)
         {
-            Ray     ray    = _cam.ScreenPointToRay(Input.mousePosition);
-            Vector3 end    = origin + worldAxis * ShaftLength * s;
-            float   tol    = HoverAxisTol * s;
+            Ray     ray = _cam.ScreenPointToRay(Input.mousePosition);
+            float   tol = HoverAxisTol * s;
 
-            ClosestPointsBetweenLines(
-                ray.origin, ray.direction,
-                origin, worldAxis,
+            ClosestPointsBetweenLines(ray.origin, ray.direction, origin, worldAxis,
                 out Vector3 onRay, out Vector3 onAxis);
 
             float t = Vector3.Dot(onAxis - origin, worldAxis);
             if (t < 0f || t > ShaftLength * s) return false;
-
             return Vector3.Distance(onRay, onAxis) <= tol;
         }
 
         private bool HoverPlane(Vector3 origin, Vector3 axisA, Vector3 axisB, float s)
         {
-            Ray ray = _cam.ScreenPointToRay(Input.mousePosition);
+            Ray ray   = _cam.ScreenPointToRay(Input.mousePosition);
             var plane = new Plane(Vector3.Cross(axisA, axisB).normalized, origin);
             if (!plane.Raycast(ray, out float enter)) return false;
 
@@ -237,7 +200,7 @@ namespace Controler.Editor.Views
 
         private bool HoverRing(Vector3 origin, Vector3 ringAxis, float s)
         {
-            Ray ray = _cam.ScreenPointToRay(Input.mousePosition);
+            Ray ray       = _cam.ScreenPointToRay(Input.mousePosition);
             var ringPlane = new Plane(ringAxis, origin);
             if (!ringPlane.Raycast(ray, out float enter)) return false;
 
@@ -246,19 +209,17 @@ namespace Controler.Editor.Views
             return Mathf.Abs(dist - r) <= HoverRingTol * s;
         }
 
-        // ── Drag ─────────────────────────────────────────────────────────────
-
         private void StartDrag(float s)
         {
             _active     = _hovered;
             _isDragging = true;
 
-            Transform t      = _target.transform;
-            _positionBefore  = t.position;
-            _rotationBefore  = t.rotation;
-            _scaleBefore     = t.localScale;
-            _dragStartPos    = t.position;
-            _dragStartScale  = t.localScale;
+            Transform t     = _target.transform;
+            _positionBefore = t.position;
+            _rotationBefore = t.rotation;
+            _scaleBefore    = t.localScale;
+            _dragStartPos   = t.position;
+            _dragStartScale = t.localScale;
 
             switch (_active)
             {
@@ -308,8 +269,8 @@ namespace Controler.Editor.Views
 
         private void BeginScalePlaneDrag(int axisA, int axisB)
         {
-            _scaleAxisA      = axisA;
-            _scaleAxisB      = axisB;
+            _scaleAxisA        = axisA;
+            _scaleAxisB        = axisB;
             _dragStartMousePos = Input.mousePosition;
         }
 
@@ -377,12 +338,12 @@ namespace Controler.Editor.Views
 
             if (_domainObj == null || _target == null) return;
 
-            Transform t = _target.transform;
-            var after   = new TransformModel
+            Transform t  = _target.transform;
+            var after    = new TransformModel
             {
-                Position = new DomainVec3(t.position.x,   t.position.y,   t.position.z),
-                Rotation = new DomainQuat(t.rotation.x,   t.rotation.y,   t.rotation.z, t.rotation.w),
-                Scale    = new DomainVec3(t.localScale.x, t.localScale.y, t.localScale.z)
+                Position = new Vector3(t.position.x,   t.position.y,   t.position.z),
+                Rotation = new Quaternion(t.rotation.x, t.rotation.y,  t.rotation.z, t.rotation.w),
+                Scale    = new Vector3(t.localScale.x, t.localScale.y, t.localScale.z)
             };
 
             string label = _mode switch
@@ -395,8 +356,6 @@ namespace Controler.Editor.Views
 
             _vm.TransformObject.Execute(_domainObj, after, label);
         }
-
-        // ── Rendering ─────────────────────────────────────────────────────────
 
         private void DrawTranslateHandles(Vector3 o, float s)
         {
@@ -455,8 +414,6 @@ namespace Controler.Editor.Views
             GizmoRenderer.DrawLine(d, a, col);
         }
 
-        // ── Helpers ───────────────────────────────────────────────────────────
-
         private Color Col(Handle handle, Color defaultCol)
             => (_hovered == handle || _active == handle) ? ColHover : defaultCol;
 
@@ -470,8 +427,6 @@ namespace Controler.Editor.Views
         private Vector3 WorldAxisX => _isLocal ? _target.transform.right   : Vector3.right;
         private Vector3 WorldAxisY => _isLocal ? _target.transform.up      : Vector3.up;
         private Vector3 WorldAxisZ => _isLocal ? _target.transform.forward : Vector3.forward;
-
-        // ── Geometry (no external dependency) ────────────────────────────────
 
         private static Vector3 ClosestPointOnAxisToMouse(Ray mouseRay, Vector3 axisOrigin, Vector3 axisDir)
         {

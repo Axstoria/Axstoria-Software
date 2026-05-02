@@ -1,5 +1,5 @@
 using System.IO;
-using App.Ports;
+using Shared.App.Port;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -7,13 +7,8 @@ using UnityEditor;
 using UnityEngine;
 #endif
 
-namespace Infrastructure.IO
+namespace Shared.Infrastructure
 {
-    /// <summary>
-    /// Implements IFileDialogService.
-    /// Editor builds use UnityEditor native dialogs.
-    /// Runtime builds fall back to persistentDataPath.
-    /// </summary>
     public class FileDialogService : IFileDialogService
     {
         public string SaveFile(string title, string defaultName, string extension)

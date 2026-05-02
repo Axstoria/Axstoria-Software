@@ -1,27 +1,26 @@
 using System.Collections.Generic;
-using Domain;
+using Grid.Domain;
+using MapEditor.Domain;
+using SceneEditor.Domain;
+using Shared.Domain;
 
-namespace App.Commands
+namespace SceneEditor.App.Command
 {
-    /// <summary>
-    /// Command to delete an existing SceneObject from the map.
-    /// </summary>
     public class DeleteObjectCommand : ICommand
     {
         public string Label => $"Delete {_obj.DisplayName}";
 
-        private readonly Map _map;
-        private readonly Grid _grid;
-        private readonly SceneObject _obj;
-        private readonly GridCoord _origin;
+        private readonly Map             _map;
+        private readonly Grid.Domain.Grid _grid;
+        private readonly SceneObject     _obj;
+        private readonly GridCoord       _origin;
         private readonly List<GridCoord> _footprint;
 
-        public DeleteObjectCommand(Map map, Grid grid, SceneObject obj)
+        public DeleteObjectCommand(Map map, Grid.Domain.Grid grid, SceneObject obj)
         {
             _map  = map;
             _grid = grid;
             _obj  = obj;
-            // Capture placement data from the grid before removal
             _grid.TryGetPlacement(obj.Id, out _origin, out _footprint);
         }
 

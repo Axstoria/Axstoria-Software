@@ -1,15 +1,13 @@
 using System.IO;
-using App.Ports;
-using Domain;
+using Campaign.App.Port;
+using MapEditor.Domain;
+using Shared.App.Port;
 
-namespace App.UseCases
+namespace Campaign.App.UseCase
 {
-    /// <summary>
-    /// Use case for loading a map.
-    /// </summary>
     public class LoadMapUseCase
     {
-        private readonly IMapSerializer _serializer;
+        private readonly IMapSerializer    _serializer;
         private readonly IFileDialogService _dialog;
 
         public LoadMapUseCase(IMapSerializer serializer, IFileDialogService dialog)

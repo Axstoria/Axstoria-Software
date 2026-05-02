@@ -1,13 +1,10 @@
-using Controler.Editor.ViewModels;
-using Domain;
+using Grid.Domain;
 using Loxodon.Framework.Contexts;
+using MapEditor.Presenter.ViewModels;
 using UnityEngine;
 
-namespace Controler.Editor.Views
+namespace Grid.Presenter.View
 {
-    /// <summary>
-    /// Moves a highlight quad to the hovered cell and tints it by cell state.
-    /// </summary>
     public class GridHighlighterView : MonoBehaviour
     {
         [SerializeField] private GameObject highlightQuad;
@@ -44,7 +41,6 @@ namespace Controler.Editor.Views
             if (_mat != null) Destroy(_mat);
         }
 
-        // Wired to GridInputView.OnCellHovered in the Inspector
         public void OnCellHovered(GridCell cell)
         {
             if (cell == null || highlightQuad == null) { highlightQuad?.SetActive(false); return; }

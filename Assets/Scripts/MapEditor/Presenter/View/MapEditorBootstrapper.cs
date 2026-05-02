@@ -1,28 +1,31 @@
-
-using App.Ports;
-using App.UseCases;
-using Controler.Editor.ViewModels;
-using Domain;
-using DomainGrid = Domain.Grid;
-using Infrastructure.IO;
-using Infrastructure.Persistence;
+using AssetImporter.App.UseCase;
+using Campaign.App.Port;
+using Campaign.App.UseCase;
+using Campaign.Infrastructure;
+using Camera.Domain;
+using Grid.Domain;
+using MapEditor.App.UseCase;
+using MapEditor.Domain;
+using MapEditor.Presenter.ViewModels;
+using SceneEditor.App.UseCase;
+using Shared.App.Port;
+using Shared.Domain;
+using Shared.Infrastructure;
 using UnityEngine;
+using DomainGrid = Grid.Domain.Grid;
 
-namespace Controler.Editor.Views
+namespace MapEditor.Presenter.View
 {
-    /// <summary>
-    /// Composition root for the map editor scene.
-    /// </summary>
     public class MapEditorBootstrapper : MonoBehaviour
     {
         [Header("Initial map settings")]
-        [SerializeField] private string mapName    = "Default Map";
-        [SerializeField] private float  cellSize   = 1f;
-        [SerializeField] private int    mapWidth   = 20;
-        [SerializeField] private int    mapDepth   = 20;
+        [SerializeField] private string mapName      = "Default Map";
+        [SerializeField] private float  cellSize     = 1f;
+        [SerializeField] private int    mapWidth     = 20;
+        [SerializeField] private int    mapDepth     = 20;
         [SerializeField] private int    mapThickness = 3;
 
-        private MapEditorViewModel _vm; // not readonly — assigned in Awake, not constructor
+        private MapEditorViewModel _vm;
 
         private void OnDestroy()
         {

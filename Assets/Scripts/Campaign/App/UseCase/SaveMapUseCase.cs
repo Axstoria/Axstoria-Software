@@ -1,15 +1,13 @@
 using System.IO;
-using App.Ports;
-using Domain;
+using Campaign.App.Port;
+using MapEditor.Domain;
+using Shared.App.Port;
 
-namespace App.UseCases
+namespace Campaign.App.UseCase
 {
-    /// <summary>
-    /// Use case for saving the current map to a file.
-    /// </summary>
     public class SaveMapUseCase
     {
-        private readonly IMapSerializer _serializer;
+        private readonly IMapSerializer    _serializer;
         private readonly IFileDialogService _dialog;
 
         public SaveMapUseCase(IMapSerializer serializer, IFileDialogService dialog)

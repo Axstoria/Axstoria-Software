@@ -1,10 +1,9 @@
-using Domain;
+using MapEditor.Domain;
+using SceneEditor.Domain;
+using Shared.Domain;
 
-namespace App.Commands
+namespace SceneEditor.App.Command
 {
-    /// <summary>
-    /// Command to add a new SceneObject to the map.
-    /// </summary>
     public class AddObjectCommand : ICommand
     {
         public string Label => $"Add {_obj.DisplayName}";

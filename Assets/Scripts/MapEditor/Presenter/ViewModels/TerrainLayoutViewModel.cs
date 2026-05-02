@@ -1,11 +1,8 @@
-using Domain;
 using Loxodon.Framework.Observables;
+using MapEditor.Domain;
 
-namespace Controler.Editor.ViewModels
+namespace MapEditor.Presenter.ViewModels
 {
-    /// <summary>
-    /// ViewModel for TerrainLayout entities in the map editor.
-    /// </summary>
     public class TerrainLayoutViewModel : ObservableObject
     {
         private readonly TerrainLayout _model;
@@ -16,10 +13,6 @@ namespace Controler.Editor.ViewModels
         public ObservableProperty<int>   Thickness { get; } = new();
         public ObservableProperty<float> Height    { get; } = new();
 
-        /// <summary>
-        /// Initializes a new instance of the TerrainLayoutViewModel class with the given TerrainLayout model.
-        /// </summary>
-        /// <param name="model"></param>
         public TerrainLayoutViewModel(TerrainLayout model)
         {
             _model = model;

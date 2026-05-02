@@ -1,56 +1,54 @@
-using App.UseCases;
-using Domain;
+using AssetImporter.App.UseCase;
+using Campaign.App.UseCase;
+using Camera.Domain;
+using Camera.Presenter.ViewModels;
+using DomainGrid = Grid.Domain.Grid;
 using Loxodon.Framework.Contexts;
 using Loxodon.Framework.Observables;
+using MapEditor.App.UseCase;
+using MapEditor.Domain;
+using SceneEditor.App.UseCase;
+using Shared.Domain;
 
-namespace Controler.Editor.ViewModels
+namespace MapEditor.Presenter.ViewModels
 {
-    /// <summary>
-    /// Main ViewModel for the map editor scene.
-    /// Holds references to all sub-ViewModels, exposes observable state for UI binding,
-    /// </summary>
     public class MapEditorViewModel : ObservableObject
     {
         private readonly CommandHistory _history;
 
         // ── Sub-ViewModels ────────────────────────────────────────────────────
-
         public MapViewModel    Map    { get; }
         public CameraViewModel Camera { get; }
-        public Grid            Grid   => Map.Terrain?.Model?.Grid;
+        public DomainGrid      Grid   => Map.Terrain?.Model?.Grid;
 
         // ── Observable state ──────────────────────────────────────────────────
-
-        public ObservableProperty<bool>   CanUndo        { get; } = new();
-        public ObservableProperty<bool>   CanRedo        { get; } = new();
-        public ObservableProperty<string> UndoLabel      { get; } = new();
+        public ObservableProperty<bool>   CanUndo         { get; } = new();
+        public ObservableProperty<bool>   CanRedo         { get; } = new();
+        public ObservableProperty<string> UndoLabel       { get; } = new();
         public ObservableProperty<bool>   IsPlacementMode { get; } = new();
-        public ObservableProperty<string> Status         { get; } = new();
-        public ObservableProperty<bool>   IsBusy         { get; } = new();
+        public ObservableProperty<string> Status          { get; } = new();
+        public ObservableProperty<bool>   IsBusy          { get; } = new();
 
-        // ── Use cases (called by Views) ───────────────────────────────────────
-
-        public PlaceObjectUseCase    PlaceObject     { get; }
-        public DeleteObjectUseCase   DeleteObject    { get; }
+        // ── Use cases ─────────────────────────────────────────────────────────
+        public PlaceObjectUseCase     PlaceObject     { get; }
+        public DeleteObjectUseCase    DeleteObject    { get; }
         public TransformObjectUseCase TransformObject { get; }
         public GenerateTerrainUseCase GenerateTerrain { get; }
-        public SaveMapUseCase        SaveMap          { get; }
-        public LoadMapUseCase        LoadMap          { get; }
-        public ImportAssetUseCase    ImportAsset      { get; }
-
-        // ── Constructor ───────────────────────────────────────────────────────
+        public SaveMapUseCase         SaveMap         { get; }
+        public LoadMapUseCase         LoadMap         { get; }
+        public ImportAssetUseCase     ImportAsset     { get; }
 
         public MapEditorViewModel(
-            Domain.Map             map,
-            CameraState            cameraState,
-            CommandHistory         history,
-            PlaceObjectUseCase     placeObject,
-            DeleteObjectUseCase    deleteObject,
+            Map                   map,
+            CameraState           cameraState,
+            CommandHistory        history,
+            PlaceObjectUseCase    placeObject,
+            DeleteObjectUseCase   deleteObject,
             TransformObjectUseCase transformObject,
             GenerateTerrainUseCase generateTerrain,
-            SaveMapUseCase         saveMap,
-            LoadMapUseCase         loadMap,
-            ImportAssetUseCase     importAsset)
+            SaveMapUseCase        saveMap,
+            LoadMapUseCase        loadMap,
+            ImportAssetUseCase    importAsset)
         {
             _history = history;
 
@@ -68,8 +66,6 @@ namespace Controler.Editor.ViewModels
             SyncHistoryState();
         }
 
-        // ── History passthrough ───────────────────────────────────────────────
-
         public void Undo() => _history.Undo();
         public void Redo() => _history.Redo();
 
@@ -79,16 +75,12 @@ namespace Controler.Editor.ViewModels
             Map.Dispose();
         }
 
-        // ── Registration ──────────────────────────────────────────────────────
-
         public void Register()
         {
             Context.GetApplicationContext()
                    .GetContainer()
                    .Register<MapEditorViewModel>(this);
         }
-
-        // ── Private ───────────────────────────────────────────────────────────
 
         private void SyncHistoryState()
         {

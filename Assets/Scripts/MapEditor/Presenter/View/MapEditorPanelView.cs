@@ -1,25 +1,23 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using Controler.Editor.ViewModels;
-using Domain;
 using Loxodon.Framework.Contexts;
+using MapEditor.Presenter.ViewModels;
+using SceneEditor.Domain;
+using SceneEditor.Presenter.View;
+using SceneEditor.Presenter.ViewModels;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Controler.Editor.Views
+namespace MapEditor.Presenter.View
 {
     [Serializable]
     public class PrefabCategory
     {
-        public string          name    = "Category";
+        public string           name    = "Category";
         public List<GameObject> prefabs = new();
     }
 
-    /// <summary>
-    /// UI Toolkit panel view for map editing.
-    /// (WIP on UI)
-    /// </summary>
     [RequireComponent(typeof(UIDocument))]
     public class MapEditorPanelView : MonoBehaviour
     {
@@ -32,7 +30,6 @@ namespace Controler.Editor.Views
         private MapEditorViewModel _vm;
         private VisualElement      _root;
 
-        // Stored handlers for clean unsubscription in OnDestroy
         private EventHandler                        _onCanUndoChanged;
         private EventHandler                        _onCanRedoChanged;
         private NotifyCollectionChangedEventHandler _onObjectsChanged;
@@ -47,9 +44,7 @@ namespace Controler.Editor.Views
             _vm = Context.GetApplicationContext().GetContainer().Resolve<MapEditorViewModel>();
             if (_vm == null)
             {
-                Debug.LogError("[MapEditorPanelView] MapEditorViewModel not registered. " +
-                               "Ensure MapEditorBootstrapper runs before this script " +
-                               "(Edit > Project Settings > Script Execution Order).");
+                Debug.LogError("[MapEditorPanelView] MapEditorViewModel not registered.");
                 enabled = false;
                 return;
             }
@@ -85,8 +80,6 @@ namespace Controler.Editor.Views
             }
         }
 
-        // ── Header ────────────────────────────────────────────────────────────
-
         private void BindHeader()
         {
             _root.Q<Button>("undo-btn").clicked += () => _vm.Undo();
@@ -105,8 +98,6 @@ namespace Controler.Editor.Views
                 undoBtn.tooltip = _vm.CanUndo.Value ? _vm.UndoLabel.Value : "Nothing to undo";
         }
 
-        // ── Terrain ───────────────────────────────────────────────────────────
-
         private void BindTerrain()
         {
             var terrain = _vm.Map.Terrain;
@@ -122,7 +113,6 @@ namespace Controler.Editor.Views
             if (thicknessField != null) thicknessField.value = terrain.Thickness.Value;
             if (heightField    != null) heightField.value    = terrain.Height.Value;
 
-            // Sync incoming ViewModel changes to fields (e.g. from undo)
             _subscribedTerrain  = terrain;
             _onWidthChanged     = (_, __) => widthField?.SetValueWithoutNotify(terrain.Width.Value);
             _onDepthChanged     = (_, __) => depthField?.SetValueWithoutNotify(terrain.Depth.Value);
@@ -141,16 +131,14 @@ namespace Controler.Editor.Views
 
             _root.Q<Button>("regen-btn")?.RegisterCallback<ClickEvent>(_ =>
             {
-                int   w   = widthField?.value     ?? terrain.Width.Value;
-                int   d   = depthField?.value     ?? terrain.Depth.Value;
-                int   th  = thicknessField?.value ?? terrain.Thickness.Value;
-                float h   = heightField?.value    ?? terrain.Height.Value;
-                float[]col = terrain.Model.Color;
+                int   w  = widthField?.value     ?? terrain.Width.Value;
+                int   d  = depthField?.value     ?? terrain.Depth.Value;
+                int   th = thicknessField?.value ?? terrain.Thickness.Value;
+                float h  = heightField?.value    ?? terrain.Height.Value;
+                float[] col = terrain.Model.Color;
                 _vm.GenerateTerrain.Execute(terrain.Model, w, d, th, h, col);
             });
         }
-
-        // ── Prefabs ───────────────────────────────────────────────────────────
 
         private void BindPrefabs()
         {
@@ -174,13 +162,11 @@ namespace Controler.Editor.Views
 
         private void BuildCategorySection(VisualElement parent, PrefabCategory cat)
         {
-            // Category header (toggle)
-            var header   = new VisualElement(); header.AddToClassList("category-header");
-            var label    = new Label(cat.name); header.Add(label);
-            var chevron  = new Label("▾");     chevron.AddToClassList("category-chevron"); header.Add(chevron);
+            var header  = new VisualElement(); header.AddToClassList("category-header");
+            var label   = new Label(cat.name); header.Add(label);
+            var chevron = new Label("▾");      chevron.AddToClassList("category-chevron"); header.Add(chevron);
             parent.Add(header);
 
-            // Prefab grid (initially visible)
             var grid = new VisualElement(); grid.AddToClassList("prefab-grid");
             parent.Add(grid);
 
@@ -209,7 +195,6 @@ namespace Controler.Editor.Views
                 grid.Add(item);
             }
 
-            // Toggle grid on header click
             header.RegisterCallback<ClickEvent>(_ =>
             {
                 bool visible = grid.style.display != DisplayStyle.None;
@@ -217,8 +202,6 @@ namespace Controler.Editor.Views
                 chevron.text = visible ? "▸" : "▾";
             });
         }
-
-        // ── Outliner ──────────────────────────────────────────────────────────
 
         private void BindOutliner()
         {
@@ -234,10 +217,10 @@ namespace Controler.Editor.Views
 
             list.makeItem = () =>
             {
-                var row     = new VisualElement(); row.AddToClassList("outliner-item");
-                var name    = new Label();         name.AddToClassList("item-name");
-                var cat     = new Label();         cat.AddToClassList("item-category");
-                var del     = new Button { text = "×" }; del.AddToClassList("delete-btn");
+                var row  = new VisualElement(); row.AddToClassList("outliner-item");
+                var name = new Label();         name.AddToClassList("item-name");
+                var cat  = new Label();         cat.AddToClassList("item-category");
+                var del  = new Button { text = "×" }; del.AddToClassList("delete-btn");
                 row.Add(name); row.Add(cat); row.Add(del);
                 return row;
             };

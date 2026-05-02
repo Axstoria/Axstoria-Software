@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
+using SceneEditor.Domain;
 
-namespace Domain
+namespace MapEditor.Domain
 {
-    /// <summary>
-    /// Represents the game map, containing tokens, structures, objects, and terrain layout.
-    /// </summary>
     public class Map
     {
         public string Id   { get; set; }

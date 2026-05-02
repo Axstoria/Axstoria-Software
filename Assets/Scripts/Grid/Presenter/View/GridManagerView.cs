@@ -1,15 +1,12 @@
-using Controler.Editor.ViewModels;
-using Domain;
+using Grid.Domain;
 using Loxodon.Framework.Contexts;
+using MapEditor.Presenter.ViewModels;
 using UnityEngine;
 using UnityEngine.Events;
-using DomainGrid = Domain.Grid;
+using DomainGrid = Grid.Domain.Grid;
 
-namespace Controler.Editor.Views
+namespace Grid.Presenter.View
 {
-    /// <summary>
-    /// Unity-side adapter for Domain.Grid.
-    /// </summary>
     public class GridManagerView : MonoBehaviour
     {
         public UnityEvent<GridCell> OnCellChanged;
@@ -25,7 +22,6 @@ namespace Controler.Editor.Views
 
             if (_vm == null)
             {
-                // Debug logs
                 Debug.LogError("[GridManagerView] MapEditorViewModel not found.");
                 enabled = false;
                 return;
@@ -37,9 +33,6 @@ namespace Controler.Editor.Views
                 _grid.OnCellChanged += cell => OnCellChanged?.Invoke(cell);
         }
 
-        // ── Coordinate helpers ────────────────────────────────────────────────
-
-        /// <summary>Snaps a world position to the centre of its grid cell.</summary>
         public Vector3 SnapToGrid(Vector3 worldPos)
         {
             if (_grid == null) return worldPos;
@@ -48,7 +41,6 @@ namespace Controler.Editor.Views
             return new Vector3(wx, wy, wz);
         }
 
-        /// <summary>Returns the world-space centre of a grid cell as a Unity Vector3.</summary>
         public Vector3 GridToWorld(int x, int z)
         {
             if (_grid == null) return Vector3.zero;
@@ -56,14 +48,12 @@ namespace Controler.Editor.Views
             return new Vector3(wx, wy, wz);
         }
 
-        /// <summary>Returns the grid coordinates for a world position.</summary>
         public (int x, int z) WorldToGrid(Vector3 worldPos)
         {
             if (_grid == null) return (0, 0);
             return _grid.WorldToGrid(worldPos.x, worldPos.z);
         }
 
-        /// <summary>Returns the cell at a world position, or null if not loaded.</summary>
         public GridCell GetCellAt(Vector3 worldPos)
         {
             if (_grid == null) return null;

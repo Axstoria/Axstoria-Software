@@ -1,25 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Controler.Editor.Views
+namespace MapEditor.Presenter.View
 {
-    /// <summary>
-    /// Static drawing primitives for the transform gizmo.
-    /// </summary>
-    /// <remarks>
-    /// Meshes and materials are created once and cached.
-    /// </remarks>
     internal static class GizmoRenderer
     {
-        // ── Cached assets ─────────────────────────────────────────────────────
-
         private static Material _lineMat;
         private static Material _meshMat;
         private static Mesh     _sphereMesh;
         private static Mesh     _cylinderMesh;
         private static Mesh     _coneMesh;
-
-        // ── Line ──────────────────────────────────────────────────────────────
 
         public static void DrawLine(Vector3 start, Vector3 end, Color color)
         {
@@ -33,8 +23,6 @@ namespace Controler.Editor.Views
             GL.End();
             GL.PopMatrix();
         }
-
-        // ── Wire circle ───────────────────────────────────────────────────────
 
         public static void DrawWireCircle(Vector3 center, float radius, int segments, Vector3 normal, Color color)
         {
@@ -66,8 +54,6 @@ namespace Controler.Editor.Views
             GL.PopMatrix();
         }
 
-        // ── Solid sphere (point handle) ───────────────────────────────────────
-
         public static void DrawPoint(Vector3 position, float radius, Color color)
         {
             EnsureSphereMesh();
@@ -77,8 +63,6 @@ namespace Controler.Editor.Views
             Graphics.DrawMeshNow(_sphereMesh,
                 Matrix4x4.TRS(position, Quaternion.identity, Vector3.one * radius * 2f));
         }
-
-        // ── Cylinder (axis shaft) ─────────────────────────────────────────────
 
         public static void DrawCylinder(Vector3 start, Vector3 direction, float length, Color color,
                                         float shaftRadius = 0.05f)
@@ -92,15 +76,13 @@ namespace Controler.Editor.Views
             _meshMat.color = color;
             _meshMat.SetPass(0);
 
-            Vector3    shaftPos    = start + dir * (length * 0.5f);
-            Matrix4x4  shaftMatrix = Matrix4x4.TRS(
+            Vector3   shaftPos    = start + dir * (length * 0.5f);
+            Matrix4x4 shaftMatrix = Matrix4x4.TRS(
                 shaftPos,
                 rotation * Quaternion.Euler(90f, 0f, 0f),
                 new Vector3(shaftRadius * 2f, length * 0.5f, shaftRadius * 2f));
             Graphics.DrawMeshNow(_cylinderMesh, shaftMatrix);
         }
-
-        // ── Cone (arrow tip) ──────────────────────────────────────────────────
 
         public static void DrawCone(Vector3 tip, Vector3 direction, Color color,
                                     float coneLength = 0.25f, float coneRadius = 0.08f)
@@ -120,8 +102,6 @@ namespace Controler.Editor.Views
                 new Vector3(coneRadius * 2f, coneLength * 0.5f, coneRadius * 2f));
             Graphics.DrawMeshNow(_coneMesh, matrix);
         }
-
-        // ── Asset initialisation ──────────────────────────────────────────────
 
         private static void EnsureLineMat()
         {
@@ -167,11 +147,11 @@ namespace Controler.Editor.Views
 
         private static Mesh BuildConeMesh(int segments = 24)
         {
-            var mesh      = new Mesh();
-            var verts     = new List<Vector3>();
-            var tris      = new List<int>();
+            var mesh  = new Mesh();
+            var verts = new List<Vector3>();
+            var tris  = new List<int>();
 
-            verts.Add(Vector3.up); // tip at index 0
+            verts.Add(Vector3.up);
             for (int i = 0; i <= segments; i++)
             {
                 float a = (float)i / segments * Mathf.PI * 2f;
@@ -179,16 +159,12 @@ namespace Controler.Editor.Views
             }
 
             for (int i = 1; i <= segments; i++)
-            {
-                tris.Add(0); tris.Add(i); tris.Add(i + 1);
-            }
+                { tris.Add(0); tris.Add(i); tris.Add(i + 1); }
 
             int baseCenter = verts.Count;
             verts.Add(Vector3.zero);
             for (int i = 1; i <= segments; i++)
-            {
-                tris.Add(baseCenter); tris.Add(i + 1); tris.Add(i);
-            }
+                { tris.Add(baseCenter); tris.Add(i + 1); tris.Add(i); }
 
             mesh.SetVertices(verts);
             mesh.SetTriangles(tris, 0);

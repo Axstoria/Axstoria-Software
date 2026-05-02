@@ -1,24 +1,24 @@
-using Domain;
+using Grid.Domain;
+using MapEditor.Domain;
+using SceneEditor.Domain;
+using Shared.Domain;
 
-namespace App.Commands
+namespace MapEditor.App.Command
 {
-    /// <summary>
-    /// Command to regenerate the terrain layout with new parameters. Implements the ICommand interface.
-    /// </summary>
     public class GenerateTerrainCommand : ICommand
     {
         public string Label => "Regenerate terrain";
 
-        private readonly TerrainLayout _terrain;
-        private readonly Grid          _grid;
-        private readonly Map           _map;
+        private readonly TerrainLayout    _terrain;
+        private readonly Grid.Domain.Grid _grid;
+        private readonly Map              _map;
         private readonly int   _widthBefore,  _widthAfter;
         private readonly int   _depthBefore,  _depthAfter;
         private readonly int   _thickBefore,  _thickAfter;
         private readonly float _heightBefore, _heightAfter;
         private readonly float[] _colorBefore, _colorAfter;
 
-        public GenerateTerrainCommand(TerrainLayout terrain, Grid grid, Map map,
+        public GenerateTerrainCommand(TerrainLayout terrain, Grid.Domain.Grid grid, Map map,
             int widthAfter, int depthAfter, int thickAfter, float heightAfter, float[] colorAfter)
         {
             _terrain      = terrain;
@@ -48,8 +48,6 @@ namespace App.Commands
             _terrain.Height    = height;
             _terrain.Color     = color;
 
-            // Rebuild occupancy from current object positions — orphaned occupants
-            // outside the new bounds are cleared, objects inside stay registered.
             if (_grid != null && _map != null)
                 _grid.RebuildOccupancy(_map.Objects);
         }

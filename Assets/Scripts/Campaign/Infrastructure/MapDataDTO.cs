@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Infrastructure.Persistence
+namespace Campaign.Infrastructure
 {
     [Serializable]
     public class MapDataDTO
@@ -11,8 +11,8 @@ namespace Infrastructure.Persistence
         public string mapId;
         public string mapName;
 
-        public TerrainDTO            terrain;
-        public List<SceneObjectDTO>  objects;
+        public TerrainDTO           terrain;
+        public List<SceneObjectDTO> objects;
     }
 
     [Serializable]

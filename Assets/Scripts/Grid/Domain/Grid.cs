@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
+using SceneEditor.Domain;
 
-namespace Domain
+namespace Grid.Domain
 {
-    /// <summary>
-    /// Represents a grid-based spatial system for managing occupancy and movement within the game world.
-    /// </summary>
     public class Grid
     {
         public float CellSize { get; set; }
@@ -83,7 +81,7 @@ namespace Domain
         {
             if (_placements.TryGetValue(id, out var record))
             {
-                origin   = record.Origin;
+                origin    = record.Origin;
                 footprint = record.Footprint;
                 return true;
             }
@@ -98,10 +96,6 @@ namespace Domain
                 RemoveOccupant(id);
         }
 
-        /// <summary>
-        /// Rebuilds the occupancy grid based on the current positions of scene objects. This is for when loading a map or after bulk changes to objects.
-        /// </summary>
-        /// <param name="objects"></param>
         public void RebuildOccupancy(IEnumerable<SceneObject> objects)
         {
             ClearAllOccupants();
@@ -153,8 +147,8 @@ namespace Domain
 
         private readonly struct PlacementRecord
         {
-            public GridCoord        Origin   { get; }
-            public List<GridCoord>  Footprint { get; }
+            public GridCoord       Origin    { get; }
+            public List<GridCoord> Footprint { get; }
             public PlacementRecord(GridCoord origin, List<GridCoord> footprint)
             {
                 Origin    = origin;

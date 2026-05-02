@@ -1,14 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Controler.Editor.ViewModels;
 using Loxodon.Framework.Contexts;
+using MapEditor.Presenter.ViewModels;
 using UnityEngine;
 
-namespace Controler.Editor.Views
+namespace MapEditor.Presenter.View
 {
-    /// <summary>
-    /// Procedurally generates the terrain mesh based on TerrainLayoutViewModel properties.
-    /// </summary>
     [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider))]
     public class TerrainBuilderView : MonoBehaviour
     {
@@ -75,7 +72,6 @@ namespace Controler.Editor.Views
 
             GenerateMesh(w, d, th, h, c);
 
-            // Sync surface Y back to Grid so cell world positions are correct
             if (_vm.Grid != null) _vm.Grid.SurfaceY = h;
 
             UpdateTable(w, d, th, h);
@@ -84,9 +80,9 @@ namespace Controler.Editor.Views
         private void GenerateMesh(int width, int depth, int thickness, float baseHeight, Color color)
         {
             if (_mesh != null) Destroy(_mesh);
-            _mesh      = new Mesh { name = "Terrain" };
-            int gw     = width  + 1;
-            int gd     = depth  + 1;
+            _mesh  = new Mesh { name = "Terrain" };
+            int gw = width  + 1;
+            int gd = depth  + 1;
             int topCount = gw * gd;
 
             var vertices = new Vector3[topCount * 2];
@@ -98,8 +94,8 @@ namespace Controler.Editor.Views
             for (int x = 0; x < gw; x++)
             {
                 int i = z * gw + x;
-                vertices[i]            = new Vector3(x - ox, baseHeight,              z - oz);
-                vertices[i + topCount] = new Vector3(x - ox, baseHeight - thickness,  z - oz);
+                vertices[i]            = new Vector3(x - ox, baseHeight,             z - oz);
+                vertices[i + topCount] = new Vector3(x - ox, baseHeight - thickness, z - oz);
                 colors[i] = colors[i + topCount] = color;
             }
 
@@ -111,10 +107,10 @@ namespace Controler.Editor.Views
                 tris.Add(i); tris.Add(i + gw); tris.Add(i + 1);
                 tris.Add(i + 1); tris.Add(i + gw); tris.Add(i + gw + 1);
 
-                if (x == 0)          AddQuad(tris, i + gw, i, i + topCount + gw, i + topCount);
-                if (x == width - 1)  AddQuad(tris, i + 1, i + 1 + gw, i + 1 + topCount, i + 1 + topCount + gw);
-                if (z == 0)          AddQuad(tris, i, i + 1, i + topCount, i + 1 + topCount);
-                if (z == depth - 1)  AddQuad(tris, i + gw + 1, i + gw, i + topCount + gw + 1, i + topCount + gw);
+                if (x == 0)         AddQuad(tris, i + gw, i, i + topCount + gw, i + topCount);
+                if (x == width - 1) AddQuad(tris, i + 1, i + 1 + gw, i + 1 + topCount, i + 1 + topCount + gw);
+                if (z == 0)         AddQuad(tris, i, i + 1, i + topCount, i + 1 + topCount);
+                if (z == depth - 1) AddQuad(tris, i + gw + 1, i + gw, i + topCount + gw + 1, i + topCount + gw);
             }
 
             _mesh.vertices  = vertices;
@@ -125,9 +121,9 @@ namespace Controler.Editor.Views
 
             GetComponent<MeshFilter>().sharedMesh = _mesh;
 
-            var col = GetComponent<MeshCollider>();
-            col.sharedMesh = null;   // force physics re-cook
-            col.sharedMesh = _mesh;
+            var col2 = GetComponent<MeshCollider>();
+            col2.sharedMesh = null;
+            col2.sharedMesh = _mesh;
         }
 
         private void UpdateTable(int width, int depth, int thickness, float baseHeight)

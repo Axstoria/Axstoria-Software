@@ -1,12 +1,9 @@
 using System;
-using Domain;
+using SceneEditor.Domain;
 using UnityEngine;
 
-namespace Controler.Editor.Views
+namespace SceneEditor.Presenter.View
 {
-    /// <summary>
-    /// Link component placed on every spawned GameObject.
-    /// </summary>
     public class SceneObjectView : MonoBehaviour
     {
         public SceneObject DomainObject { get; private set; }
@@ -32,7 +29,7 @@ namespace Controler.Editor.Views
                 ApplyTransform(DomainObject.Transform);
         }
 
-        private void ApplyTransform(Domain.TransformModel t)
+        private void ApplyTransform(TransformModel t)
         {
             transform.position   = new Vector3(t.Position.x, t.Position.y, t.Position.z);
             transform.rotation   = new Quaternion(t.Rotation.x, t.Rotation.y, t.Rotation.z, t.Rotation.w);

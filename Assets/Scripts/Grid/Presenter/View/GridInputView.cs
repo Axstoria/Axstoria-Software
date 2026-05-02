@@ -1,19 +1,15 @@
-using Controler.Editor.ViewModels;
-using Domain;
+using Grid.Domain;
 using Loxodon.Framework.Contexts;
+using MapEditor.Presenter.ViewModels;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-namespace Controler.Editor.Views
+namespace Grid.Presenter.View
 {
-    /// <summary>
-    /// Raycasts each frame to detect which grid cell the cursor is over.
-    /// Fires events on events hover and click.
-    /// </summary>
     public class GridInputView : MonoBehaviour
     {
-        [SerializeField] private Camera    gridCamera;
+        [SerializeField] private UnityEngine.Camera gridCamera;
         [SerializeField] private LayerMask terrainLayer;
 
         public UnityEvent<GridCell> OnCellHovered;
@@ -38,21 +34,20 @@ namespace Controler.Editor.Views
                 return;
             }
 
-            if (gridCamera == null) gridCamera = Camera.main;
+            if (gridCamera == null) gridCamera = UnityEngine.Camera.main;
         }
 
         private void Update()
         {
             if (_vm?.Grid == null) return;
 
-            // Block input when cursor is over UI
             if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
             {
                 if (_lastHovered != null) { _lastHovered = null; OnCellHovered?.Invoke(null); }
                 return;
             }
 
-            if (!Physics.Raycast(gridCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, terrainLayer)) // Mathf.Infinity is fine but not very optimized
+            if (!Physics.Raycast(gridCamera.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, Mathf.Infinity, terrainLayer))
             {
                 if (_lastHovered != null) { _lastHovered = null; OnCellHovered?.Invoke(null); }
                 return;
@@ -65,7 +60,7 @@ namespace Controler.Editor.Views
             {
                 _lastHovered = cell;
                 HoveredCell  = cell;
-                OnCellHovered?.Invoke(cell);                
+                OnCellHovered?.Invoke(cell);
             }
 
             if (Input.GetMouseButtonDown(0)) OnCellClicked?.Invoke(cell);

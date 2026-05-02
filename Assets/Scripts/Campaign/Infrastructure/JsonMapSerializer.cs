@@ -1,23 +1,24 @@
 using System;
 using System.Collections.Generic;
-using App.Ports;
-using Domain;
-using DomainGrid  = Domain.Grid;
-using DomainVec3  = Domain.Math.Vector3;
-using DomainQuat  = Domain.Math.Quaternion;
+using Campaign.App.Port;
+using Grid.Domain;
+using MapEditor.Domain;
+using SceneEditor.Domain;
+using UnityEngine;
+using DomainGrid = Grid.Domain.Grid;
 
-namespace Infrastructure.Persistence
+namespace Campaign.Infrastructure
 {
     public class JsonMapSerializer : IMapSerializer
     {
         public string Serialize(Map map)
         {
-            return UnityEngine.JsonUtility.ToJson(ToDTO(map), true);
+            return JsonUtility.ToJson(ToDTO(map), true);
         }
 
         public Map Deserialize(string json)
         {
-            return FromDTO(UnityEngine.JsonUtility.FromJson<MapDataDTO>(json));
+            return FromDTO(JsonUtility.FromJson<MapDataDTO>(json));
         }
 
         // ── Map ↔ DTO ─────────────────────────────────────────────────────────
@@ -121,9 +122,9 @@ namespace Infrastructure.Persistence
                 ImportPath  = dto.importPath,
                 Transform   = new TransformModel
                 {
-                    Position = new DomainVec3(dto.posX,  dto.posY,  dto.posZ),
-                    Rotation = new DomainQuat(dto.rotX,  dto.rotY,  dto.rotZ, dto.rotW),
-                    Scale    = new DomainVec3(dto.scaleX, dto.scaleY, dto.scaleZ)
+                    Position = new Vector3(dto.posX,  dto.posY,  dto.posZ),
+                    Rotation = new Quaternion(dto.rotX, dto.rotY, dto.rotZ, dto.rotW),
+                    Scale    = new Vector3(dto.scaleX, dto.scaleY, dto.scaleZ)
                 }
             };
         }

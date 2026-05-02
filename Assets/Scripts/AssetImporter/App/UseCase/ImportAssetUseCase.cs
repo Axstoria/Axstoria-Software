@@ -1,16 +1,15 @@
-using App.Commands;
-using App.Ports;
-using Domain;
+using MapEditor.Domain;
+using SceneEditor.App.Command;
+using SceneEditor.Domain;
+using Shared.App.Port;
+using Shared.Domain;
 
-namespace App.UseCases
+namespace AssetImporter.App.UseCase
 {
-    /// <summary>
-    /// Use case for importing a 3D asset into the map.
-    /// </summary>
     public class ImportAssetUseCase
     {
-        private readonly Map            _map;
-        private readonly CommandHistory _history;
+        private readonly Map             _map;
+        private readonly CommandHistory  _history;
         private readonly IFileDialogService _dialog;
 
         public ImportAssetUseCase(Map map, CommandHistory history, IFileDialogService dialog)

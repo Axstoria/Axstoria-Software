@@ -1,13 +1,11 @@
-using UnityEngine;
 using UnityEngine.UIElements;
 
-public interface IUIManager
+namespace EditorShell.Presenter.View
 {
-    public void Init(VisualElement root, VisualElement managedUI, ThemeStyleSheet theme);
-    public void ToggleUI(DropdownMenuAction action);
-
-    public string Name
+    public interface IUIManager
     {
-        get;
+        void Init(VisualElement root, VisualElement managedUI, ThemeStyleSheet theme);
+        void ToggleUI(DropdownMenuAction action);
+        string Name { get; }
     }
 }

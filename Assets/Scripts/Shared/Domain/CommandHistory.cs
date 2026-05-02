@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
 
-namespace Domain
+namespace Shared.Domain
 {
-    /// <summary>
-    /// Manages the history of executed commands, allowing for undo and redo functionality.
-    /// </summary>
     public class CommandHistory
     {
         private readonly Stack<ICommand> _undoStack = new();
@@ -13,12 +10,12 @@ namespace Domain
 
         public event Action OnHistoryChanged;
 
-        public bool CanUndo   => _undoStack.Count > 0;
-        public bool CanRedo   => _redoStack.Count > 0;
+        public bool   CanUndo   => _undoStack.Count > 0;
+        public bool   CanRedo   => _redoStack.Count > 0;
         public string UndoLabel => CanUndo ? _undoStack.Peek().Label : "";
         public string RedoLabel => CanRedo ? _redoStack.Peek().Label : "";
-        public int UndoCount  => _undoStack.Count;
-        public int RedoCount  => _redoStack.Count;
+        public int    UndoCount => _undoStack.Count;
+        public int    RedoCount => _redoStack.Count;
 
         public void Record(ICommand cmd)
         {

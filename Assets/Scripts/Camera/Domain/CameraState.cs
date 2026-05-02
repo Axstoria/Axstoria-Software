@@ -1,8 +1,5 @@
-namespace Domain
+namespace Camera.Domain
 {
-    /// <summary>
-    /// Tunable settings for the editor camera.
-    /// </summary>
     public class CameraSettings
     {
         // Orbit
@@ -22,14 +19,11 @@ namespace Domain
         public float PanSmoothing   = 16f;
     }
 
-    /// <summary>
-    /// Camere state current target values and initial values for reset.
-    /// </summary>
     public class CameraState
     {
         public CameraSettings Settings { get; } = new();
 
-        // ── Target state (what input writes to) ───────────────────────────────
+        // ── Target state ──────────────────────────────────────────────────────
         public float PivotX   { get; set; }
         public float PivotY   { get; set; }
         public float PivotZ   { get; set; }
@@ -50,7 +44,6 @@ namespace Domain
             Reset();
         }
 
-        /// <summary>Snaps all target values back to their initial state.</summary>
         public void Reset()
         {
             PivotX   = InitialPivotX;
@@ -61,7 +54,6 @@ namespace Domain
             Distance = InitialDistance;
         }
 
-        /// <summary>Moves the pivot target to focus on a world point.</summary>
         public void FocusOn(float x, float y, float z, float distance = -1f)
         {
             PivotX = x;

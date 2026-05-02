@@ -1,18 +1,17 @@
-using App.Commands;
-using Domain;
+using Grid.Domain;
+using MapEditor.App.Command;
+using MapEditor.Domain;
+using Shared.Domain;
 
-namespace App.UseCases
+namespace MapEditor.App.UseCase
 {
-    /// <summary>
-    /// Use case for generating terrain based on a specified layout and parameters.
-    /// </summary>
     public class GenerateTerrainUseCase
     {
-        private readonly CommandHistory _history;
-        private readonly Grid           _grid;
-        private readonly Map            _map;
+        private readonly CommandHistory   _history;
+        private readonly Grid.Domain.Grid _grid;
+        private readonly Map              _map;
 
-        public GenerateTerrainUseCase(CommandHistory history, Grid grid, Map map)
+        public GenerateTerrainUseCase(CommandHistory history, Grid.Domain.Grid grid, Map map)
         {
             _history = history;
             _grid    = grid;

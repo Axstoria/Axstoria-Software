@@ -1,18 +1,18 @@
-using App.Commands;
-using Domain;
+using Grid.Domain;
+using MapEditor.Domain;
+using SceneEditor.App.Command;
+using SceneEditor.Domain;
+using Shared.Domain;
 
-namespace App.UseCases
+namespace SceneEditor.App.UseCase
 {
-    /// <summary>
-    /// Use case for deleting an existing SceneObject from the map.
-    /// </summary>
     public class DeleteObjectUseCase
     {
-        private readonly Map _map;
-        private readonly Grid _grid;
-        private readonly CommandHistory _history;
+        private readonly Map              _map;
+        private readonly Grid.Domain.Grid _grid;
+        private readonly CommandHistory   _history;
 
-        public DeleteObjectUseCase(Map map, Grid grid, CommandHistory history)
+        public DeleteObjectUseCase(Map map, Grid.Domain.Grid grid, CommandHistory history)
         {
             _map     = map;
             _grid    = grid;

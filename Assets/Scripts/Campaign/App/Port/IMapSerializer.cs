@@ -1,10 +1,7 @@
-using Domain;
+using MapEditor.Domain;
 
-namespace App.Ports
+namespace Campaign.App.Port
 {
-    /// <summary>
-    /// Interface for map serialization.
-    /// </summary>
     public interface IMapSerializer
     {
         string Serialize(Map map);

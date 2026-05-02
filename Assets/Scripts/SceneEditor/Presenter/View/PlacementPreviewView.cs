@@ -1,15 +1,13 @@
-using System; 
+using System;
 using System.Collections.Generic;
-using Controler.Editor.ViewModels;
-using Domain;
+using Grid.Domain;
 using Loxodon.Framework.Contexts;
+using MapEditor.Presenter.ViewModels;
+using SceneEditor.Domain;
 using UnityEngine;
 
-namespace Controler.Editor.Views
+namespace SceneEditor.Presenter.View
 {
-    /// <summary>
-    /// Manages the preview object during placement mode.
-    /// </summary>
     public class PlacementPreviewView : MonoBehaviour
     {
         [SerializeField] private Material validMaterial;
@@ -48,7 +46,6 @@ namespace Controler.Editor.Views
                 Destroy(_previewInstance);
         }
 
-        // Called by UI when user selects an object to place
         public void BeginPlacement(GameObject prefab, SceneObject domainObject)
         {
             CancelPreview();
@@ -60,7 +57,6 @@ namespace Controler.Editor.Views
             _vm.IsPlacementMode.Value = true;
         }
 
-        // Wired to GridInputView.OnCellHovered in the Inspector
         public void OnCellHovered(GridCell cell)
         {
             if (_previewInstance == null || cell == null) return;
@@ -72,7 +68,6 @@ namespace Controler.Editor.Views
             SetPreviewMaterial(canPlace ? validMaterial : invalidMaterial);
         }
 
-        // Wired to GridInputView.OnCellClicked in the Inspector
         public void OnCellClicked(GridCell cell)
         {
             if (_previewInstance == null || _pendingObject == null || cell == null) return;
@@ -91,7 +86,6 @@ namespace Controler.Editor.Views
             if (_vm != null) _vm.IsPlacementMode.Value = false;
         }
 
-        // Computes grid footprint from the cached renderers' bounds — call once on BeginPlacement
         private List<GridCoord> ComputeFootprint()
         {
             float cellSize = _vm.Grid?.CellSize ?? 1f;

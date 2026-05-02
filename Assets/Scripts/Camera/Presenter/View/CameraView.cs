@@ -1,25 +1,20 @@
-using Controler.Editor.ViewModels;
-using Domain;
+using Camera.Domain;
+using Camera.Presenter.ViewModels;
 using Loxodon.Framework.Contexts;
+using MapEditor.Presenter.ViewModels;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Controler.Editor.Views
+namespace Camera.Presenter.View
 {
-    /// <summary>
-    /// Orbit camera View.
-    /// RMB = orbit  |  MMB = pan  |  Scroll = zoom  |  F = reset
-    /// </summary>
     public class CameraView : MonoBehaviour
     {
         private CameraState _state;
-        private Camera      _cam;
+        private UnityEngine.Camera _cam;
 
-        // ── Smoothed current values (Unity-side only) ─────────────────────────
         private float   _yaw, _pitch, _distance;
         private Vector3 _pivot;
 
-        // ── Drag tracking ─────────────────────────────────────────────────────
         private Vector2 _lastMousePos;
         private bool    _orbitBlocked;
         private bool    _panBlocked;
@@ -31,7 +26,7 @@ namespace Controler.Editor.Views
                             .Resolve<MapEditorViewModel>();
 
             _state = vm?.Camera?.Model;
-            _cam   = Camera.main;
+            _cam   = UnityEngine.Camera.main;
 
             if (_state == null)
             {
@@ -40,7 +35,6 @@ namespace Controler.Editor.Views
                 return;
             }
 
-            // Snap smoothed values to starting state
             _yaw      = _state.Yaw;
             _pitch    = _state.Pitch;
             _distance = _state.Distance;
@@ -57,8 +51,6 @@ namespace Controler.Editor.Views
             SmoothAndApply();
         }
 
-        // ── Input handlers ────────────────────────────────────────────────────
-
         private void HandleOrbit()
         {
             if (Input.GetMouseButtonDown(1))
@@ -72,9 +64,9 @@ namespace Controler.Editor.Views
             _lastMousePos = Input.mousePosition;
 
             var s = _state.Settings;
-            _state.Yaw    += delta.x * s.OrbitSensitivity;
-            _state.Pitch  -= delta.y * s.OrbitSensitivity;
-            _state.Pitch   = Mathf.Clamp(_state.Pitch, s.MinPitch, s.MaxPitch);
+            _state.Yaw   += delta.x * s.OrbitSensitivity;
+            _state.Pitch -= delta.y * s.OrbitSensitivity;
+            _state.Pitch  = Mathf.Clamp(_state.Pitch, s.MinPitch, s.MaxPitch);
         }
 
         private void HandlePan()
@@ -106,7 +98,6 @@ namespace Controler.Editor.Views
 
             var s = _state.Settings;
 
-            // Zoom-to-cursor: nudge pivot toward world point under cursor on zoom-in
             if (scroll > 0f)
             {
                 var cursor = GetWorldPointUnderCursor();
@@ -125,11 +116,9 @@ namespace Controler.Editor.Views
                 _state.Reset();
         }
 
-        // ── Smooth & apply ────────────────────────────────────────────────────
-
         private void SmoothAndApply()
         {
-            var s  = _state.Settings;
+            var   s  = _state.Settings;
             float dt = Time.unscaledDeltaTime;
 
             _yaw      = Mathf.LerpAngle(_yaw,      _state.Yaw,      s.OrbitSmoothing * dt);
@@ -146,8 +135,6 @@ namespace Controler.Editor.Views
             transform.position = _pivot + rot * new Vector3(0f, 0f, -_distance);
             transform.rotation = rot;
         }
-
-        // ── Helpers ───────────────────────────────────────────────────────────
 
         private Vector3 GetWorldPointUnderCursor()
         {

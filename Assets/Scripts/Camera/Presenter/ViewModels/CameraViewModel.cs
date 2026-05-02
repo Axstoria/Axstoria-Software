@@ -1,17 +1,11 @@
-using Domain;
+using Camera.Domain;
 using Loxodon.Framework.Observables;
 
-namespace Controler.Editor.ViewModels
+namespace Camera.Presenter.ViewModels
 {
-    /// <summary>
-    /// Exposes CameraState properties as observables so UI panels can
-    /// bind to and modify camera settings without touching the View directly.
-    /// </summary>
     public class CameraViewModel
     {
         public CameraState Model { get; }
-
-        // ── Observable settings ───────────────────────────────────────────────
 
         public ObservableProperty<float> OrbitSensitivity { get; } = new();
         public ObservableProperty<float> PanSensitivity   { get; } = new();
@@ -25,7 +19,6 @@ namespace Controler.Editor.ViewModels
         {
             Model = model;
 
-            // Seed observables from model
             OrbitSensitivity.Value = model.Settings.OrbitSensitivity;
             PanSensitivity.Value   = model.Settings.PanSensitivity;
             ZoomSpeed.Value        = model.Settings.ZoomSpeed;
@@ -34,7 +27,6 @@ namespace Controler.Editor.ViewModels
             MinPitch.Value         = model.Settings.MinPitch;
             MaxPitch.Value         = model.Settings.MaxPitch;
 
-            // Update model when observables change
             OrbitSensitivity.ValueChanged += (_, __) => model.Settings.OrbitSensitivity = OrbitSensitivity.Value;
             PanSensitivity.ValueChanged   += (_, __) => model.Settings.PanSensitivity   = PanSensitivity.Value;
             ZoomSpeed.ValueChanged        += (_, __) => model.Settings.ZoomSpeed        = ZoomSpeed.Value;

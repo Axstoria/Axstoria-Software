@@ -1,18 +1,15 @@
-namespace Domain
+namespace Grid.Domain
 {
     public enum CellState { Empty, Occupied, Blocked }
 
-    /// <summary>
-    /// Represents a single cell in the grid, which can be empty, occupied by a token, or blocked by a structure.
-    /// </summary>
     public class GridCell
     {
         public int X { get; }
         public int Z { get; }
-        public CellState State { get; private set; }
-        public string OccupantId { get; private set; }
+        public CellState State      { get; private set; }
+        public string OccupantId   { get; private set; }
 
-        public bool IsEmpty => State == CellState.Empty;
+        public bool IsEmpty    => State == CellState.Empty;
         public bool IsWalkable => State != CellState.Blocked;
 
         public GridCell(int x, int z) { X = x; Z = z; }

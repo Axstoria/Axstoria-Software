@@ -1,15 +1,13 @@
-using Domain;
+using SceneEditor.Domain;
+using Shared.Domain;
 
-namespace App.Commands
+namespace SceneEditor.App.Command
 {
-    /// <summary>
-    /// Command to transform a SceneObject by changing its position, rotation, or scale.
-    /// </summary>
     public class TransformObjectCommand : ICommand
     {
         public string Label { get; }
 
-        private readonly SceneObject _obj;
+        private readonly SceneObject   _obj;
         private readonly TransformModel _before;
         private readonly TransformModel _after;
 

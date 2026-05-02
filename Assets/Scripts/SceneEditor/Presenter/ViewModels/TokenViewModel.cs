@@ -1,33 +1,21 @@
-﻿using Domain;
 using Loxodon.Framework.Observables;
+using SceneEditor.Domain;
 
-namespace Controler.Editor.ViewModels
+namespace SceneEditor.Presenter.ViewModels
 {
-    /// <summary>
-    /// ViewModel for Token entities in the map editor.
-    /// </summary>
     public class TokenViewModel : SceneViewModel
     {
-
-        public readonly ObservableProperty<string> Faction = new ObservableProperty<string>("");
-        
         private readonly Token _token;
-        
-         public Token Model => _token;
+        public Token Model => _token;
 
-         /// <summary>
-         /// Initializes a new instance of the TokenViewModel class with the given Token model.
-         /// </summary>
-         /// <param name="token"></param>
+        public ObservableProperty<string> Faction { get; } = new ObservableProperty<string>("");
+
         public TokenViewModel(Token token) : base(token)
         {
             _token = token;
             Faction.Value = _token.Faction;
-            
-            Faction.ValueChanged += (sender, args) =>
-            {
-                _token.Faction = Faction.Value;
-            };
+
+            Faction.ValueChanged += (_, __) => _token.Faction = Faction.Value;
         }
     }
 }
