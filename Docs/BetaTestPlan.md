@@ -66,7 +66,7 @@ The following features will be shown during the defense
 | F1 | Creation of a grid that fits all the parameters | 10 attempts, grid with random parameter properly generated | Result |
 | F2 | User can display the desired panel without corruption | 5 attempts, hide or display a random panel | Result |
 | F3 | A player can move easily from one point to another | 10 attempts, a new tester can move to a chosen point on a given map without indication | Result |
-| F4 | Angle changement must be smooth without abrupt jump or broken view | Change angle 20 times in a row without problem | Result |
+| F4 | Changing angle must be smooth without abrupt jump or broken view | Change angle 20 times in a row without problem | Result |
 | F5 | Object must get all the attributes of a gameobject and be displayable | 10 attempts, object must be visible and interactable | Result |
 | F6 | Transformation must give the correct result | 35 attempts, transformation applied without corruption | Result |
 | F7 | Object must be displayed at the correct coordinates | 15 attempts, placement and transformation must succeed and stay visible | Result |
@@ -78,7 +78,7 @@ The following features will be shown during the defense
 | F13 | Create a tag with no duplicate and assign the correct properties | 20 attempts, can access the tags from the different pannel and properties are saved | Result |
 | F14 | Can save/load a map without corruption or loss | 10 attempts, save close and then load a map | Result |
 | F15 | User can add the desired block and modify the text and variable | 10 attempts, create a sheet with a random number of block | Result |
-| F16 | Can save/load a sheet without corruption or loss | 10 attempts, save close and then load a sheet| Result |
+| F16 | Can save/load a sheet without corruption or loss | 10 attempts, save close and then load a sheet | Result |
 | F17 | User can join the session with an invitation and talk in the chat | 15 attempts, no blocking or message not displayed | Result |
 | F18 | Start the session with the desired parameters | 10 attemps, start a session with random parameters | Result |
 | F19 | Tags assigned to the player id correctly and properties transmitted | 10 attempts, 5 attemps only one player can see a note, 5 attemps only one player can move a pawn | Result |
@@ -90,7 +90,7 @@ The following features will be shown during the defense
 | F25 | Object parameters must be interactable only when permission is given | 10 attempts, try to access the object with or without permission and have correct result | Result |
 | F26 | Fog must be displayed to the correct users | 10 attempts, is the layer mask working as intended | Result |
 | F27 | The result must be correctly formatted and displayed | 25 attempts, roll a random set of dice with correct format | Result |
-| F28 | Hidden option must hide the result to the non concerned user | 15 attempts (10 user, 5 game master), roll a set of dices, result must be displayed to the correct users | Result |
+| F28 | Hidden option must hide the dice result to the non concerned user | 15 attempts (10 user, 5 game master), roll a set of dices, result must be displayed to the correct users | Result |
 | F29 | Display the correct distance between two points | 20 attempts, no wrong distance displayed (10% error margin) | Result |
 | F30 | Ping must be displayed on everyone's screen with the player's color | 20 attempts, proper display | Result |
 | F31 | Line of sight must be displayed with breaking point highlated | 30 attempts (10 without obstacle), correctly show the line of sight (15% error margin with obstacle) | Result |
