@@ -1,0 +1,14 @@
+{
+    "name": "Axstoria.SceneEditor.Domain",
+    "rootNamespace": "SceneEditor.Domain",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
