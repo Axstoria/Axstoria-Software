@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace Shared.Domain
 {
     public enum StatType { Int, Float, Bool, Text}

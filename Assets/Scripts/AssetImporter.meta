@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/Scripts/AssetImporter.meta
 guid: 89590288fc791a7599a732dd0f1c1fb9
-========
-guid: a8a82be41e606b3dfb67ed697111781b
->>>>>>>> 44b432f ([add] basic widget for character sheet):Assets/Scripts/SceneEditor/Domain/Character.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}
