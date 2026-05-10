@@ -1,6 +1,7 @@
-using UnityEngine;
-
-public class CharacterSheetPlayerViewModel
+namespace CharacterSheet.Presentation.ViewModel
 {
+    public class CharacterSheetPlayerViewModel
+    {
     
+    }
 }

@@ -9,16 +9,17 @@ namespace CharacterSheet.Domain
         public Rect Layout { get; set; }
         
         public List<WidgetStatBinding> Stats { get; } = new();
-        
-        public bool HasBorder { get; set; }
-        public float BorderThickness { get; set; }
-        public Color BorderColor { get; set; }
-        public Color BackgroundColor { get; set; }
+
+        public bool HasBorder { get; set; } = false;
+        public float BorderThickness { get; set; } = 0.1f;
+        public Color BorderColor { get; set; } = Color.black;
+        public Color BackgroundColor { get; set; } = Color.white;
         public string BackgroundImagePath { get; set; }
         
-        protected SheetWidget(string id)
+        protected SheetWidget(string id, Rect layout)
         {
             Id = id;
+            Layout = layout;
         }
     }
 }
