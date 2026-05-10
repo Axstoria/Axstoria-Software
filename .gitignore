@@ -115,6 +115,9 @@ crashlytics-build.properties
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
+.idea/**/indexLayout.xml
+.idea/**/projectSettings.xml
+.idea/**/vcs.xml
 
 # Gradle
 .idea/**/gradle.xml
