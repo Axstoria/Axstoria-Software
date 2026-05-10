@@ -1,0 +1,8 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <engine:VisualElement name="prefab-browser" class="prefab-browser">
+        <engine:VisualElement name="prefab-browser-header" class="prefab-browser__header">
+            <engine:VisualElement name="prefab-browser-tabs" class="prefab-browser__tabs"/>
+        </engine:VisualElement>
+        <engine:ScrollView name="prefab-browser-grid" class="prefab-browser__grid" mode="Horizontal" horizontal-scroller-visibility="Auto" vertical-scroller-visibility="Hidden"/>
+    </engine:VisualElement>
+</engine:UXML>

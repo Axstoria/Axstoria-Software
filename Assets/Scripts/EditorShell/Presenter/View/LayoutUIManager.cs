@@ -41,7 +41,9 @@ namespace EditorShell.Presenter.View
             layersFlyout.Init(root);
             moveFlyout.OnFlyoutOpened   = () => layersFlyout.HideImmediately();
             layersFlyout.OnFlyoutOpened = () => moveFlyout.HideImmediately();
-            this.AddComponent<BottomPanelController>().Init(root);
+            var bottomPanel = GetComponentInChildren<BottomPanelController>() ?? this.AddComponent<BottomPanelController>();
+            bottomPanel.Init(root);
+            GetComponentInChildren<PrefabBrowserView>()?.Init(root);
             this.AddComponent<TooltipController>().Init(root);
         }
     }

@@ -3,6 +3,7 @@
     <Style src="ToolsBar/ToolsBar.uss"/>
     <Style src="Resources/EditionToolbar/EditionToolbarUI.uss"/>
     <Style src="BottomPanel/BottomPanel.uss"/>
+    <Style src="BottomPanel/PrefabBrowser.uss"/>
     <Style src="Tooltip.uss"/>
     <engine:VisualElement name="tools-bar" class="tools-bar">
         <engine:VisualElement name="layers-tool-wrapper" class="layers-tool-wrapper">

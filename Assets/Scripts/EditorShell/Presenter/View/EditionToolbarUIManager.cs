@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.IO;
 using Fab.UITKDropdown;
+using Loxodon.Framework.Contexts;
+using MapEditor.Presenter.ViewModels;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -87,14 +89,13 @@ namespace EditorShell.Presenter.View
 
         private void OnImportAssetClicked(DropdownMenuAction action)
         {
-            // var aim = VTT.AssetImportManager.Instance;
-            // if (aim != null)
-            // {
-            //     aim.ImportFromFileDialog();
-            //     return;
-            // }
-
-            // Debug.LogWarning("EditionToolbarUIManager: VTT.AssetImportManager not found.");
+            var vm = Context.GetApplicationContext().GetContainer().Resolve<MapEditorViewModel>();
+            if (vm == null)
+            {
+                Debug.LogWarning("[EditionToolbarUIManager] MapEditorViewModel not registered, cannot import.");
+                return;
+            }
+            vm.ImportAsset.Execute();
         }
 
         private void OnUndoClicked(DropdownMenuAction action)
