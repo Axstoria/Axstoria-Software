@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using Loxodon.Framework.Contexts;
 using MapEditor.Presenter.ViewModels;
 using SceneEditor.Domain;
+using SceneEditor.Presenter;
 using SceneEditor.Presenter.View;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -46,6 +48,12 @@ namespace EditorShell.Presenter.View
         private string _activeCategory;
         private VisualElement _selectedItem;
 
+        private GameObject _armedPrefab;
+        private string _armedCategory;
+        private bool _rearmPending;
+        private NotifyCollectionChangedEventHandler _onObjectsChanged;
+        private EventHandler _onPlacementModeChanged;
+
         public void Init(VisualElement root)
         {
             if (_prefabBrowserUxml == null)
@@ -79,6 +87,35 @@ namespace EditorShell.Presenter.View
 
             if (_categories.Count > 0 && _categories[0] != null)
                 SelectCategory(_categories[0].name);
+
+            _onObjectsChanged = OnObjectsChanged;
+            _vm.Map.Objects.CollectionChanged += _onObjectsChanged;
+
+            _onPlacementModeChanged = OnPlacementModeChanged;
+            _vm.IsPlacementMode.ValueChanged += _onPlacementModeChanged;
+        }
+
+        private void OnDestroy()
+        {
+            if (_vm == null) return;
+            if (_onObjectsChanged != null) _vm.Map.Objects.CollectionChanged -= _onObjectsChanged;
+            if (_onPlacementModeChanged != null) _vm.IsPlacementMode.ValueChanged -= _onPlacementModeChanged;
+        }
+
+        private void OnObjectsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action != NotifyCollectionChangedAction.Add) return;
+            if (_armedPrefab == null || _selectedItem == null) return;
+            _rearmPending = true;
+        }
+
+        private void OnPlacementModeChanged(object sender, EventArgs e)
+        {
+            if (_vm.IsPlacementMode.Value) return;
+            if (!_rearmPending) return;
+            _rearmPending = false;
+            if (_armedPrefab != null)
+                StartPlacement(_armedPrefab, _armedCategory);
         }
 
         private void BuildTabs()
@@ -170,8 +207,16 @@ namespace EditorShell.Presenter.View
             if (_selectedItem != null)
                 _selectedItem.RemoveFromClassList(ItemSelectedClass);
             item.AddToClassList(ItemSelectedClass);
-            _selectedItem = item;
+            _selectedItem  = item;
+            _armedPrefab   = prefab;
+            _armedCategory = categoryName;
+            _rearmPending  = false;
 
+            StartPlacement(prefab, categoryName);
+        }
+
+        private void StartPlacement(GameObject prefab, string categoryName)
+        {
             if (_placementPreview == null)
             {
                 Debug.LogWarning("[PrefabBrowserView] PlacementPreviewView not assigned.");
@@ -184,9 +229,29 @@ namespace EditorShell.Presenter.View
                 DisplayName = GetDisplayNameForPrefab(prefab, categoryName),
                 Category    = categoryName,
                 IsImported  = false,
-                Transform   = new TransformModel()
+                Transform   = new TransformModel
+                {
+                    Position = Vector3.zero,
+                    Rotation = Quaternion.identity,
+                    Scale    = Vector3.one
+                }
             };
+            ScenePrefabRegistry.Register(domainObj.Id, prefab);
             _placementPreview.BeginPlacement(prefab, domainObj);
+        }
+
+        private void Update()
+        {
+            if (_selectedItem == null || _vm == null) return;
+            if (!Input.GetMouseButtonDown(1)) return;
+            if (!_vm.IsPlacementMode.Value) return;
+
+            _armedPrefab   = null;
+            _armedCategory = null;
+            _rearmPending  = false;
+            _vm.IsPlacementMode.Value = false;
+            _selectedItem.RemoveFromClassList(ItemSelectedClass);
+            _selectedItem = null;
         }
 
         private string GetDisplayNameForPrefab(GameObject prefab, string categoryName)
