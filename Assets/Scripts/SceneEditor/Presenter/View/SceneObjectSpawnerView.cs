@@ -56,8 +56,11 @@ namespace SceneEditor.Presenter.View
 
             if (!ScenePrefabRegistry.TryGet(id, out GameObject prefab) || prefab == null)
             {
-                Debug.LogWarning($"[SceneObjectSpawnerView] No prefab registered for SceneObject '{id}'. Skipping spawn.");
-                return;
+                if (!ScenePrefabRegistry.TryGetByCatalog(domain.Category, domain.DisplayName, out prefab) || prefab == null)
+                {
+                    Debug.LogWarning($"[SceneObjectSpawnerView] No prefab found for SceneObject '{id}' (category='{domain.Category}', name='{domain.DisplayName}'). Skipping spawn.");
+                    return;
+                }
             }
 
             Transform parent = _container != null ? _container : transform;

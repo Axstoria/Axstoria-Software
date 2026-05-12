@@ -2,7 +2,9 @@ using System.Collections.Generic;
 using System.IO;
 using Fab.UITKDropdown;
 using Loxodon.Framework.Contexts;
+using MapEditor.Domain;
 using MapEditor.Presenter.ViewModels;
+using SceneEditor.Domain;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -45,8 +47,8 @@ namespace EditorShell.Presenter.View
             dropdown = new Dropdown(root);
 
             fileMenu = new DropdownMenu();
-            fileMenu.AppendAction("Save",                  null);
-            fileMenu.AppendAction("Import Map",            null);
+            fileMenu.AppendAction("Save",                  OnSaveClicked);
+            fileMenu.AppendAction("Import Map",            OnImportMapClicked);
             fileMenu.AppendAction("Import Asset",          OnImportAssetClicked);
             fileMenu.AppendAction("Open/Rules",            null);
             fileMenu.AppendAction("Open/Sheets",           null);
@@ -96,6 +98,44 @@ namespace EditorShell.Presenter.View
                 return;
             }
             vm.ImportAsset.Execute();
+        }
+
+        private void OnSaveClicked(DropdownMenuAction action)
+        {
+            var vm = Context.GetApplicationContext().GetContainer().Resolve<MapEditorViewModel>();
+            if (vm == null)
+            {
+                Debug.LogWarning("[EditionToolbarUIManager] MapEditorViewModel not registered, cannot save.");
+                return;
+            }
+            vm.SaveMap.Execute(vm.Map.Model);
+        }
+
+        private void OnImportMapClicked(DropdownMenuAction action)
+        {
+            var vm = Context.GetApplicationContext().GetContainer().Resolve<MapEditorViewModel>();
+            if (vm == null)
+            {
+                Debug.LogWarning("[EditionToolbarUIManager] MapEditorViewModel not registered, cannot load.");
+                return;
+            }
+
+            Map loaded = vm.LoadMap.Execute();
+            if (loaded == null) return;
+
+            Map active = vm.Map.Model;
+            active.Id   = loaded.Id;
+            active.Name = loaded.Name;
+
+            var existing = new List<SceneObject>(active.Objects);
+            foreach (SceneObject obj in existing)
+                active.RemoveObject(obj);
+
+            foreach (SceneObject obj in loaded.Objects)
+                active.AddObject(obj);
+
+            if (vm.Grid != null)
+                vm.Grid.RebuildOccupancy(active.Objects);
         }
 
         private void OnUndoClicked(DropdownMenuAction action)

@@ -84,6 +84,7 @@ namespace EditorShell.Presenter.View
             _grid = instance.Q<ScrollView>("prefab-browser-grid");
 
             BuildTabs();
+            PopulateRegistryCatalog();
 
             if (_categories.Count > 0 && _categories[0] != null)
                 SelectCategory(_categories[0].name);
@@ -116,6 +117,19 @@ namespace EditorShell.Presenter.View
             _rearmPending = false;
             if (_armedPrefab != null)
                 StartPlacement(_armedPrefab, _armedCategory);
+        }
+
+        private void PopulateRegistryCatalog()
+        {
+            foreach (BrowserCategory cat in _categories)
+            {
+                if (cat == null || cat.entries == null) continue;
+                foreach (PrefabEntry entry in cat.entries)
+                {
+                    if (entry == null || entry.prefab == null) continue;
+                    ScenePrefabRegistry.RegisterCatalog(cat.name, GetDisplayName(entry), entry.prefab);
+                }
+            }
         }
 
         private void BuildTabs()
