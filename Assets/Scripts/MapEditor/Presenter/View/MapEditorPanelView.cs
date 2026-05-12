@@ -142,13 +142,11 @@ namespace MapEditor.Presenter.View
 
         private void BindPrefabs()
         {
-            _root.Q<Button>("import-btn")?.RegisterCallback<ClickEvent>(_ =>
-            {
-                var status = _root.Q<Label>("import-status");
-                var obj    = _vm.ImportAsset.Execute();
-                if (status != null)
-                    status.text = obj != null ? $"Imported: {obj.DisplayName}" : "Import cancelled";
-            });
+            var importStatus = _root.Q<Label>("import-status");
+            if (importStatus != null)
+                _vm.ImportAsset.OnImported += (obj, _) => importStatus.text = $"Imported: {obj.DisplayName}";
+
+            _root.Q<Button>("import-btn")?.RegisterCallback<ClickEvent>(_ => _vm.ImportAsset.Execute());
 
             var categoryList = _root.Q<VisualElement>("category-list");
             if (categoryList == null || categories == null) return;

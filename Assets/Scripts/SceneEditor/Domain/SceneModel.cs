@@ -14,7 +14,7 @@ namespace SceneEditor.Domain
     {
         public string        Id        { get; set; }
         public string        ModelPath { get; set; }
-        private TransformModel _transform;
+        private TransformModel _transform = new TransformModel { Scale = UnityEngine.Vector3.one, Rotation = UnityEngine.Quaternion.identity };
         public TransformModel Transform
         {
             get => _transform;

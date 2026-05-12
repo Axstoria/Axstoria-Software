@@ -6,7 +6,8 @@
         "Axstoria.Shared.App",
         "Axstoria.SceneEditor.Domain",
         "Axstoria.SceneEditor.App",
-        "Axstoria.MapEditor.Domain"
+        "Axstoria.MapEditor.Domain",
+        "glTFast"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -16,5 +17,5 @@
     "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],
-    "noEngineReferences": true
+    "noEngineReferences": false
 }

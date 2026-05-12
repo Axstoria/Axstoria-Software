@@ -1,10 +1,7 @@
 {
-    "name": "Axstoria.Shared.Infrastructure",
-    "rootNamespace": "Shared.Infrastructure",
-    "references": [
-        "Axstoria.Shared.App",
-        "StandaloneFileBrowser"
-    ],
+    "name": "StandaloneFileBrowser",
+    "rootNamespace": "SFB",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
