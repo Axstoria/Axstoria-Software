@@ -121,6 +121,9 @@ namespace EditorShell.Presenter.View
             if (_spawner == null)
                 Debug.LogWarning("[SideBarController] SceneObjectSpawnerView not found in scene.");
 
+            if (_directionalLight == null)
+                _directionalLight = FindFirstObjectByType<Light>();
+
             _sideBar   = root.Q<VisualElement>("side-bar");
             _btnToggle = root.Q<Button>("btn-sidebar-toggle");
             _scroll    = root.Q<ScrollView>("side-bar-scroll");

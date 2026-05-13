@@ -1290,10 +1290,28 @@ MonoBehaviour:
   _categories:
   - name: Terrain
     entries:
-    - prefab: {fileID: 5679900585067106708, guid: 69b13ea45f4482946b3e8e6aaea5bb7d, type: 3}
-      displayName: Test1
-    - prefab: {fileID: 4602775962666987721, guid: 78ff3199686f2314aa4d37c0aa3516e5, type: 3}
-      displayName: Test2
+    - prefab: {fileID: 919132149155446097, guid: fb0559a36ae9650449b6e3c26d5076a5, type: 3}
+      displayName: Fruit_Tree_apples
+    - prefab: {fileID: 919132149155446097, guid: 3ebf65d3a6489594ca09a35d85d43b0a, type: 3}
+      displayName: Fruit_Tree_Dead
+    - prefab: {fileID: 919132149155446097, guid: f222748f1796b2e49a56a2fbf7563247, type: 3}
+      displayName: Fruit_Tree_Green
+    - prefab: {fileID: 919132149155446097, guid: 268a14e7ef45f1542a7d335b0a20d200, type: 3}
+      displayName: Fruit_Tree_Logs
+    - prefab: {fileID: 919132149155446097, guid: c2dcabc4d03cc9b4098225e59529d20d, type: 3}
+      displayName: Pine_Tree
+    - prefab: {fileID: 919132149155446097, guid: e9a01d2a3de15954eb2cccf4df7f3d5b, type: 3}
+      displayName: Pine_Tree_Logs
+    - prefab: {fileID: 919132149155446097, guid: f42a2ed0c78e45643bba339ed33235d4, type: 3}
+      displayName: Fruit_Tree_Stump
+    - prefab: {fileID: 919132149155446097, guid: f226223b3a11d2d4b980aaa520301583, type: 3}
+      displayName: Rock
+    - prefab: {fileID: 919132149155446097, guid: 13bd9962aed9bef41bc2dd73a559c317, type: 3}
+      displayName: Pine_Tree_Stump
+    - prefab: {fileID: 919132149155446097, guid: e0fe1b80592a0144babd1bf297ad32ad, type: 3}
+      displayName: Menhir_Rock
+    - prefab: {fileID: 919132149155446097, guid: e5e1b3c0d2be60b47981235187af0936, type: 3}
+      displayName: Rock_Pile
   - name: Divers
     entries:
     - prefab: {fileID: 5679900585067106708, guid: 69b13ea45f4482946b3e8e6aaea5bb7d, type: 3}
@@ -1325,8 +1343,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EditorShell.Presenter.View.SideBarController
   _directionalLight: {fileID: 1816956863}
   _gridMaterial: {fileID: 2100000, guid: f4a3eac82d3ab784d8be9d26b3eeaf2b, type: 2}
-  _gizmo: {fileID: 939603662}
-  _spawner: {fileID: 901278644}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
