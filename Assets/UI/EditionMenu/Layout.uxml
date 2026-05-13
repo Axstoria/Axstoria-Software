@@ -70,6 +70,11 @@
                     <engine:Slider name="slider-grid-opacity" label="Grid Opacity" value="0.34" low-value="0" high-value="1" />
                     <engine:Toggle name="toggle-transparent-sides" label="Transparent Sides" value="false" />
                 </engine:Foldout>
+                <engine:Foldout name="foldout-snap" text="Snap" enabled="true" value="false" style="margin-bottom: 10px;">
+                    <engine:Label text="MOVE GIZMO" style="margin-top: 6px; -unity-font-style: bold;" />
+                    <engine:Toggle name="toggle-snap-grid" label="Snap to Grid" value="false" />
+                    <engine:Toggle name="toggle-snap-terrain" label="Snap to Terrain" value="false" />
+                </engine:Foldout>
                 <engine:Foldout name="foldout-outliner" text="Outliner" enabled="true" value="false" style="margin-bottom: 10px;">
                     <engine:TextField name="outliner-search" placeholder-text="Search..." />
                     <engine:VisualElement name="outliner-list" />
