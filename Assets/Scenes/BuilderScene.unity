@@ -827,6 +827,8 @@ GameObject:
   - component: {fileID: 939603656}
   - component: {fileID: 939603660}
   - component: {fileID: 939603659}
+  - component: {fileID: 939603662}
+  - component: {fileID: 939603661}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -964,6 +966,82 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &939603661
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 939603655}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acf6e2b2de8d2e545a898e6b2390d32d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RuntimeGizmos.TransformGizmo
+  space: 0
+  transformType: 0
+  pivot: 0
+  centerType: 0
+  scaleType: 0
+  SetMoveType: 119
+  SetRotateType: 101
+  SetScaleType: 114
+  SetAllTransformType: 121
+  SetSpaceToggle: 120
+  SetPivotModeToggle: 122
+  SetCenterTypeToggle: 99
+  SetScaleTypeToggle: 115
+  translationSnapping: 306
+  AddSelection: 304
+  RemoveSelection: 306
+  ActionKey: 304
+  UndoAction: 122
+  RedoAction: 121
+  xColor: {r: 1, g: 0, b: 0, a: 0.8}
+  yColor: {r: 0, g: 1, b: 0, a: 0.8}
+  zColor: {r: 0, g: 0, b: 1, a: 0.8}
+  allColor: {r: 0.7, g: 0.7, b: 0.7, a: 0.8}
+  selectedColor: {r: 1, g: 1, b: 0, a: 0.8}
+  hoverColor: {r: 1, g: 0.75, b: 0, a: 0.8}
+  planesOpacity: 0.5
+  movementSnap: 0.25
+  rotationSnap: 15
+  scaleSnap: 1
+  handleLength: 0.25
+  handleWidth: 0.003
+  planeSize: 0.035
+  triangleSize: 0.03
+  boxSize: 0.03
+  circleDetail: 40
+  allMoveHandleLengthMultiplier: 1
+  allRotateHandleLengthMultiplier: 1.4
+  allScaleHandleLengthMultiplier: 1.6
+  minSelectedDistanceCheck: 0.01
+  moveSpeedMultiplier: 1
+  scaleSpeedMultiplier: 1
+  rotateSpeedMultiplier: 1
+  allRotateSpeedMultiplier: 20
+  useFirstSelectedAsMain: 1
+  circularRotationMethod: 0
+  forceUpdatePivotPointOnChange: 1
+  maxUndoStored: 100
+  manuallyHandleGizmo: 0
+  useExternalSelection: 1
+  selectionMask:
+    serializedVersion: 2
+    m_Bits: 1073742067
+--- !u!114 &939603662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 939603655}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fad09b880c6b0147b852df070818758, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapEditor.Presenter.View.TransformGizmoView
 --- !u!1 &1545123046
 GameObject:
   m_ObjectHideFlags: 0
@@ -1158,6 +1236,7 @@ GameObject:
   - component: {fileID: 1957207857}
   - component: {fileID: 1957207860}
   - component: {fileID: 1957207861}
+  - component: {fileID: 1957207862}
   m_Layer: 0
   m_Name: UI Manager
   m_TagString: Untagged
@@ -1232,6 +1311,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EditorShell.Presenter.View.BottomPanelController
   _resizeCursor: {fileID: 2800000, guid: 61c35b825812919428d758a2f776a1b9, type: 3}
+--- !u!114 &1957207862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1957207856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80a065464e382d247ab0245fe166c001, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EditorShell.Presenter.View.SideBarController
+  _directionalLight: {fileID: 1816956863}
+  _gridMaterial: {fileID: 2100000, guid: f4a3eac82d3ab784d8be9d26b3eeaf2b, type: 2}
+  _gizmo: {fileID: 939603662}
+  _spawner: {fileID: 901278644}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

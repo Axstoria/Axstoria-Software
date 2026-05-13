@@ -45,6 +45,7 @@ namespace EditorShell.Presenter.View
             bottomPanel.Init(root);
             GetComponentInChildren<PrefabBrowserView>()?.Init(root);
             this.AddComponent<TooltipController>().Init(root);
+            this.AddComponent<SideBarController>().Init(root);
         }
     }
 }

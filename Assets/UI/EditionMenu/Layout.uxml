@@ -1,43 +1,115 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="ViewSwitcher/ViewSwitcher.uss"/>
-    <Style src="ToolsBar/ToolsBar.uss"/>
-    <Style src="Resources/EditionToolbar/EditionToolbarUI.uss"/>
-    <Style src="BottomPanel/BottomPanel.uss"/>
-    <Style src="BottomPanel/PrefabBrowser.uss"/>
-    <Style src="Tooltip.uss"/>
+    <Style src="project://database/Assets/UI/EditionMenu/ViewSwitcher/ViewSwitcher.uss?fileID=7433441132597879392&amp;guid=ba7813cebba23b5439fe0a0ef60f8540&amp;type=3#ViewSwitcher" />
+    <Style src="project://database/Assets/UI/EditionMenu/ToolsBar/ToolsBar.uss?fileID=7433441132597879392&amp;guid=c7735b6f4a8cd4e47b7e096b4881bc20&amp;type=3#ToolsBar" />
+    <Style src="project://database/Assets/UI/EditionMenu/Resources/EditionToolbar/EditionToolbarUI.uss?fileID=7433441132597879392&amp;guid=2aa33c093366387469f03e4a9eb3157e&amp;type=3#EditionToolbarUI" />
+    <Style src="project://database/Assets/UI/EditionMenu/BottomPanel/BottomPanel.uss?fileID=7433441132597879392&amp;guid=065924eecbc24b749973fd692ba2980e&amp;type=3#BottomPanel" />
+    <Style src="project://database/Assets/UI/EditionMenu/BottomPanel/PrefabBrowser.uss?fileID=7433441132597879392&amp;guid=ff1d3b70b702f9f4b8e7a0ecaaff37a4&amp;type=3#PrefabBrowser" />
+    <Style src="project://database/Assets/UI/EditionMenu/Tooltip.uss?fileID=7433441132597879392&amp;guid=239df133b1effe04c8cafd9ae3853523&amp;type=3#Tooltip" />
+    <engine:VisualElement name="side-bar" style="position: absolute; top: 80px; right: 0; background-color: rgba(192, 192, 192, 0.75); width: 350px; max-height: 80%;">
+        <engine:VisualElement name="side-bar-header" enabled="true" style="flex-direction: row; justify-content: flex-end; padding: 2px;">
+            <engine:Button name="btn-sidebar-toggle" text="▶" style="width: 24px; height: 24px; padding: 0;" />
+        </engine:VisualElement>
+        <engine:ScrollView name="side-bar-scroll" vertical-scroller-visibility="Auto" horizontal-scroller-visibility="Hidden" style="flex-grow: 1;">
+            <engine:VisualElement name="side-bar-content" style="background-color: rgba(128, 128, 128, 0.75); align-self: stretch;">
+                <engine:Foldout name="foldout-camera" text="Camera" enabled="true" value="false" style="margin-bottom: 10px;">
+                    <engine:Slider name="slider-orbit-sensitivity" label="Orbit Sensitivity" value="0.4" low-value="0" high-value="2" />
+                    <engine:Slider name="slider-zoom-speed" label="Zoom Speed" value="0.45" low-value="0" high-value="2" />
+                    <engine:Slider name="slider-pan-sensitivity" label="Pan Sensitivity" value="5" low-value="0" high-value="20" />
+                    <engine:Slider name="slider-orbit-smoothing" label="Orbit Smoothing" value="10" low-value="0" high-value="20" />
+                    <engine:Slider name="slider-zoom-smoothing" label="Zoom Smoothing" value="10" low-value="0" high-value="20" />
+                    <engine:Label text="LIMITS" style="margin-top: 6px; -unity-font-style: bold;" />
+                    <engine:Slider name="slider-min-pitch" label="Min Pitch" value="5" low-value="-90" high-value="90" />
+                    <engine:Slider name="slider-max-pitch" label="Max Pitch" value="60" low-value="-90" high-value="90" />
+                    <engine:Slider name="slider-min-zoom" label="Min Zoom" value="2" low-value="0" high-value="100" />
+                    <engine:Slider name="slider-max-zoom" label="Max Zoom" value="80" low-value="0" high-value="100" />
+                    <engine:Button name="btn-reset-view" text="Reset View (F)" style="margin-top: 6px;" />
+                </engine:Foldout>
+                <engine:Foldout name="foldout-light" text="Directional Light" enabled="true" value="false" style="margin-bottom: 10px;">
+                    <engine:Slider name="slider-light-intensity" label="Intensity" value="1.22" low-value="0" high-value="5" />
+                    <engine:Label text="COLOR" style="margin-top: 6px; -unity-font-style: bold;" />
+                    <engine:Slider name="slider-light-color-r" label="R" value="1" low-value="0" high-value="1" />
+                    <engine:Slider name="slider-light-color-g" label="G" value="0.96" low-value="0" high-value="1" />
+                    <engine:Slider name="slider-light-color-b" label="B" value="0.84" low-value="0" high-value="1" />
+                    <engine:Label text="DIRECTION" style="margin-top: 6px; -unity-font-style: bold;" />
+                    <engine:Slider name="slider-light-pitch" label="Pitch (X)" value="80" low-value="-180" high-value="180" />
+                    <engine:Slider name="slider-light-yaw" label="Yaw (Y)" value="330" low-value="0" high-value="360" />
+                    <engine:Slider name="slider-light-shadows" label="Shadows" value="1.6" low-value="0" high-value="5" />
+                    <engine:Label text="AMBIENT" style="margin-top: 6px; -unity-font-style: bold;" />
+                    <engine:Slider name="slider-ambient-intensity" label="Intensity" value="1" low-value="0" high-value="5" />
+                    <engine:Label text="Ambient Color" style="margin-top: 4px;" />
+                    <engine:Slider name="slider-ambient-color-r" label="R" value="0.5" low-value="0" high-value="1" />
+                    <engine:Slider name="slider-ambient-color-g" label="G" value="0.5" low-value="0" high-value="1" />
+                    <engine:Slider name="slider-ambient-color-b" label="B" value="0.5" low-value="0" high-value="1" />
+                </engine:Foldout>
+                <engine:Foldout name="foldout-terraingrid" text="TerrainGrid" enabled="true" value="false" style="margin-bottom: 10px;">
+                    <engine:VisualElement style="flex-direction: row; margin-bottom: 4px;">
+                        <engine:Button name="btn-save-map" text="Save Map" style="flex-grow: 1;" />
+                        <engine:Button name="btn-load-map" text="Load Map" style="flex-grow: 1;" />
+                    </engine:VisualElement>
+                    <engine:Label text="TERRAIN" style="margin-top: 6px; -unity-font-style: bold;" />
+                    <engine:Label text="Terrain Color" style="margin-top: 4px;" />
+                    <engine:Slider name="slider-terrain-color-r" label="R" value="0.8" low-value="0" high-value="1" />
+                    <engine:Slider name="slider-terrain-color-g" label="G" value="0.6" low-value="0" high-value="1" />
+                    <engine:Slider name="slider-terrain-color-b" label="B" value="0.2" low-value="0" high-value="1" />
+                    <engine:IntegerField name="field-terrain-width" label="Width" value="70" />
+                    <engine:IntegerField name="field-terrain-depth" label="Depth" value="70" />
+                    <engine:IntegerField name="field-terrain-thickness" label="Thickness" value="2" />
+                    <engine:Button name="btn-regenerate-map" text="Regenerate Map" style="margin-top: 6px;" />
+                    <engine:Label text="GRID SHADER" style="margin-top: 6px; -unity-font-style: bold;" />
+                    <engine:Slider name="slider-grid-cell-size-x" label="Cell Size X" value="1" low-value="0.1" high-value="10" />
+                    <engine:Slider name="slider-grid-cell-size-y" label="Cell Size Y" value="1" low-value="0.1" high-value="10" />
+                    <engine:Slider name="slider-grid-thickness" label="Grid Thickness" value="0.05" low-value="0" high-value="1" />
+                    <engine:Label text="Background" style="margin-top: 4px;" />
+                    <engine:Slider name="slider-grid-bg-r" label="R" value="0.8" low-value="0" high-value="1" />
+                    <engine:Slider name="slider-grid-bg-g" label="G" value="0.6" low-value="0" high-value="1" />
+                    <engine:Slider name="slider-grid-bg-b" label="B" value="0.2" low-value="0" high-value="1" />
+                    <engine:Label text="Grid Color" style="margin-top: 4px;" />
+                    <engine:Slider name="slider-grid-color-r" label="R" value="1" low-value="0" high-value="1" />
+                    <engine:Slider name="slider-grid-color-g" label="G" value="1" low-value="0" high-value="1" />
+                    <engine:Slider name="slider-grid-color-b" label="B" value="1" low-value="0" high-value="1" />
+                    <engine:Slider name="slider-grid-opacity" label="Grid Opacity" value="0.34" low-value="0" high-value="1" />
+                    <engine:Toggle name="toggle-transparent-sides" label="Transparent Sides" value="false" />
+                </engine:Foldout>
+                <engine:Foldout name="foldout-outliner" text="Outliner" enabled="true" value="false" style="margin-bottom: 10px;">
+                    <engine:TextField name="outliner-search" placeholder-text="Search..." />
+                    <engine:VisualElement name="outliner-list" />
+                </engine:Foldout>
+            </engine:VisualElement>
+        </engine:ScrollView>
+    </engine:VisualElement>
     <engine:VisualElement name="tools-bar" class="tools-bar">
         <engine:VisualElement name="layers-tool-wrapper" class="layers-tool-wrapper">
-            <engine:Button name="btn-layers" class="tool-btn tool-btn--layers" tooltip="All Layers"/>
+            <engine:Button name="btn-layers" tooltip="All Layers" class="tool-btn tool-btn--layers" />
             <engine:VisualElement name="layers-flyout" class="layers-flyout">
-                <engine:Button name="btn-flyout-all-layers" class="tool-btn tool-btn--layers" tooltip="All Layers"/>
-                <engine:Button name="btn-flyout-terrain" class="tool-btn tool-btn--terrain" tooltip="Terrain"/>
-                <engine:Button name="btn-flyout-buildings" class="tool-btn tool-btn--buildings" tooltip="Buildings"/>
-                <engine:Button name="btn-flyout-objects" class="tool-btn tool-btn--objects" tooltip="Objects"/>
-                <engine:Button name="btn-flyout-pawns" class="tool-btn tool-btn--pawns" tooltip="Pawns"/>
+                <engine:Button name="btn-flyout-all-layers" tooltip="All Layers" class="tool-btn tool-btn--layers" />
+                <engine:Button name="btn-flyout-terrain" tooltip="Terrain" class="tool-btn tool-btn--terrain" />
+                <engine:Button name="btn-flyout-buildings" tooltip="Buildings" class="tool-btn tool-btn--buildings" />
+                <engine:Button name="btn-flyout-objects" tooltip="Objects" class="tool-btn tool-btn--objects" />
+                <engine:Button name="btn-flyout-pawns" tooltip="Pawns" class="tool-btn tool-btn--pawns" />
             </engine:VisualElement>
         </engine:VisualElement>
         <engine:VisualElement name="move-tool-wrapper" class="move-tool-wrapper">
-            <engine:Button name="btn-move" class="tool-btn tool-btn--move tool-btn--selected" tooltip="Move"/>
+            <engine:Button name="btn-move" tooltip="Move" class="tool-btn tool-btn--move tool-btn--selected" />
             <engine:VisualElement name="move-flyout" class="move-flyout">
-                <engine:Button name="btn-flyout-move" class="tool-btn tool-btn--move" tooltip="Move"/>
-                <engine:Button name="btn-flyout-rotate" class="tool-btn tool-btn--rotate" tooltip="Rotate"/>
-                <engine:Button name="btn-flyout-scale" class="tool-btn tool-btn--scale" tooltip="Scale"/>
+                <engine:Button name="btn-flyout-move" tooltip="Move" class="tool-btn tool-btn--move" />
+                <engine:Button name="btn-flyout-rotate" tooltip="Rotate" class="tool-btn tool-btn--rotate" />
+                <engine:Button name="btn-flyout-scale" tooltip="Scale" class="tool-btn tool-btn--scale" />
             </engine:VisualElement>
         </engine:VisualElement>
-        <engine:Button name="btn-select" class="tool-btn tool-btn--select" tooltip="Select"/>
-        <engine:Button name="btn-fog" class="tool-btn tool-btn--fog" tooltip="Fog of War"/>
-        <engine:Button name="btn-measure" class="tool-btn tool-btn--measure" tooltip="Measure Distance"/>
-        <engine:Button name="btn-visibility" class="tool-btn tool-btn--visibility" tooltip="Visibility"/>
+        <engine:Button name="btn-select" tooltip="Select" class="tool-btn tool-btn--select" />
+        <engine:Button name="btn-fog" tooltip="Fog of War" class="tool-btn tool-btn--fog" />
+        <engine:Button name="btn-measure" tooltip="Measure Distance" class="tool-btn tool-btn--measure" />
+        <engine:Button name="btn-visibility" tooltip="Visibility" class="tool-btn tool-btn--visibility" />
     </engine:VisualElement>
     <engine:VisualElement name="bottom-panel" class="bottom-panel">
-        <engine:VisualElement name="bottom-panel-resize-handle" class="bottom-panel__resize-handle"/>
+        <engine:VisualElement name="bottom-panel-resize-handle" class="bottom-panel__resize-handle" />
         <engine:VisualElement name="bottom-panel-toggle-bar" class="bottom-panel__toggle-bar">
-            <engine:Button name="bottom-panel-toggle-btn" class="bottom-panel__toggle-btn"/>
+            <engine:Button name="bottom-panel-toggle-btn" class="bottom-panel__toggle-btn" />
         </engine:VisualElement>
-        <engine:VisualElement name="bottom-panel-content" class="bottom-panel__content"/>
+        <engine:VisualElement name="bottom-panel-content" class="bottom-panel__content" />
     </engine:VisualElement>
-    <engine:VisualElement name="view-switcher" class="view-switcher">
-        <engine:Button name="btn-iso-view" class="view-btn view-btn--iso view-btn--selected" tooltip="Isometric View"/>
-        <engine:Button name="btn-top-view" class="view-btn view-btn--top" tooltip="Top View"/>
+    <engine:VisualElement name="view-switcher" class="view-switcher" style="top: 20px;">
+        <engine:Button name="btn-iso-view" tooltip="Isometric View" class="view-btn view-btn--iso view-btn--selected" />
+        <engine:Button name="btn-top-view" tooltip="Top View" class="view-btn view-btn--top" />
     </engine:VisualElement>
 </engine:UXML>

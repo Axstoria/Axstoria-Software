@@ -73,6 +73,23 @@ namespace SceneEditor.Presenter.View
             _spawned[id] = instance;
         }
 
+        public bool TryGetGameObject(string id, out GameObject go)
+            => _spawned.TryGetValue(id, out go) && go != null;
+
+        public bool TryGetId(GameObject go, out string id)
+        {
+            // Walk up the hierarchy so clicking a child mesh still finds the spawned root
+            Transform t = go != null ? go.transform : null;
+            while (t != null)
+            {
+                foreach (var kvp in _spawned)
+                    if (kvp.Value == t.gameObject) { id = kvp.Key; return true; }
+                t = t.parent;
+            }
+            id = null;
+            return false;
+        }
+
         private void Despawn(string id)
         {
             if (string.IsNullOrEmpty(id)) return;
