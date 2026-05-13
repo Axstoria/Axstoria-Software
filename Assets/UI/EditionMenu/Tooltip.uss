@@ -1,0 +1,17 @@
+.tooltip {
+    position: absolute;
+    align-self: flex-start;
+    background-color: rgb(30, 30, 30);
+    border-radius: 3px;
+    padding: 3px 8px;
+    max-width: 200px;
+}
+
+.tooltip__label {
+    color: rgb(230, 230, 230);
+    font-size: 11px;
+    margin: 0;
+    padding: 0;
+    -unity-text-align: middle-center;
+    white-space: normal;
+}

@@ -51,7 +51,8 @@ namespace SceneEditor.Presenter.View
             CancelPreview();
             _pendingObject   = domainObject;
             _previewInstance = Instantiate(prefab);
-            _cachedRenderers = _previewInstance.GetComponentsInChildren<Renderer>();
+            _previewInstance.SetActive(false);
+            _cachedRenderers = _previewInstance.GetComponentsInChildren<Renderer>(true);
             _cachedFootprint = ComputeFootprint();
             SetPreviewMaterial(invalidMaterial);
             _vm.IsPlacementMode.Value = true;
@@ -59,7 +60,15 @@ namespace SceneEditor.Presenter.View
 
         public void OnCellHovered(GridCell cell)
         {
-            if (_previewInstance == null || cell == null) return;
+            if (_previewInstance == null) return;
+
+            if (cell == null)
+            {
+                if (_previewInstance.activeSelf) _previewInstance.SetActive(false);
+                return;
+            }
+
+            if (!_previewInstance.activeSelf) _previewInstance.SetActive(true);
 
             var origin       = new GridCoord(cell.X, cell.Z);
             var canPlace     = _vm.PlaceObject.CanPlace(_cachedFootprint, origin);
@@ -71,6 +80,9 @@ namespace SceneEditor.Presenter.View
         public void OnCellClicked(GridCell cell)
         {
             if (_previewInstance == null || _pendingObject == null || cell == null) return;
+
+            var (wx, wy, wz) = _vm.Grid.GridToWorld(cell.X, cell.Z);
+            _pendingObject.Transform.Position = new Vector3(wx, wy, wz);
 
             _vm.PlaceObject.Execute(_pendingObject, new GridCoord(cell.X, cell.Z), _cachedFootprint);
             CancelPreview();

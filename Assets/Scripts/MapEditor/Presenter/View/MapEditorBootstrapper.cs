@@ -76,7 +76,7 @@ namespace MapEditor.Presenter.View
             var generateTerrain = new GenerateTerrainUseCase(history, grid, map);
             var saveMap         = new SaveMapUseCase(serializer, dialog);
             var loadMap         = new LoadMapUseCase(serializer, dialog);
-            var importAsset     = new ImportAssetUseCase(map, history, dialog);
+            var importAsset     = new ImportAssetUseCase(dialog);
 
             // ── ViewModel ─────────────────────────────────────────────────────
             _vm = new MapEditorViewModel(

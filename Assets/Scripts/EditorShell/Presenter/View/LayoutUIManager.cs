@@ -32,6 +32,20 @@ namespace EditorShell.Presenter.View
             viewportManager = this.AddComponent<ViewportUIManager>();
             viewportManager.Init(root, viewport, theme);
             toolbarManager.AddToggleableUI(viewportManager);
+
+            this.AddComponent<ViewSwitcherController>().Init(root);
+            this.AddComponent<ToolsBarController>().Init(root);
+            var moveFlyout   = this.AddComponent<MoveFlyoutController>();
+            var layersFlyout = this.AddComponent<LayersFlyoutController>();
+            moveFlyout.Init(root);
+            layersFlyout.Init(root);
+            moveFlyout.OnFlyoutOpened   = () => layersFlyout.HideImmediately();
+            layersFlyout.OnFlyoutOpened = () => moveFlyout.HideImmediately();
+            var bottomPanel = GetComponentInChildren<BottomPanelController>() ?? this.AddComponent<BottomPanelController>();
+            bottomPanel.Init(root);
+            GetComponentInChildren<PrefabBrowserView>()?.Init(root);
+            this.AddComponent<TooltipController>().Init(root);
+            this.AddComponent<SideBarController>().Init(root);
         }
     }
 }

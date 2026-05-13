@@ -1,0 +1,143 @@
+.tools-bar {
+    position: absolute;
+    left: 5px;
+    top: 40px;
+    flex-direction: column;
+    background-color: rgb(192, 192, 192);
+    border-width: 1px;
+    border-color: rgb(120, 120, 120);
+    border-radius: 4px;
+    padding: 2px;
+    overflow: visible;
+}
+
+.tool-btn {
+    width: 36px;
+    height: 36px;
+    padding: 5px;
+    margin: 1.3px 0;
+    background-color: rgb(232, 232, 232);
+    border-width: 0;
+    border-radius: 4px;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+.tool-btn:hover {
+    background-color: rgb(255, 255, 250);
+}
+
+.tool-btn--selected {
+    background-color: rgb(100, 140, 210);
+}
+
+.tool-btn--selected:hover {
+    background-color: rgb(115, 155, 220);
+}
+
+.tool-btn--layers {
+    background-image: url("layers.png");
+}
+
+.tool-btn--move {
+    background-image: url("move-object.png");
+}
+
+.tool-btn--select {
+    background-image: url("select.png");
+}
+
+.tool-btn--fog {
+    background-image: url("fog-of-war.png");
+}
+
+.tool-btn--measure {
+    background-image: url("measure-distance.png");
+}
+
+.tool-btn--visibility {
+    background-image: url("visibility.png");
+}
+
+.tool-btn--rotate {
+    background-image: url("rotate.png");
+}
+
+.tool-btn--scale {
+    background-image: url("scale.png");
+}
+
+.tool-btn--terrain {
+    background-image: url("terrain.png");
+}
+
+.tool-btn--buildings {
+    background-image: url("buildings.png");
+}
+
+.tool-btn--objects {
+    background-image: url("objects.png");
+}
+
+.tool-btn--pawns {
+    background-image: url("pawns.png");
+}
+
+.layers-tool-wrapper {
+    flex-direction: row;
+    overflow: visible;
+}
+
+.layers-flyout {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    left: 40px;
+    top: 0;
+    background-color: rgb(192, 192, 192);
+    border-width: 1px;
+    border-color: rgb(120, 120, 120);
+    border-radius: 3px;
+    padding: 1px;
+}
+
+.layers-flyout .tool-btn {
+    width: 30px;
+    height: 30px;
+    padding: 4px;
+    margin: 1px 0;
+    border-radius: 3px;
+}
+
+.layers-flyout--visible {
+    display: flex;
+}
+
+.move-tool-wrapper {
+    flex-direction: row;
+    overflow: visible;
+}
+
+.move-flyout {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    left: 40px;
+    top: 0;
+    background-color: rgb(192, 192, 192);
+    border-width: 1px;
+    border-color: rgb(120, 120, 120);
+    border-radius: 3px;
+    padding: 1px;
+}
+
+.move-flyout .tool-btn {
+    width: 30px;
+    height: 30px;
+    padding: 4px;
+    margin: 1px 0;
+    border-radius: 3px;
+}
+
+.move-flyout--visible {
+    display: flex;
+}

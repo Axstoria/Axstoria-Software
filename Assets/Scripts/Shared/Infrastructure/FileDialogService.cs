@@ -4,7 +4,7 @@ using Shared.App.Port;
 #if UNITY_EDITOR
 using UnityEditor;
 #else
-using UnityEngine;
+using SFB;
 #endif
 
 namespace Shared.Infrastructure
@@ -20,9 +20,11 @@ namespace Shared.Infrastructure
             if (!path.EndsWith($".{ext}")) path += $".{ext}";
             return path;
 #else
-            var path = Path.Combine(Application.persistentDataPath, defaultName);
-            if (!path.EndsWith(extension)) path += extension;
-            return path;
+            string ext  = extension.TrimStart('.');
+            string path = StandaloneFileBrowser.SaveFilePanel(
+                title, "", defaultName,
+                new[] { new ExtensionFilter("", ext) });
+            return string.IsNullOrEmpty(path) ? null : path;
 #endif
         }
 
@@ -33,14 +35,10 @@ namespace Shared.Infrastructure
             string path   = EditorUtility.OpenFilePanel(title, "", filter);
             return string.IsNullOrEmpty(path) ? null : path;
 #else
-            var directory = Application.persistentDataPath;
-            foreach (var ext in extensions)
-            {
-                string clean = ext.TrimStart('.');
-                var files = Directory.GetFiles(directory, $"*.{clean}");
-                if (files.Length > 0) return files[0];
-            }
-            return null;
+            var filters = System.Array.ConvertAll(extensions,
+                e => new ExtensionFilter("", e.TrimStart('.')));
+            string[] paths = StandaloneFileBrowser.OpenFilePanel(title, "", filters, false);
+            return paths.Length > 0 ? paths[0] : null;
 #endif
         }
     }

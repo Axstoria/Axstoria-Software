@@ -1,0 +1,57 @@
+.bottom-panel {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+}
+
+.bottom-panel__resize-handle {
+    width: 100%;
+    height: 10px;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.bottom-panel__toggle-bar {
+    width: 100%;
+    height: 20px;
+    background-color: rgb(192, 192, 192);
+    border-top-width: 1px;
+    border-color: rgb(120, 120, 120);
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.bottom-panel__toggle-btn {
+    width: 40px;
+    height: 16px;
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    padding: 0;
+    margin: 0;
+    background-image: url("chevron.png");
+    -unity-background-scale-mode: scale-to-fit;
+    transition-property: rotate;
+    transition-duration: 0.2s;
+}
+
+.bottom-panel__toggle-btn:hover {
+    background-color: rgb(172, 172, 172);
+    border-radius: 2px;
+}
+
+.bottom-panel__toggle-btn--expanded {
+    rotate: 180deg;
+}
+
+.bottom-panel__content {
+    width: 100%;
+    height: 200px;
+    background-color: rgb(50, 50, 50);
+    display: none;
+}
+
+.bottom-panel__content--visible {
+    display: flex;
+}

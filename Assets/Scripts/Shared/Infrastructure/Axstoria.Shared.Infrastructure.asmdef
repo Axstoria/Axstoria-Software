@@ -2,7 +2,8 @@
     "name": "Axstoria.Shared.Infrastructure",
     "rootNamespace": "Shared.Infrastructure",
     "references": [
-        "Axstoria.Shared.App"
+        "Axstoria.Shared.App",
+        "StandaloneFileBrowser"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

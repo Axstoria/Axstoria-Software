@@ -1,8 +1,8 @@
 :root {
-    --text-color: rgb(20, 20, 20);
+    --text-color: rgb(5, 5, 5);
     --button-color: rgb(220, 255, 255);
     --button-open-color: rgb(188, 188, 188);
-    --button-color-hover: rgb(208, 208, 208);
+    --button-color-hover: rgb(222, 222, 222);
     --button-color-active: rgb(255, 255, 255);
     --button-border-color: rgb(192, 192, 192);
     --button-border-radius: 0;
@@ -26,11 +26,18 @@
     background-color: var(--button-border-color);
     margin: 0;
     border-width: 0;
-    font-size: 16px;
+    min-height: 0;
+    height: 22px;
+    font-size: 12px;
     padding-top: 3px;
     padding-right: 10px;
     padding-bottom: 3px;
     padding-left: 10px;
+}
+
+.toolbar__button .unity-button__label {
+    margin: 0;
+    padding: 0;
 }
 
 .toolbar__button:hover:enabled {
@@ -43,4 +50,8 @@
 
 .toolbar__button.fab-dropdown-target--open {
     background-color: var(--button-open-color);
+}
+
+.fab-dropdown-menu-item__text {
+    font-size: 12px;
 }
