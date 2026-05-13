@@ -1,0 +1,23 @@
+{
+    "name": "Tests",
+    "references": [
+        "Axstoria.Shared.Domain",
+        "Axstoria.Grid.Domain",
+        "Axstoria.SceneEditor.Domain",
+        "Axstoria.MapEditor.Domain"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
