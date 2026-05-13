@@ -405,9 +405,41 @@ namespace EditorShell.Presenter.View
                     AddOutlinerEntry(obj);
             else if (e.Action == NotifyCollectionChangedAction.Remove)
                 foreach (ObjectViewModel obj in e.OldItems)
+                {
+                    string removedName = obj.DisplayName.Value;
                     _outlinerList.Q(obj.Model.Id)?.RemoveFromHierarchy();
+                    RefreshOutlinerLabels(removedName);
+                }
             else if (e.Action == NotifyCollectionChangedAction.Reset)
                 _outlinerList.Clear();
+        }
+
+        // Recomputes the displayed label for every entry whose base name matches,
+        // so suffixes stay consistent after additions or deletions.
+        private void RefreshOutlinerLabels(string baseName)
+        {
+            foreach (ObjectViewModel obj in _vm.Map.Objects)
+            {
+                if (obj.DisplayName.Value != baseName) continue;
+                var row   = _outlinerList.Q(obj.Model.Id);
+                var lbl   = row?.Q<Label>();
+                if (lbl != null) lbl.text = ComputeOutlinerLabel(obj);
+            }
+        }
+
+        // Returns a display name with " (N)" suffix when other objects share the same base name.
+        private string ComputeOutlinerLabel(ObjectViewModel obj)
+        {
+            string baseName = obj.DisplayName.Value;
+            int index = 0, total = 0;
+            foreach (ObjectViewModel other in _vm.Map.Objects)
+            {
+                if (other.DisplayName.Value != baseName) continue;
+                if (other.Model.Id == obj.Model.Id) index = total;
+                total++;
+            }
+            if (total <= 1) return baseName;
+            return index == 0 ? baseName : $"{baseName} ({index + 1})";
         }
 
         private void AddOutlinerEntry(ObjectViewModel obj)
@@ -418,9 +450,13 @@ namespace EditorShell.Presenter.View
             row.style.paddingTop     = row.style.paddingBottom = 2;
             row.style.paddingLeft    = row.style.paddingRight  = 4;
 
-            var label = new Label(obj.DisplayName.Value);
+            var label = new Label(ComputeOutlinerLabel(obj));
             label.style.flexGrow = 1;
-            obj.DisplayName.ValueChanged += (_, __) => label.text = obj.DisplayName.Value;
+            obj.DisplayName.ValueChanged += (_, __) =>
+            {
+                label.text = ComputeOutlinerLabel(obj);
+                RefreshOutlinerLabels(obj.DisplayName.Value);
+            };
 
             var btnSelect = new Button(() => SelectObject(obj)) { text = "i" };
             btnSelect.style.width   = btnSelect.style.height  = 20;
