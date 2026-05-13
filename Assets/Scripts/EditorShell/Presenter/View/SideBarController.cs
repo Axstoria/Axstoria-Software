@@ -74,6 +74,10 @@ namespace EditorShell.Presenter.View
         public Slider       GridOpacity      { get; private set; }
         public Toggle       TransparentSides { get; private set; }
 
+        // --- Snap ---
+        public Toggle SnapToGrid    { get; private set; }
+        public Toggle SnapToTerrain { get; private set; }
+
         // --- Outliner ---
         public TextField      OutlinerSearch    { get; private set; }
         public Action<ObjectViewModel> OnObjectSelected;
@@ -109,6 +113,7 @@ namespace EditorShell.Presenter.View
             BindCameraElements(root);
             BindLightElements(root);
             BindTerrainGridElements(root);
+            BindSnapElements(root);
             BindOutlinerElements(root);
 
             _vm = Context.GetApplicationContext()
@@ -119,6 +124,7 @@ namespace EditorShell.Presenter.View
             ConnectCamera();
             ConnectLight();
             ConnectTerrainGrid();
+            ConnectSnap();
             ConnectOutliner();
         }
 
@@ -175,6 +181,12 @@ namespace EditorShell.Presenter.View
             GridColorB       = root.Q<Slider>("slider-grid-color-b");
             GridOpacity      = root.Q<Slider>("slider-grid-opacity");
             TransparentSides = root.Q<Toggle>("toggle-transparent-sides");
+        }
+
+        private void BindSnapElements(VisualElement root)
+        {
+            SnapToGrid    = root.Q<Toggle>("toggle-snap-grid");
+            SnapToTerrain = root.Q<Toggle>("toggle-snap-terrain");
         }
 
         private void BindOutlinerElements(VisualElement root)
@@ -364,6 +376,18 @@ namespace EditorShell.Presenter.View
                 GridOpacity.RegisterValueChangedCallback(e    => _gridMaterial.SetFloat(_propGridOpacity, e.newValue));
                 TransparentSides.RegisterValueChangedCallback(e => _gridMaterial.SetFloat(_propTransSides, e.newValue ? 1f : 0f));
             }
+        }
+
+        private void ConnectSnap()
+        {
+            SnapToGrid?.RegisterValueChangedCallback(e =>
+            {
+                if (_gizmo != null) _gizmo.SnapToGridEnabled = e.newValue;
+            });
+            SnapToTerrain?.RegisterValueChangedCallback(e =>
+            {
+                if (_gizmo != null) _gizmo.SnapToTerrainEnabled = e.newValue;
+            });
         }
 
         private void ConnectOutliner()
