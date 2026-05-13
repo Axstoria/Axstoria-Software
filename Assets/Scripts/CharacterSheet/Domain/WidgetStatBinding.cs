@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace CharacterSheet.Domain
 {
     public class WidgetStatBinding
@@ -8,9 +10,11 @@ namespace CharacterSheet.Domain
         public bool ShowLabel { get; set; }
         public int Order { get; set; }
         
-        public WidgetStatBinding(string StatId)
+        public Color? ColorOverride { get; set; }
+        
+        public WidgetStatBinding(string statId)
         {
-            this.StatId = StatId;
+            this.StatId = statId;
         }
     }
 }
