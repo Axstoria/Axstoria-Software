@@ -43,6 +43,11 @@ namespace MapEditor.Presenter.View
         public bool IsInteractingWithGizmo
             => _gizmo != null && (_gizmo.isTransforming || _gizmo.translatingAxis != Axis.None);
 
+        public void SetTransformType(TransformType type)
+        {
+            if (_gizmo != null) _gizmo.transformType = type;
+        }
+
         public void Select(GameObject go, SceneObject domainObj)
         {
             _domainObj = domainObj;
