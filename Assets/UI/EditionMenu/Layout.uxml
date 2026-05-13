@@ -79,6 +79,38 @@
                     <engine:TextField name="outliner-search" placeholder-text="Search..." />
                     <engine:VisualElement name="outliner-list" />
                 </engine:Foldout>
+                <engine:Foldout name="foldout-selected-transform" text="Selected Object" enabled="true" value="true" style="margin-bottom: 10px;">
+                    <engine:Label name="label-no-selection" text="No object selected." style="padding: 4px; color: rgba(160, 160, 160, 1);" />
+                    <engine:VisualElement name="transform-fields" style="display: none;">
+                        <engine:VisualElement style="flex-direction: row; align-items: center; margin-top: 4px;">
+                            <engine:Label text="POS" style="-unity-font-style: bold; width: 30px; min-width: 30px;" />
+                            <engine:Label text="X" style="width: 10px; min-width: 10px;" />
+                            <engine:FloatField name="field-pos-x" style="flex: 1;" />
+                            <engine:Label text="Y" style="width: 10px; min-width: 10px; margin-left: 2px;" />
+                            <engine:FloatField name="field-pos-y" style="flex: 1;" />
+                            <engine:Label text="Z" style="width: 10px; min-width: 10px; margin-left: 2px;" />
+                            <engine:FloatField name="field-pos-z" style="flex: 1;" />
+                        </engine:VisualElement>
+                        <engine:VisualElement style="flex-direction: row; align-items: center; margin-top: 4px;">
+                            <engine:Label text="ROT" style="-unity-font-style: bold; width: 30px; min-width: 30px;" />
+                            <engine:Label text="X" style="width: 10px; min-width: 10px;" />
+                            <engine:FloatField name="field-rot-x" style="flex: 1;" />
+                            <engine:Label text="Y" style="width: 10px; min-width: 10px; margin-left: 2px;" />
+                            <engine:FloatField name="field-rot-y" style="flex: 1;" />
+                            <engine:Label text="Z" style="width: 10px; min-width: 10px; margin-left: 2px;" />
+                            <engine:FloatField name="field-rot-z" style="flex: 1;" />
+                        </engine:VisualElement>
+                        <engine:VisualElement style="flex-direction: row; align-items: center; margin-top: 4px;">
+                            <engine:Label text="SCL" style="-unity-font-style: bold; width: 30px; min-width: 30px;" />
+                            <engine:Label text="X" style="width: 10px; min-width: 10px;" />
+                            <engine:FloatField name="field-scale-x" style="flex: 1;" />
+                            <engine:Label text="Y" style="width: 10px; min-width: 10px; margin-left: 2px;" />
+                            <engine:FloatField name="field-scale-y" style="flex: 1;" />
+                            <engine:Label text="Z" style="width: 10px; min-width: 10px; margin-left: 2px;" />
+                            <engine:FloatField name="field-scale-z" style="flex: 1;" />
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+                </engine:Foldout>
             </engine:VisualElement>
         </engine:ScrollView>
     </engine:VisualElement>
