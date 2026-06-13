@@ -50,11 +50,60 @@
     flex-shrink: 1;
 }
 
+.prefab-browser__grid .unity-scroll-view__content-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+}
+
+.prefab-browser__grid .unity-scroller {
+    width: 10px;
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    margin-left: 2px;
+}
+
+.prefab-browser__grid .unity-scroller__low-button,
+.prefab-browser__grid .unity-scroller__high-button {
+    display: none;
+}
+
+.prefab-browser__grid .unity-scroller .unity-base-slider {
+    margin: 0;
+    width: 10px;
+    min-width: 10px;
+}
+
+.prefab-browser__grid .unity-scroller .unity-base-slider__tracker {
+    background-color: rgba(255, 255, 255, 0.06);
+    border-width: 0;
+    border-radius: 5px;
+}
+
+.prefab-browser__grid .unity-base-slider__dragger {
+    width: 10px;
+    left: 0;
+    background-color: rgb(110, 110, 110);
+    border-width: 0;
+    border-radius: 4px;
+    transition-property: background-color;
+    transition-duration: 0.15s;
+}
+
+.prefab-browser__grid .unity-base-slider__dragger:hover {
+    background-color: rgb(150, 150, 150);
+}
+
+.prefab-browser__grid .unity-base-slider__dragger:active {
+    background-color: rgb(100, 140, 210);
+}
+
 .prefab-browser__item {
     width: 96px;
     height: 128px;
     align-self: flex-start;
     margin-right: 8px;
+    margin-bottom: 8px;
     align-items: center;
     background-color: rgb(220, 220, 220);
     border-radius: 4px;
