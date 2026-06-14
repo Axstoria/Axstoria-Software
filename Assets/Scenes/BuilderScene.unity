@@ -1325,8 +1325,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EditorShell.Presenter.View.SideBarController
   _directionalLight: {fileID: 1816956863}
   _gridMaterial: {fileID: 2100000, guid: f4a3eac82d3ab784d8be9d26b3eeaf2b, type: 2}
-  _gizmo: {fileID: 939603662}
-  _spawner: {fileID: 901278644}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

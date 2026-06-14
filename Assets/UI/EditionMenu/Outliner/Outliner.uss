@@ -1,0 +1,225 @@
+.editor-split-root {
+    position: absolute;
+    top: 24px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    flex-direction: row;
+}
+
+.split-handle {
+    width: 8px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.settings-pane {
+    flex-direction: column;
+    width: 320px;
+    min-width: 120px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    background-color: rgb(50, 50, 50);
+}
+
+.settings-pane .unity-label,
+.settings-pane .unity-foldout__text,
+.settings-pane .unity-base-field__label {
+    color: rgb(225, 225, 225);
+}
+
+.settings-pane .unity-base-text-field__input {
+    background-color: rgb(38, 38, 38);
+    border-color: rgb(70, 70, 70);
+    color: rgb(240, 240, 240);
+}
+
+.settings-pane .unity-base-text-field__input .unity-text-element {
+    color: rgb(240, 240, 240);
+}
+
+.settings-pane__header {
+    flex-direction: row;
+    align-items: center;
+    height: 28px;
+    background-color: rgb(42, 42, 42);
+    border-bottom-width: 1px;
+    border-bottom-color: rgb(70, 70, 70);
+}
+
+.settings-pane__title {
+    flex-grow: 1;
+    margin-left: 10px;
+    color: rgb(220, 220, 220);
+    font-size: 12px;
+    -unity-font-style: bold;
+}
+
+.settings-pane__scroll {
+    flex-grow: 1;
+}
+
+.settings-pane__content {
+    padding: 6px;
+}
+
+.settings-pane .unity-foldout__toggle > .unity-toggle__input {
+    flex-grow: 1;
+}
+
+.settings-pane .unity-foldout__text {
+    flex-grow: 1;
+    margin-right: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.map-pane {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 200px;
+}
+
+.outliner {
+    width: 320px;
+    min-width: 120px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-direction: column;
+    background-color: rgb(50, 50, 50);
+}
+
+.outliner__header {
+    flex-direction: row;
+    align-items: center;
+    height: 28px;
+    background-color: rgb(42, 42, 42);
+    border-bottom-width: 1px;
+    border-bottom-color: rgb(70, 70, 70);
+}
+
+.outliner__title {
+    flex-grow: 1;
+    margin-left: 10px;
+    color: rgb(220, 220, 220);
+    font-size: 12px;
+    -unity-font-style: bold;
+}
+
+.outliner__search {
+    margin: 8px 8px 4px 8px;
+}
+
+.outliner__search .unity-text-field__input {
+    background-color: rgb(38, 38, 38);
+    border-color: rgb(70, 70, 70);
+    border-radius: 4px;
+    color: rgb(245, 245, 245);
+    padding: 3px 6px;
+}
+
+.outliner__search .unity-text-element {
+    color: rgb(245, 245, 245);
+}
+
+.outliner__scroll {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.outliner__list {
+    flex-direction: column;
+}
+
+.outliner__row {
+    flex-direction: row;
+    align-items: center;
+    height: 24px;
+    margin: 1px 6px;
+    padding-left: 10px;
+    padding-right: 4px;
+    border-radius: 3px;
+}
+
+.outliner__row:hover {
+    background-color: rgb(62, 62, 62);
+}
+
+.outliner__row--selected {
+    background-color: rgb(100, 140, 210);
+}
+
+.outliner__name {
+    flex-grow: 1;
+    color: rgb(215, 215, 215);
+    font-size: 12px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.outliner__row--selected .outliner__name {
+    color: rgb(255, 255, 255);
+}
+
+.outliner__delete {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    padding: 0;
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    color: rgb(160, 160, 160);
+    font-size: 14px;
+    -unity-text-align: middle-center;
+}
+
+.outliner__delete:hover {
+    color: rgb(235, 120, 120);
+    background-color: rgba(255, 255, 255, 0.06);
+    border-radius: 3px;
+}
+
+/* Shared scrollbar style — apply the "themed-scroll" class to any ScrollView. */
+.themed-scroll .unity-scroller {
+    width: 10px;
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    margin-left: 2px;
+}
+
+.themed-scroll .unity-scroller__low-button,
+.themed-scroll .unity-scroller__high-button {
+    display: none;
+}
+
+.themed-scroll .unity-scroller .unity-base-slider {
+    margin: 0;
+    width: 10px;
+    min-width: 10px;
+}
+
+.themed-scroll .unity-scroller .unity-base-slider__tracker {
+    background-color: rgba(255, 255, 255, 0.06);
+    border-width: 0;
+    border-radius: 5px;
+}
+
+.themed-scroll .unity-base-slider__dragger {
+    width: 10px;
+    left: 0;
+    background-color: rgb(110, 110, 110);
+    border-width: 0;
+    border-radius: 4px;
+    transition-property: background-color;
+    transition-duration: 0.15s;
+}
+
+.themed-scroll .unity-base-slider__dragger:hover {
+    background-color: rgb(150, 150, 150);
+}
+
+.themed-scroll .unity-base-slider__dragger:active {
+    background-color: rgb(100, 140, 210);
+}

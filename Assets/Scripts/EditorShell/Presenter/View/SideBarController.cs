@@ -5,8 +5,6 @@ using MapEditor.Presenter.ViewModels;
 using SceneEditor.Presenter.View;
 using SceneEditor.Presenter.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -74,17 +72,8 @@ namespace EditorShell.Presenter.View
         public Slider       GridOpacity      { get; private set; }
         public Toggle       TransparentSides { get; private set; }
 
-        // --- Outliner ---
-        public TextField      OutlinerSearch    { get; private set; }
+        // --- Selection ---
         public Action<ObjectViewModel> OnObjectSelected;
-        private VisualElement _outlinerList;
-
-        // --- Toggle ---
-        private Button        _btnToggle;
-        private VisualElement _scroll;
-        private VisualElement _sideBar;
-        private bool          _isExpanded = true;
-        private const float   ExpandedWidth = 350f;
 
         private IPanel _uiPanel;
         private MapEditorViewModel _vm;
@@ -101,15 +90,9 @@ namespace EditorShell.Presenter.View
             if (_spawner == null)
                 Debug.LogWarning("[SideBarController] SceneObjectSpawnerView not found in scene.");
 
-            _sideBar   = root.Q<VisualElement>("side-bar");
-            _btnToggle = root.Q<Button>("btn-sidebar-toggle");
-            _scroll    = root.Q<ScrollView>("side-bar-scroll");
-            _btnToggle.clicked += ToggleSidebar;
-
             BindCameraElements(root);
             BindLightElements(root);
             BindTerrainGridElements(root);
-            BindOutlinerElements(root);
 
             _vm = Context.GetApplicationContext()
                          .GetContainer()
@@ -119,7 +102,6 @@ namespace EditorShell.Presenter.View
             ConnectCamera();
             ConnectLight();
             ConnectTerrainGrid();
-            ConnectOutliner();
         }
 
         // ── UI element queries ────────────────────────────────────────────────
@@ -175,13 +157,6 @@ namespace EditorShell.Presenter.View
             GridColorB       = root.Q<Slider>("slider-grid-color-b");
             GridOpacity      = root.Q<Slider>("slider-grid-opacity");
             TransparentSides = root.Q<Toggle>("toggle-transparent-sides");
-        }
-
-        private void BindOutlinerElements(VisualElement root)
-        {
-            OutlinerSearch = root.Q<TextField>("outliner-search");
-            _outlinerList  = root.Q<VisualElement>("outliner-list");
-            OutlinerSearch.RegisterValueChangedCallback(e => FilterOutliner(e.newValue));
         }
 
         // ── Scene click-to-select ─────────────────────────────────────────────
@@ -366,54 +341,6 @@ namespace EditorShell.Presenter.View
             }
         }
 
-        private void ConnectOutliner()
-        {
-            foreach (ObjectViewModel obj in _vm.Map.Objects)
-                AddOutlinerEntry(obj);
-
-            _vm.Map.Objects.CollectionChanged += OnObjectsChanged;
-        }
-
-        private void OnObjectsChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Add)
-                foreach (ObjectViewModel obj in e.NewItems)
-                    AddOutlinerEntry(obj);
-            else if (e.Action == NotifyCollectionChangedAction.Remove)
-                foreach (ObjectViewModel obj in e.OldItems)
-                    _outlinerList.Q(obj.Model.Id)?.RemoveFromHierarchy();
-            else if (e.Action == NotifyCollectionChangedAction.Reset)
-                _outlinerList.Clear();
-        }
-
-        private void AddOutlinerEntry(ObjectViewModel obj)
-        {
-            var row = new VisualElement { name = obj.Model.Id };
-            row.style.flexDirection  = FlexDirection.Row;
-            row.style.alignItems     = Align.Center;
-            row.style.paddingTop     = row.style.paddingBottom = 2;
-            row.style.paddingLeft    = row.style.paddingRight  = 4;
-
-            var label = new Label(obj.DisplayName.Value);
-            label.style.flexGrow = 1;
-            obj.DisplayName.ValueChanged += (_, __) => label.text = obj.DisplayName.Value;
-
-            var btnSelect = new Button(() => SelectObject(obj)) { text = "i" };
-            btnSelect.style.width   = btnSelect.style.height  = 20;
-            btnSelect.style.marginLeft = 2;
-
-            var btnDelete = new Button(() => _vm.DeleteObject.Execute(obj.Model)) { text = "X" };
-            btnDelete.style.width   = btnDelete.style.height  = 20;
-            btnDelete.style.marginLeft = 2;
-            btnDelete.style.backgroundColor = new StyleColor(new Color(0.78f, 0.24f, 0.24f));
-            btnDelete.style.color           = new StyleColor(Color.white);
-
-            row.Add(label);
-            row.Add(btnSelect);
-            row.Add(btnDelete);
-            _outlinerList.Add(row);
-        }
-
         // ── Selection ─────────────────────────────────────────────────────────
 
         private void SelectObject(ObjectViewModel obj)
@@ -435,45 +362,5 @@ namespace EditorShell.Presenter.View
 
         private void ApplyAmbientColor()
             => RenderSettings.ambientLight = new Color(AmbientColorR.value, AmbientColorG.value, AmbientColorB.value);
-
-        // ── Sidebar toggle ────────────────────────────────────────────────────
-
-        private void ToggleSidebar()
-        {
-            _isExpanded            = !_isExpanded;
-            _scroll.style.display  = _isExpanded ? DisplayStyle.Flex : DisplayStyle.None;
-            _sideBar.style.width   = _isExpanded ? ExpandedWidth : _btnToggle.resolvedStyle.width + 4;
-            _btnToggle.text        = _isExpanded ? "▶" : "▼";
-        }
-
-        // ── Outliner helpers ──────────────────────────────────────────────────
-
-        public void SetOutlinerItems(IEnumerable<string> names)
-        {
-            _outlinerList.Clear();
-            foreach (string name in names)
-                AddOutlinerItem(name);
-        }
-
-        public void AddOutlinerItem(string itemName)
-        {
-            var label = new Label(itemName) { name = itemName };
-            _outlinerList.Add(label);
-        }
-
-        public void RemoveOutlinerItem(string itemName)
-        {
-            _outlinerList.Q(itemName)?.RemoveFromHierarchy();
-        }
-
-        private void FilterOutliner(string query)
-        {
-            foreach (VisualElement child in _outlinerList.Children())
-            {
-                bool visible = string.IsNullOrEmpty(query)
-                    || child.name.Contains(query, StringComparison.OrdinalIgnoreCase);
-                child.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
-            }
-        }
     }
 }

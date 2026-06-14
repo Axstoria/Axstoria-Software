@@ -1,3 +1,4 @@
+using SceneEditor.Presenter.View;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -7,6 +8,7 @@ namespace EditorShell.Presenter.View
     public class LayoutUIManager : MonoBehaviour
     {
         public UIDocument uiDoc;
+        [SerializeField] private Texture2D _resizeCursor;
         [Header("References")]
         private EditionToolbarUIManager toolbarManager;
         private ViewportUIManager       viewportManager;
@@ -46,6 +48,12 @@ namespace EditorShell.Presenter.View
             GetComponentInChildren<PrefabBrowserView>()?.Init(root);
             this.AddComponent<TooltipController>().Init(root);
             this.AddComponent<SideBarController>().Init(root);
+
+            VisualElement outlinerPane = root.Q<VisualElement>("outliner-pane");
+            if (outlinerPane != null)
+                this.AddComponent<OutlinerView>().Init(outlinerPane);
+
+            this.AddComponent<SplitLayoutController>().Init(root, _resizeCursor);
         }
     }
 }

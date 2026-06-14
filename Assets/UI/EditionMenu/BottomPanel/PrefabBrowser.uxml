@@ -3,6 +3,6 @@
         <engine:VisualElement name="prefab-browser-header" class="prefab-browser__header">
             <engine:VisualElement name="prefab-browser-tabs" class="prefab-browser__tabs"/>
         </engine:VisualElement>
-        <engine:ScrollView name="prefab-browser-grid" class="prefab-browser__grid" mode="Vertical" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto"/>
+        <engine:ScrollView name="prefab-browser-grid" class="prefab-browser__grid themed-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto"/>
     </engine:VisualElement>
 </engine:UXML>
