@@ -1,8 +1,16 @@
 using System;
 using System.Collections.Generic;
+using SceneEditor.Domain;
 
 namespace Campaign.Infrastructure
 {
+    [Serializable]
+    public class MetadataEntryDTO
+    {
+        public string EntryType;
+        public string EntryValue;
+    }
+
     [Serializable]
     public class MapDataDTO
     {
@@ -36,6 +44,7 @@ namespace Campaign.Infrastructure
         public string modelPath;
         public bool   isImported;
         public string importPath;
+        public List<MetadataEntryDTO> metadata { get; set; }
 
         public float posX, posY, posZ;
         public float rotX, rotY, rotZ, rotW;

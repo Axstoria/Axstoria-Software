@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Campaign.App.Port;
 using Grid.Domain;
 using MapEditor.Domain;
@@ -103,6 +104,11 @@ namespace Campaign.Infrastructure
                 modelPath   = obj.ModelPath,
                 isImported  = obj.IsImported,
                 importPath  = obj.ImportPath,
+                metadata = obj.Metadata?.Select(m => new MetadataEntryDTO
+                {
+                    EntryType = m.EntryType,
+                    EntryValue = m.EntryValue,
+                }).ToList() ?? new List<MetadataEntryDTO>(),
                 posX   = t?.Position.x ?? 0, posY   = t?.Position.y ?? 0, posZ   = t?.Position.z ?? 0,
                 rotX   = t?.Rotation.x ?? 0, rotY   = t?.Rotation.y ?? 0,
                 rotZ   = t?.Rotation.z ?? 0, rotW   = t?.Rotation.w ?? 1,
@@ -120,6 +126,11 @@ namespace Campaign.Infrastructure
                 ModelPath   = dto.modelPath,
                 IsImported  = dto.isImported,
                 ImportPath  = dto.importPath,
+                Metadata    = dto.metadata?.Select(m => new MetadataEntry
+                {
+                    EntryType = m.EntryType,
+                    EntryValue = m.EntryValue,
+                }).ToList() ?? new List<MetadataEntry>(),
                 Transform   = new TransformModel
                 {
                     Position = new Vector3(dto.posX,  dto.posY,  dto.posZ),

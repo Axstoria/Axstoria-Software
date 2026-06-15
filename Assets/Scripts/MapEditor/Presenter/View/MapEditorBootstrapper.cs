@@ -13,6 +13,7 @@ using Shared.Domain;
 using Shared.Infrastructure;
 using UnityEngine;
 using DomainGrid = Grid.Domain.Grid;
+using Loxodon.Framework.Localizations;
 
 namespace MapEditor.Presenter.View
 {
@@ -73,6 +74,7 @@ namespace MapEditor.Presenter.View
             var placeObject     = new PlaceObjectUseCase(map, grid, history);
             var deleteObject    = new DeleteObjectUseCase(map, grid, history);
             var transformObject = new TransformObjectUseCase(history);
+            var setObjectMetadata = new SetObjectMetadataUseCase(history);
             var generateTerrain = new GenerateTerrainUseCase(history, grid, map);
             var saveMap         = new SaveMapUseCase(serializer, dialog);
             var loadMap         = new LoadMapUseCase(serializer, dialog);
@@ -81,7 +83,7 @@ namespace MapEditor.Presenter.View
             // ── ViewModel ─────────────────────────────────────────────────────
             _vm = new MapEditorViewModel(
                 map, cameraState, history,
-                placeObject, deleteObject, transformObject, generateTerrain,
+                placeObject, deleteObject, transformObject, setObjectMetadata, generateTerrain,
                 saveMap, loadMap, importAsset);
 
             _vm.Register();
