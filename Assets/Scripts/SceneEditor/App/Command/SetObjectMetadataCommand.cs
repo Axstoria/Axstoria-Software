@@ -9,7 +9,6 @@ namespace SceneEditor.App.Command
         public string Label => $"Add metadata to {_obj.DisplayName}";
         private readonly SceneObject _obj;
         private readonly MetadataEntry _newEntry;
-        private readonly List<MetadataEntry> _previousMetadata;
 
         public SetObjectMetadataCommand(SceneObject obj, string metadataType, string metadataValue)
         {
@@ -19,7 +18,6 @@ namespace SceneEditor.App.Command
                 EntryType = metadataType,
                 EntryValue = metadataValue
             };
-            _previousMetadata = new List<MetadataEntry>(_obj.Metadata ?? new List<MetadataEntry>());
         }
 
         public void Execute()
@@ -30,7 +28,7 @@ namespace SceneEditor.App.Command
 
         public void Undo()
         {
-            _obj.Metadata = new List<MetadataEntry>(_previousMetadata);
+            _obj.Metadata.Remove(_newEntry);
         }
 
         public void Redo() => Execute();
