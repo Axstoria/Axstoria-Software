@@ -10,6 +10,7 @@
         <engine:VisualElement name="settings-pane" class="settings-pane">
             <engine:VisualElement name="settings-header" class="settings-pane__header">
                 <engine:Label text="Settings" class="settings-pane__title" />
+                <engine:Button name="settings-collapse-btn" text="‹" tooltip="Collapse" class="panel-collapse-btn" />
             </engine:VisualElement>
             <engine:ScrollView name="settings-scroll" vertical-scroller-visibility="Auto" horizontal-scroller-visibility="Hidden" class="settings-pane__scroll themed-scroll">
                 <engine:VisualElement name="settings-content" class="settings-pane__content">
@@ -110,12 +111,15 @@
         <engine:VisualElement name="outliner-pane" class="outliner">
             <engine:VisualElement name="outliner-header" class="outliner__header">
                 <engine:Label text="Outliner" class="outliner__title" />
+                <engine:Button name="outliner-collapse-btn" text="›" tooltip="Collapse" class="panel-collapse-btn" />
             </engine:VisualElement>
             <engine:TextField name="outliner-search" placeholder-text="Search..." class="outliner__search" />
             <engine:ScrollView name="outliner-scroll" class="outliner__scroll themed-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto">
                 <engine:VisualElement name="outliner-list" class="outliner__list" />
             </engine:ScrollView>
         </engine:VisualElement>
+        <engine:Button name="settings-reopen-tab" text="›" tooltip="Show Settings" class="panel-reopen-tab panel-reopen-tab--left" />
+        <engine:Button name="outliner-reopen-tab" text="‹" tooltip="Show Outliner" class="panel-reopen-tab panel-reopen-tab--right" />
     </engine:VisualElement>
     <engine:VisualElement name="bottom-panel" class="bottom-panel">
         <engine:VisualElement name="bottom-panel-resize-handle" class="bottom-panel__resize-handle" />

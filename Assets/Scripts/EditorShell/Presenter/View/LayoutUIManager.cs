@@ -54,6 +54,7 @@ namespace EditorShell.Presenter.View
                 this.AddComponent<OutlinerView>().Init(outlinerPane);
 
             this.AddComponent<SplitLayoutController>().Init(root, _resizeCursor);
+            this.AddComponent<SidePanelToggleController>().Init(root);
         }
     }
 }

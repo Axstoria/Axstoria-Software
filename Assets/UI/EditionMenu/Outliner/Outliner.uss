@@ -181,6 +181,59 @@
     border-radius: 3px;
 }
 
+/* Side-panel collapse button (in the pane header). */
+.panel-collapse-btn {
+    width: 20px;
+    height: 20px;
+    margin-right: 6px;
+    padding: 0;
+    align-self: center;
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    color: rgb(180, 180, 180);
+    font-size: 13px;
+    -unity-text-align: middle-center;
+}
+
+.panel-collapse-btn:hover {
+    color: rgb(235, 235, 235);
+    background-color: rgba(255, 255, 255, 0.06);
+    border-radius: 3px;
+}
+
+/* Edge tab to re-open a collapsed side panel (hidden until its pane is closed). */
+.panel-reopen-tab {
+    display: none;
+    position: absolute;
+    top: 8px;
+    width: 14px;
+    height: 38px;
+    padding: 0;
+    margin: 0;
+    background-color: rgb(42, 42, 42);
+    border-width: 0;
+    color: rgb(205, 205, 205);
+    font-size: 12px;
+    -unity-text-align: middle-center;
+}
+
+.panel-reopen-tab:hover {
+    background-color: rgb(62, 62, 62);
+    color: rgb(240, 240, 240);
+}
+
+.panel-reopen-tab--left {
+    left: 0;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.panel-reopen-tab--right {
+    right: 0;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
 /* Shared scrollbar style — apply the "themed-scroll" class to any ScrollView. */
 .themed-scroll .unity-scroller {
     width: 10px;
@@ -206,7 +259,7 @@
     border-radius: 5px;
 }
 
-.themed-scroll .unity-base-slider__dragger {
+.themed-scroll .unity-scroller .unity-base-slider__dragger {
     width: 10px;
     left: 0;
     background-color: rgb(110, 110, 110);
@@ -216,10 +269,10 @@
     transition-duration: 0.15s;
 }
 
-.themed-scroll .unity-base-slider__dragger:hover {
+.themed-scroll .unity-scroller .unity-base-slider__dragger:hover {
     background-color: rgb(150, 150, 150);
 }
 
-.themed-scroll .unity-base-slider__dragger:active {
+.themed-scroll .unity-scroller .unity-base-slider__dragger:active {
     background-color: rgb(100, 140, 210);
 }
