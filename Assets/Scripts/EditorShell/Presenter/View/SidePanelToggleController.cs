@@ -26,11 +26,16 @@ namespace EditorShell.Presenter.View
         public void ToggleSettings() => Toggle(_settings);
         public void ToggleOutliner() => Toggle(_outliner);
 
-        public bool IsSettingsOpen => IsOpen(_settings);
-        public bool IsOutlinerOpen => IsOpen(_outliner);
+        public bool IsSettingsPresent => IsPresent(_settings);
+        public bool IsOutlinerPresent => IsPresent(_outliner);
 
-        private static bool IsOpen(Panel panel)
-            => panel?.Pane != null && panel.Pane.resolvedStyle.display == DisplayStyle.Flex;
+        private static bool IsPresent(Panel panel)
+        {
+            if (panel?.Pane == null) return false;
+            bool paneVisible = panel.Pane.resolvedStyle.display == DisplayStyle.Flex;
+            bool tabVisible  = panel.Tab != null && panel.Tab.resolvedStyle.display == DisplayStyle.Flex;
+            return paneVisible || tabVisible;
+        }
 
         private Panel BuildPanel(VisualElement root, string paneName, string handleName, string tabName,
                                  string collapseBtnName, string closeBtnName)
@@ -55,7 +60,7 @@ namespace EditorShell.Presenter.View
         private void Toggle(Panel panel)
         {
             if (panel?.Pane == null) return;
-            if (panel.Pane.resolvedStyle.display == DisplayStyle.Flex) Close(panel);
+            if (IsPresent(panel)) Close(panel);
             else Open(panel);
         }
 

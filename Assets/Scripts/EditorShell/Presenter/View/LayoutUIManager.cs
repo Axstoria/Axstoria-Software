@@ -57,9 +57,9 @@ namespace EditorShell.Presenter.View
             var sidePanels = this.AddComponent<SidePanelToggleController>();
             sidePanels.Init(root);
             toolbarManager.AddViewMenuEntry("Settings", _ => sidePanels.ToggleSettings(),
-                _ => sidePanels.IsSettingsOpen ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
+                _ => sidePanels.IsSettingsPresent ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
             toolbarManager.AddViewMenuEntry("Outliner", _ => sidePanels.ToggleOutliner(),
-                _ => sidePanels.IsOutlinerOpen ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
+                _ => sidePanels.IsOutlinerPresent ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
         }
     }
 }

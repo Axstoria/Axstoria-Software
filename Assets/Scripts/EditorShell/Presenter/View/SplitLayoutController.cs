@@ -26,8 +26,6 @@ namespace EditorShell.Presenter.View
 
         public void Init(VisualElement root, Texture2D resizeCursor)
         {
-            // The shared cursor texture is vertical (north-south); rotate it 90° for
-            // the horizontal pane handles.
             if (resizeCursor != null && resizeCursor.isReadable)
             {
                 _resizeCursor = RotateClockwise90(resizeCursor);

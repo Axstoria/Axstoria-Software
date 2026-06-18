@@ -10,8 +10,8 @@
         <engine:VisualElement name="settings-pane" class="settings-pane">
             <engine:VisualElement name="settings-header" class="settings-pane__header">
                 <engine:Label text="Settings" class="settings-pane__title" />
-                <engine:Button name="settings-close-btn" text="✕" tooltip="Close" class="panel-close-btn" />
                 <engine:Button name="settings-collapse-btn" text="‹" tooltip="Collapse" class="panel-collapse-btn" />
+                <engine:Button name="settings-close-btn" text="✕" tooltip="Close" class="panel-close-btn" />
             </engine:VisualElement>
             <engine:ScrollView name="settings-scroll" vertical-scroller-visibility="Auto" horizontal-scroller-visibility="Hidden" class="settings-pane__scroll themed-scroll">
                 <engine:VisualElement name="settings-content" class="settings-pane__content">
@@ -112,8 +112,8 @@
         <engine:VisualElement name="outliner-pane" class="outliner">
             <engine:VisualElement name="outliner-header" class="outliner__header">
                 <engine:Label text="Outliner" class="outliner__title" />
-                <engine:Button name="outliner-close-btn" text="✕" tooltip="Close" class="panel-close-btn" />
                 <engine:Button name="outliner-collapse-btn" text="›" tooltip="Collapse" class="panel-collapse-btn" />
+                <engine:Button name="outliner-close-btn" text="✕" tooltip="Close" class="panel-close-btn" />
             </engine:VisualElement>
             <engine:TextField name="outliner-search" placeholder-text="Search..." class="outliner__search" />
             <engine:ScrollView name="outliner-scroll" class="outliner__scroll themed-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto">

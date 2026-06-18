@@ -109,18 +109,20 @@
 
 .outliner__search {
     margin: 8px 8px 4px 8px;
+    font-size: 12px;
 }
 
 .outliner__search .unity-text-field__input {
     background-color: rgb(38, 38, 38);
     border-color: rgb(70, 70, 70);
     border-radius: 4px;
-    color: rgb(245, 245, 245);
+    color: rgb(215, 215, 215);
+    --unity-cursor-color: rgb(215, 215, 215);
     padding: 3px 6px;
 }
 
 .outliner__search .unity-text-element {
-    color: rgb(245, 245, 245);
+    color: rgb(215, 215, 215);
 }
 
 .outliner__scroll {
@@ -150,16 +152,25 @@
     background-color: rgb(100, 140, 210);
 }
 
+.outliner__row--selected:hover {
+    background-color: rgb(112, 150, 220);
+}
+
 .outliner__name {
     flex-grow: 1;
     color: rgb(215, 215, 215);
     font-size: 12px;
+    -unity-text-align: middle-left;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
 
 .outliner__row--selected .outliner__name {
+    color: rgb(255, 255, 255);
+}
+
+.outliner__row--selected .outliner__delete {
     color: rgb(255, 255, 255);
 }
 
@@ -170,7 +181,7 @@
     padding: 0;
     background-color: rgba(0, 0, 0, 0);
     border-width: 0;
-    color: rgb(160, 160, 160);
+    color: rgb(215, 215, 215);
     font-size: 14px;
     -unity-text-align: middle-center;
 }
@@ -181,26 +192,7 @@
     border-radius: 3px;
 }
 
-/* Side-panel collapse button (in the pane header). */
-.panel-collapse-btn {
-    width: 20px;
-    height: 20px;
-    margin-right: 6px;
-    padding: 0;
-    align-self: center;
-    background-color: rgba(0, 0, 0, 0);
-    border-width: 0;
-    color: rgb(180, 180, 180);
-    font-size: 13px;
-    -unity-text-align: middle-center;
-}
-
-.panel-collapse-btn:hover {
-    color: rgb(235, 235, 235);
-    background-color: rgba(255, 255, 255, 0.06);
-    border-radius: 3px;
-}
-
+.panel-collapse-btn,
 .panel-close-btn {
     width: 20px;
     height: 20px;
@@ -210,8 +202,21 @@
     background-color: rgba(0, 0, 0, 0);
     border-width: 0;
     color: rgb(180, 180, 180);
-    font-size: 13px;
     -unity-text-align: middle-center;
+}
+
+.panel-collapse-btn {
+    font-size: 16px;
+}
+
+.panel-close-btn {
+    font-size: 13px;
+}
+
+.panel-collapse-btn:hover {
+    color: rgb(235, 235, 235);
+    background-color: rgba(255, 255, 255, 0.06);
+    border-radius: 3px;
 }
 
 .panel-close-btn:hover {
@@ -220,7 +225,6 @@
     border-radius: 3px;
 }
 
-/* Edge tab to re-open a collapsed side panel (hidden until its pane is closed). */
 .panel-reopen-tab {
     display: none;
     position: absolute;
@@ -253,7 +257,6 @@
     border-bottom-left-radius: 4px;
 }
 
-/* Shared scrollbar style — apply the "themed-scroll" class to any ScrollView. */
 .themed-scroll .unity-scroller {
     width: 10px;
     background-color: rgba(0, 0, 0, 0);
