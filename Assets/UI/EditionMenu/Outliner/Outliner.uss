@@ -201,6 +201,25 @@
     border-radius: 3px;
 }
 
+.panel-close-btn {
+    width: 20px;
+    height: 20px;
+    margin-right: 6px;
+    padding: 0;
+    align-self: center;
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    color: rgb(180, 180, 180);
+    font-size: 13px;
+    -unity-text-align: middle-center;
+}
+
+.panel-close-btn:hover {
+    color: rgb(235, 120, 120);
+    background-color: rgba(255, 255, 255, 0.06);
+    border-radius: 3px;
+}
+
 /* Edge tab to re-open a collapsed side panel (hidden until its pane is closed). */
 .panel-reopen-tab {
     display: none;

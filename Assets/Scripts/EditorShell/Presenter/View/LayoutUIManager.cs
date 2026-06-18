@@ -33,7 +33,6 @@ namespace EditorShell.Presenter.View
 
             viewportManager = this.AddComponent<ViewportUIManager>();
             viewportManager.Init(root, viewport, theme);
-            toolbarManager.AddToggleableUI(viewportManager);
 
             this.AddComponent<ViewSwitcherController>().Init(root);
             this.AddComponent<ToolsBarController>().Init(root);
@@ -54,7 +53,13 @@ namespace EditorShell.Presenter.View
                 this.AddComponent<OutlinerView>().Init(outlinerPane);
 
             this.AddComponent<SplitLayoutController>().Init(root, _resizeCursor);
-            this.AddComponent<SidePanelToggleController>().Init(root);
+
+            var sidePanels = this.AddComponent<SidePanelToggleController>();
+            sidePanels.Init(root);
+            toolbarManager.AddViewMenuEntry("Settings", _ => sidePanels.ToggleSettings(),
+                _ => sidePanels.IsSettingsOpen ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
+            toolbarManager.AddViewMenuEntry("Outliner", _ => sidePanels.ToggleOutliner(),
+                _ => sidePanels.IsOutlinerOpen ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
         }
     }
 }

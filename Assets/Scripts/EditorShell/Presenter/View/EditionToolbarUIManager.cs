@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Fab.UITKDropdown;
@@ -26,6 +27,7 @@ namespace EditorShell.Presenter.View
         private DropdownMenu helpMenu;
 
         private List<IUIManager> toggleableUIs = new List<IUIManager>();
+        private List<(string Name, Action<DropdownMenuAction> Callback, Func<DropdownMenuAction, DropdownMenuAction.Status> Status)> extraViewEntries = new();
 
         string IUIManager.Name => UIName;
 
@@ -40,6 +42,12 @@ namespace EditorShell.Presenter.View
         public void AddToggleableUI(IUIManager element)
         {
             toggleableUIs.Add(element);
+        }
+
+        public void AddViewMenuEntry(string name, Action<DropdownMenuAction> callback,
+                                     Func<DropdownMenuAction, DropdownMenuAction.Status> status = null)
+        {
+            extraViewEntries.Add((name, callback, status));
         }
 
         private void Start()
@@ -87,6 +95,14 @@ namespace EditorShell.Presenter.View
         {
             for (int i = 0; i < toggleableUIs.Count; i++)
                 viewMenu.AppendAction(toggleableUIs[i].Name, toggleableUIs[i].ToggleUI);
+
+            foreach (var entry in extraViewEntries)
+            {
+                if (entry.Status != null)
+                    viewMenu.AppendAction(entry.Name, entry.Callback, entry.Status);
+                else
+                    viewMenu.AppendAction(entry.Name, entry.Callback);
+            }
         }
 
         private void OnImportAssetClicked(DropdownMenuAction action)
