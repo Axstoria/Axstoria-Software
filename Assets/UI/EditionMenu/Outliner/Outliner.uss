@@ -60,6 +60,25 @@
     flex-grow: 1;
 }
 
+.settings-btn {
+    padding: 4px 12px;
+    background-color: rgb(232, 232, 232);
+    border-width: 1px;
+    border-color: rgb(180, 180, 180);
+    border-radius: 4px;
+    color: rgb(40, 40, 40);
+}
+
+.settings-btn:hover {
+    background-color: rgb(255, 255, 250);
+}
+
+.settings-btn:active {
+    background-color: rgb(100, 140, 210);
+    border-color: rgb(80, 120, 190);
+    color: rgb(255, 255, 255);
+}
+
 .settings-pane__content {
     padding: 6px;
 }

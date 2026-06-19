@@ -26,7 +26,7 @@
                         <engine:Slider name="slider-max-pitch" label="Max Pitch" value="60" low-value="-90" high-value="90" />
                         <engine:Slider name="slider-min-zoom" label="Min Zoom" value="2" low-value="0" high-value="100" />
                         <engine:Slider name="slider-max-zoom" label="Max Zoom" value="80" low-value="0" high-value="100" />
-                        <engine:Button name="btn-reset-view" text="Reset View (F)" style="margin-top: 6px;" />
+                        <engine:Button name="btn-reset-view" text="Reset View (F)" class="settings-btn" style="margin-top: 6px;" />
                     </engine:Foldout>
                     <engine:Foldout name="foldout-light" text="Directional Light" enabled="true" value="false" style="margin-bottom: 10px;">
                         <engine:Slider name="slider-light-intensity" label="Intensity" value="1.22" low-value="0" high-value="5" />
@@ -47,8 +47,8 @@
                     </engine:Foldout>
                     <engine:Foldout name="foldout-terraingrid" text="TerrainGrid" enabled="true" value="false" style="margin-bottom: 10px;">
                         <engine:VisualElement style="flex-direction: row; margin-bottom: 4px;">
-                            <engine:Button name="btn-save-map" text="Save Map" style="flex-grow: 1;" />
-                            <engine:Button name="btn-load-map" text="Load Map" style="flex-grow: 1;" />
+                            <engine:Button name="btn-save-map" text="Save Map" class="settings-btn" style="flex-grow: 1;" />
+                            <engine:Button name="btn-load-map" text="Load Map" class="settings-btn" style="flex-grow: 1;" />
                         </engine:VisualElement>
                         <engine:Label text="TERRAIN" style="margin-top: 6px; -unity-font-style: bold;" />
                         <engine:Label text="Terrain Color" style="margin-top: 4px;" />
@@ -58,7 +58,7 @@
                         <engine:IntegerField name="field-terrain-width" label="Width" value="70" />
                         <engine:IntegerField name="field-terrain-depth" label="Depth" value="70" />
                         <engine:IntegerField name="field-terrain-thickness" label="Thickness" value="2" />
-                        <engine:Button name="btn-regenerate-map" text="Regenerate Map" style="margin-top: 6px;" />
+                        <engine:Button name="btn-regenerate-map" text="Regenerate Map" class="settings-btn" style="margin-top: 6px;" />
                         <engine:Label text="GRID SHADER" style="margin-top: 6px; -unity-font-style: bold;" />
                         <engine:Slider name="slider-grid-cell-size-x" label="Cell Size X" value="1" low-value="0.1" high-value="10" />
                         <engine:Slider name="slider-grid-cell-size-y" label="Cell Size Y" value="1" low-value="0.1" high-value="10" />
