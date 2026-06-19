@@ -1,3 +1,4 @@
+using CharacterSheet.App.UseCase;
 using CharacterSheet.Domain;
 
 namespace CharacterSheet.Presenter.ViewModel.Widgets
@@ -28,7 +29,10 @@ namespace CharacterSheet.Presenter.ViewModel.Widgets
             }
         }
 
-        public PointGaugeViewModel(PointGaugeWidget widget) : base(widget)
+        public PointGaugeViewModel(PointGaugeWidget widget, 
+            UpdateWidgetAppearanceUseCase appearance, 
+            UpdateWidgetLayoutUseCase updateLayout, 
+            UpdatePointGaugeWidgetUseCase up) : base(widget, appearance, updateLayout)
         {
             _gauge = widget;
             _maxPoints = widget.MaxPoints;

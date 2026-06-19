@@ -1,6 +1,6 @@
 namespace CharacterSheet.Domain.Widgets
 {
-    public class SlotGirdWidget
+    public class SlotGridWidget
     {
         
     }

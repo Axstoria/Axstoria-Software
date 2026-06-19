@@ -10,10 +10,10 @@ namespace CharacterSheet.Domain
         
         public List<WidgetStatBinding> Stats { get; } = new();
 
-        public bool HasBorder { get; set; } = false;
-        public float BorderThickness { get; set; } = 0.1f;
-        public Color BorderColor { get; set; } = Color.black;
-        public Color BackgroundColor { get; set; } = Color.white;
+        public bool HasBorder { get; set; } = true;
+        public float BorderThickness { get; set; } = 4f;
+        public Color BorderColor { get; set; } = Color.pink;
+        public Color BackgroundColor { get; set; } = Color.red;
         public string BackgroundImagePath { get; set; }
         
         protected SheetWidget(string id, Rect layout)
