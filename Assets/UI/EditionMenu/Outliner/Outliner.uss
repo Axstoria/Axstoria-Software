@@ -42,7 +42,7 @@
 .settings-pane__header {
     flex-direction: row;
     align-items: center;
-    height: 28px;
+    height: 32px;
     background-color: rgb(42, 42, 42);
     border-bottom-width: 1px;
     border-bottom-color: rgb(70, 70, 70);
@@ -52,7 +52,7 @@
     flex-grow: 1;
     margin-left: 10px;
     color: rgb(220, 220, 220);
-    font-size: 12px;
+    font-size: 13.5px;
     -unity-font-style: bold;
 }
 
@@ -80,18 +80,74 @@
 }
 
 .settings-pane__content {
-    padding: 6px;
+    padding: 0 0 14px 0;
+}
+
+.settings-pane .unity-foldout {
+    margin-bottom: 0;
+}
+
+.settings-pane .unity-foldout__toggle {
+    margin: 0;
+    background-color: rgb(58, 58, 58);
+    border-bottom-width: 1px;
+    border-bottom-color: rgb(34, 34, 34);
 }
 
 .settings-pane .unity-foldout__toggle > .unity-toggle__input {
     flex-grow: 1;
+    padding: 5px 8px;
 }
 
 .settings-pane .unity-foldout__text {
     flex-grow: 1;
     margin-right: 4px;
+    -unity-font-style: bold;
+    font-size: 13.2px;
+    color: rgb(236, 236, 236);
+    -unity-text-align: middle-left;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.settings-pane .unity-foldout__checkmark {
+    scale: 0.8 0.8;
+    -unity-background-image-tint-color: rgb(236, 236, 236);
+}
+
+.settings-pane .unity-foldout__content {
+    margin-left: 0;
+    padding: 6px 10px 12px 10px;
+}
+
+.settings-pane .settings-subhead {
+    margin-top: 12px;
+    margin-bottom: 6px;
+    padding-bottom: 3px;
+    font-size: 10.9px;
+    -unity-font-style: bold;
+    letter-spacing: 1px;
+    color: rgb(235, 235, 235);
+    border-bottom-width: 1px;
+    border-bottom-color: rgb(80, 80, 80);
+}
+
+.settings-pane .settings-caption {
+    margin-top: 6px;
+    margin-bottom: 1px;
+    font-size: 12px;
+    color: rgb(180, 180, 180);
+}
+
+.settings-pane .unity-base-field__label {
+    min-width: 104px;
+    width: 104px;
+    font-size: 12px;
+    -unity-text-align: middle-left;
+}
+
+.settings-pane .unity-base-field__input {
+    font-size: 12px;
 }
 
 .map-pane {
@@ -112,7 +168,7 @@
 .outliner__header {
     flex-direction: row;
     align-items: center;
-    height: 28px;
+    height: 32px;
     background-color: rgb(42, 42, 42);
     border-bottom-width: 1px;
     border-bottom-color: rgb(70, 70, 70);
@@ -122,7 +178,7 @@
     flex-grow: 1;
     margin-left: 10px;
     color: rgb(220, 220, 220);
-    font-size: 12px;
+    font-size: 13.5px;
     -unity-font-style: bold;
 }
 
