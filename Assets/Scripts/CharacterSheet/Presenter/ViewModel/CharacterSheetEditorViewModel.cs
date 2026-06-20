@@ -36,7 +36,6 @@ namespace CharacterSheet.Presenter.ViewModel
         public CharacterSheetEditorViewModel(SheetViewModel sheet)
         {
             LoadSheet(sheet);
-            sheet.OnWidgetSelected += vm => SelectedWidget = vm;
             
             AddWidgetCommand = new SimpleCommand<WidgetType>(type =>
             {
@@ -53,6 +52,8 @@ namespace CharacterSheet.Presenter.ViewModel
 
             sheet.OnWidgetSelected += vm =>
             {
+                if (SelectedWidget == vm) return;
+                
                 if (SelectedWidget != null) SelectedWidget.IsSelected = false;
                 
                 SelectedWidget = vm;

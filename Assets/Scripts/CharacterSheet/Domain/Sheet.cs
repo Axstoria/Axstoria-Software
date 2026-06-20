@@ -53,8 +53,8 @@ namespace CharacterSheet.Domain
         
         public bool HasBorder { get; set; }
         public float BorderThickness { get; set; }
-        public Color BorderColor { get; set; }
-        public Color BackgroundColor { get; set; }
+        public Color BorderColor { get; set; } = Color.black;
+        public Color BackgroundColor { get; set; } = Color.white;
         public string BackgroundImagePath { get; set; }
         
         public Sheet(string id)

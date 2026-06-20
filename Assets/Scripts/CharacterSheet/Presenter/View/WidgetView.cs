@@ -86,6 +86,7 @@ namespace CharacterSheet.Presenter.View
 
         public void OnPointerClick(PointerEventData eventData)
         {
+            Debug.Log("OnPointerClick");
             if (eventData.button == PointerEventData.InputButton.Left)
             {
                 _vm.Select();

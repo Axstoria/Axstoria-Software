@@ -7,6 +7,7 @@ using CharacterSheet.Presenter.ViewModel.Widgets;
 using Loxodon.Framework.Binding;
 using Loxodon.Framework.Views;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace CharacterSheet.Presenter.View
 {
@@ -19,13 +20,17 @@ namespace CharacterSheet.Presenter.View
     
     public class SheetView : UIView
     {
+        [SerializeField] private Image background;
+        [SerializeField] private Image border;
+        [SerializeField] private HorizontalLayoutGroup borderLayoutGroup;
+        
         [SerializeField] private Transform widgetContainer;
         [SerializeField] private GameObject pointGaugeWidgetPrefab;
         
         private SheetViewModel _vm;
         private readonly Dictionary<string, WidgetView> _widgets = new Dictionary<string, WidgetView>();
         
-        /*public float BorderThickness
+        public float BorderThickness
         {
             get
             {
@@ -44,11 +49,28 @@ namespace CharacterSheet.Presenter.View
                 borderLayoutGroup.SetLayoutHorizontal();
                 borderLayoutGroup.SetLayoutVertical();
             }
-        }*/
+        }
 
         public void Initialize(SheetViewModel vm)
         {
             _vm = vm;
+            
+            var bindingSet = this.CreateBindingSet<SheetView, SheetViewModel>();
+            
+            bindingSet.Bind(background).For(v => v.color)
+                .To(vm => vm.BackgroundColor);
+            bindingSet.Bind(border).For(v => v.enabled)
+                .To(vm => vm.HasBorder);
+            
+            bindingSet.Bind(border)
+                .For(v => v.color)
+                .To(vm => vm.BorderColor);
+            
+            bindingSet.Bind(this)
+                .For(v => v.BorderThickness)
+                .To(vm => vm.BorderThickness);
+            
+            bindingSet.Build();
             
             foreach (var widget in vm.Widgets)
                 SpawnWidgetView(widget);
