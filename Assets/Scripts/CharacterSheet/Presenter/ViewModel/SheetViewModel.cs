@@ -159,6 +159,11 @@ namespace CharacterSheet.Presenter.ViewModel
             });
         }
 
+        public void ClearSelection()
+        {
+            OnWidgetSelected?.Invoke(null);
+        }
+
         public void Dispose()
         {
             _sheet.OnStatAdded     -= _onStatAdded;

@@ -7,6 +7,7 @@ using CharacterSheet.Presenter.ViewModel.Widgets;
 using Loxodon.Framework.Binding;
 using Loxodon.Framework.Views;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace CharacterSheet.Presenter.View
@@ -18,7 +19,7 @@ namespace CharacterSheet.Presenter.View
         public GameObject prefab;
     }
     
-    public class SheetView : UIView
+    public class SheetView : UIView, IPointerClickHandler
     {
         [SerializeField] private Image background;
         [SerializeField] private Image border;
@@ -117,6 +118,11 @@ namespace CharacterSheet.Presenter.View
                 _vm.Widgets.CollectionChanged -= OnWidgetsChanged;
             }
             base.OnDestroy();
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            _vm?.ClearSelection();
         }
     }
 }
