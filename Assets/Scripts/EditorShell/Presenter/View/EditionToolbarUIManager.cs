@@ -134,6 +134,15 @@ namespace EditorShell.Presenter.View
             foreach (SceneObject obj in loaded.Objects)
                 active.AddObject(obj);
 
+            if (loaded.TerrainLayout != null && active.TerrainLayout != null)
+            {
+                var t = loaded.TerrainLayout;
+                vm.GenerateTerrain.Execute(active.TerrainLayout, t.Width, t.Depth, t.Thickness, t.Height, t.Color);
+                if (vm.Grid != null && t.Grid != null)
+                    vm.Grid.CellSize = t.Grid.CellSize;
+                vm.Map.Terrain?.Refresh();
+            }
+
             if (vm.Grid != null)
                 vm.Grid.RebuildOccupancy(active.Objects);
         }

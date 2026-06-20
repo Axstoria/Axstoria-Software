@@ -27,5 +27,13 @@ namespace MapEditor.Presenter.ViewModels
             Thickness.ValueChanged += (_, __) => _model.Thickness = Thickness.Value;
             Height.ValueChanged    += (_, __) => _model.Height    = Height.Value;
         }
+
+        public void Refresh()
+        {
+            Width.Value     = _model.Width;
+            Depth.Value     = _model.Depth;
+            Thickness.Value = _model.Thickness;
+            Height.Value    = _model.Height;
+        }
     }
 }
