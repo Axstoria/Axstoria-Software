@@ -1,7 +1,7 @@
 .view-switcher {
     position: absolute;
     top: 40px;
-    right: 10px;
+    right: 20px;
     flex-direction: row;
     background-color: rgb(192, 192, 192);
     border-width: 1px;

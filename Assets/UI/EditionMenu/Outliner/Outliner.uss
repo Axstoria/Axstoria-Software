@@ -171,7 +171,7 @@
 }
 
 .settings-pane .unity-base-slider__dragger {
-    width: 10px;
+    width: 8px;
     border-width: 0;
     border-radius: 4px;
     background-color: rgb(232, 232, 232);
