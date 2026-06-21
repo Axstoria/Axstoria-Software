@@ -94,6 +94,15 @@ namespace EditorShell.Presenter.View
             BindLightElements(root);
             BindTerrainGridElements(root);
 
+            VisualElement settingsPane = root.Q<VisualElement>("settings-pane");
+            settingsPane?.Query<Slider>().ForEach(slider =>
+            {
+                slider.RegisterCallback<PointerDownEvent>(
+                    _ => slider.AddToClassList("slider--dragging"), TrickleDown.TrickleDown);
+                slider.RegisterCallback<PointerCaptureOutEvent>(
+                    _ => slider.RemoveFromClassList("slider--dragging"));
+            });
+
             _vm = Context.GetApplicationContext()
                          .GetContainer()
                          .Resolve<MapEditorViewModel>();

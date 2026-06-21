@@ -17,7 +17,7 @@
 .settings-pane {
     flex-direction: column;
     width: 320px;
-    min-width: 120px;
+    min-width: 160px;
     flex-grow: 0;
     flex-shrink: 0;
     background-color: rgb(50, 50, 50);
@@ -164,6 +164,31 @@
     -unity-background-image-tint-color: rgb(240, 240, 240);
 }
 
+.settings-pane .unity-base-slider__tracker {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-width: 0;
+    border-radius: 2px;
+}
+
+.settings-pane .unity-base-slider__dragger {
+    width: 10px;
+    border-width: 0;
+    border-radius: 4px;
+    background-color: rgb(232, 232, 232);
+}
+
+.settings-pane .unity-base-slider__dragger:hover {
+    background-color: rgb(255, 255, 250);
+}
+
+.settings-pane .unity-base-slider:focus .unity-base-slider__dragger {
+    border-width: 0;
+}
+
+.settings-pane .unity-base-slider.slider--dragging .unity-base-slider__dragger {
+    background-color: rgb(100, 140, 210);
+}
+
 .map-pane {
     flex-grow: 1;
     flex-shrink: 1;
@@ -172,7 +197,7 @@
 
 .outliner {
     width: 320px;
-    min-width: 120px;
+    min-width: 160px;
     flex-grow: 0;
     flex-shrink: 0;
     flex-direction: column;

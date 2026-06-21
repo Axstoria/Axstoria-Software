@@ -5,8 +5,8 @@ namespace EditorShell.Presenter.View
 {
     public class SplitLayoutController : MonoBehaviour
     {
-        private const float SettingsMin = 120f;
-        private const float OutlinerMin = 120f;
+        private const float SettingsMin = 160f;
+        private const float OutlinerMin = 160f;
         private const float MapMin      = 200f;
         private const float HandleWidth = 8f;
 
