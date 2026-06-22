@@ -74,6 +74,34 @@
                         <engine:Slider name="slider-grid-opacity" label="Grid Opacity" value="0.34" low-value="0" high-value="1" />
                         <engine:Toggle name="toggle-transparent-sides" label="Transparent Sides" value="false" />
                     </engine:Foldout>
+                    <engine:Foldout name="foldout-snap" text="Snap" enabled="true" value="false">
+                        <engine:Label text="MOVE GIZMO" class="settings-subhead" />
+                        <engine:Toggle name="toggle-snap-grid" label="Snap to Grid" value="false" />
+                        <engine:Toggle name="toggle-snap-terrain" label="Snap to Terrain" value="false" />
+                    </engine:Foldout>
+                    <engine:Foldout name="foldout-selected-transform" text="Selected Object" enabled="true" value="false">
+                        <engine:Label name="label-no-selection" text="No object selected." class="settings-caption" />
+                        <engine:VisualElement name="transform-fields" style="display: none;">
+                            <engine:Label text="POSITION" class="settings-subhead" />
+                            <engine:VisualElement class="transform-row">
+                                <engine:FloatField name="field-pos-x" label="X" />
+                                <engine:FloatField name="field-pos-y" label="Y" />
+                                <engine:FloatField name="field-pos-z" label="Z" />
+                            </engine:VisualElement>
+                            <engine:Label text="ROTATION" class="settings-subhead" />
+                            <engine:VisualElement class="transform-row">
+                                <engine:FloatField name="field-rot-x" label="X" />
+                                <engine:FloatField name="field-rot-y" label="Y" />
+                                <engine:FloatField name="field-rot-z" label="Z" />
+                            </engine:VisualElement>
+                            <engine:Label text="SCALE" class="settings-subhead" />
+                            <engine:VisualElement class="transform-row">
+                                <engine:FloatField name="field-scale-x" label="X" />
+                                <engine:FloatField name="field-scale-y" label="Y" />
+                                <engine:FloatField name="field-scale-z" label="Z" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                    </engine:Foldout>
                 </engine:VisualElement>
             </engine:ScrollView>
         </engine:VisualElement>

@@ -1,3 +1,4 @@
+using MapEditor.Presenter.View;
 using SceneEditor.Presenter.View;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -42,6 +43,9 @@ namespace EditorShell.Presenter.View
             layersFlyout.Init(root);
             moveFlyout.OnFlyoutOpened   = () => layersFlyout.HideImmediately();
             layersFlyout.OnFlyoutOpened = () => moveFlyout.HideImmediately();
+
+            var gizmoView = FindFirstObjectByType<TransformGizmoView>();
+            moveFlyout.OnToolSelected = type => { if (gizmoView != null) gizmoView.SetTransformType(type); };
             var bottomPanel = GetComponentInChildren<BottomPanelController>() ?? this.AddComponent<BottomPanelController>();
             bottomPanel.Init(root);
             GetComponentInChildren<PrefabBrowserView>()?.Init(root);

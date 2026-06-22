@@ -1,3 +1,5 @@
+using RuntimeGizmos;
+using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -39,6 +41,7 @@ namespace EditorShell.Presenter.View
         }
 
         public System.Action OnFlyoutOpened;
+        public System.Action<TransformType> OnToolSelected;
 
         private void ShowFlyout()
         {
@@ -85,12 +88,15 @@ namespace EditorShell.Presenter.View
             {
                 case "tool-btn--move":
                     _btnMove.AddToClassList(SelectedClass);
+                    OnToolSelected?.Invoke(TransformType.Move);
                     break;
                 case "tool-btn--rotate":
                     _btnRotate.AddToClassList(SelectedClass);
+                    OnToolSelected?.Invoke(TransformType.Rotate);
                     break;
                 case "tool-btn--scale":
                     _btnScale.AddToClassList(SelectedClass);
+                    OnToolSelected?.Invoke(TransformType.Scale);
                     break;
             }
 

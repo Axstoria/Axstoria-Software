@@ -2,9 +2,11 @@ using Camera.Presenter.ViewModels;
 using Loxodon.Framework.Contexts;
 using MapEditor.Presenter.View;
 using MapEditor.Presenter.ViewModels;
+using SceneEditor.Domain;
 using SceneEditor.Presenter.View;
 using SceneEditor.Presenter.ViewModels;
 using System;
+using System.Collections.Specialized;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -72,6 +74,25 @@ namespace EditorShell.Presenter.View
         public Slider       GridOpacity      { get; private set; }
         public Toggle       TransparentSides { get; private set; }
 
+        // --- Snap ---
+        public Toggle SnapToGrid    { get; private set; }
+        public Toggle SnapToTerrain { get; private set; }
+
+        // --- Selected Object Transform ---
+        public FloatField PosX   { get; private set; }
+        public FloatField PosY   { get; private set; }
+        public FloatField PosZ   { get; private set; }
+        public FloatField RotX   { get; private set; }
+        public FloatField RotY   { get; private set; }
+        public FloatField RotZ   { get; private set; }
+        public FloatField ScaleX { get; private set; }
+        public FloatField ScaleY { get; private set; }
+        public FloatField ScaleZ { get; private set; }
+        private VisualElement _transformFields;
+        private Label         _labelNoSelection;
+        private ObjectViewModel _selectedObject;
+        private EventHandler    _onSelectedTransformChanged;
+
         // --- Selection ---
         public Action<ObjectViewModel> OnObjectSelected;
 
@@ -93,6 +114,8 @@ namespace EditorShell.Presenter.View
             BindCameraElements(root);
             BindLightElements(root);
             BindTerrainGridElements(root);
+            BindSnapElements(root);
+            BindSelectedTransformElements(root);
 
             VisualElement settingsPane = root.Q<VisualElement>("settings-pane");
             settingsPane?.Query<Slider>().ForEach(slider =>
@@ -111,6 +134,8 @@ namespace EditorShell.Presenter.View
             ConnectCamera();
             ConnectLight();
             ConnectTerrainGrid();
+            ConnectSnap();
+            ConnectSelectedTransform();
         }
 
         // ── UI element queries ────────────────────────────────────────────────
@@ -166,6 +191,27 @@ namespace EditorShell.Presenter.View
             GridColorB       = root.Q<Slider>("slider-grid-color-b");
             GridOpacity      = root.Q<Slider>("slider-grid-opacity");
             TransparentSides = root.Q<Toggle>("toggle-transparent-sides");
+        }
+
+        private void BindSnapElements(VisualElement root)
+        {
+            SnapToGrid    = root.Q<Toggle>("toggle-snap-grid");
+            SnapToTerrain = root.Q<Toggle>("toggle-snap-terrain");
+        }
+
+        private void BindSelectedTransformElements(VisualElement root)
+        {
+            _labelNoSelection = root.Q<Label>("label-no-selection");
+            _transformFields  = root.Q<VisualElement>("transform-fields");
+            PosX   = root.Q<FloatField>("field-pos-x");
+            PosY   = root.Q<FloatField>("field-pos-y");
+            PosZ   = root.Q<FloatField>("field-pos-z");
+            RotX   = root.Q<FloatField>("field-rot-x");
+            RotY   = root.Q<FloatField>("field-rot-y");
+            RotZ   = root.Q<FloatField>("field-rot-z");
+            ScaleX = root.Q<FloatField>("field-scale-x");
+            ScaleY = root.Q<FloatField>("field-scale-y");
+            ScaleZ = root.Q<FloatField>("field-scale-z");
         }
 
         // ── Scene click-to-select ─────────────────────────────────────────────
@@ -348,6 +394,138 @@ namespace EditorShell.Presenter.View
                 GridOpacity.RegisterValueChangedCallback(e    => _gridMaterial.SetFloat(_propGridOpacity, e.newValue));
                 TransparentSides.RegisterValueChangedCallback(e => _gridMaterial.SetFloat(_propTransSides, e.newValue ? 1f : 0f));
             }
+        }
+
+        private void ConnectSelectedTransform()
+        {
+            PosX.RegisterValueChangedCallback(_   => ApplyTransformFromFields());
+            PosY.RegisterValueChangedCallback(_   => ApplyTransformFromFields());
+            PosZ.RegisterValueChangedCallback(_   => ApplyTransformFromFields());
+            RotX.RegisterValueChangedCallback(_   => ApplyTransformFromFields());
+            RotY.RegisterValueChangedCallback(_   => ApplyTransformFromFields());
+            RotZ.RegisterValueChangedCallback(_   => ApplyTransformFromFields());
+            ScaleX.RegisterValueChangedCallback(_ => ApplyTransformFromFields());
+            ScaleY.RegisterValueChangedCallback(_ => ApplyTransformFromFields());
+            ScaleZ.RegisterValueChangedCallback(_ => ApplyTransformFromFields());
+
+            _vm.Map.Objects.CollectionChanged += OnSelectedObjectRemoved;
+            if (_gizmo != null) _gizmo.OnSelectionChanged += OnGizmoSelectionChanged;
+
+            SetSelectedObject(null);
+        }
+
+        private void OnGizmoSelectionChanged(SceneObject model)
+        {
+            if (model == null) { SetSelectedObject(null); return; }
+            foreach (ObjectViewModel obj in _vm.Map.Objects)
+            {
+                if (obj.Model.Id == model.Id) { SetSelectedObject(obj); return; }
+            }
+            SetSelectedObject(null);
+        }
+
+        private void OnSelectedObjectRemoved(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action != NotifyCollectionChangedAction.Remove || _selectedObject == null) return;
+            foreach (ObjectViewModel obj in e.OldItems)
+            {
+                if (obj.Model.Id == _selectedObject.Model.Id)
+                {
+                    SetSelectedObject(null);
+                    return;
+                }
+            }
+        }
+
+        private void SetSelectedObject(ObjectViewModel obj)
+        {
+            if (_onSelectedTransformChanged != null && _selectedObject != null)
+                _selectedObject.Model.OnTransformChanged -= _onSelectedTransformChanged;
+
+            _selectedObject = obj;
+
+            if (obj == null)
+            {
+                _labelNoSelection.style.display = DisplayStyle.Flex;
+                _transformFields.style.display  = DisplayStyle.None;
+                return;
+            }
+
+            _labelNoSelection.style.display = DisplayStyle.None;
+            _transformFields.style.display  = DisplayStyle.Flex;
+
+            _onSelectedTransformChanged = (_, __) => RefreshTransformFields();
+            obj.Model.OnTransformChanged += _onSelectedTransformChanged;
+            RefreshTransformFields();
+        }
+
+        private void RefreshTransformFields()
+        {
+            if (_selectedObject?.Model.Transform == null) return;
+            TransformModel t = _selectedObject.Model.Transform;
+
+            PosX.SetValueWithoutNotify(t.Position.x);
+            PosY.SetValueWithoutNotify(t.Position.y);
+            PosZ.SetValueWithoutNotify(t.Position.z);
+
+            Vector3 euler = t.Rotation.eulerAngles;
+            RotX.SetValueWithoutNotify(euler.x);
+            RotY.SetValueWithoutNotify(euler.y);
+            RotZ.SetValueWithoutNotify(euler.z);
+
+            ScaleX.SetValueWithoutNotify(t.Scale.x);
+            ScaleY.SetValueWithoutNotify(t.Scale.y);
+            ScaleZ.SetValueWithoutNotify(t.Scale.z);
+        }
+
+        private void ApplyTransformFromFields()
+        {
+            if (_selectedObject == null || _vm == null) return;
+
+            var newTransform = new TransformModel
+            {
+                Position = new Vector3(PosX.value, PosY.value, PosZ.value),
+                Rotation = Quaternion.Euler(RotX.value, RotY.value, RotZ.value),
+                Scale    = new Vector3(ScaleX.value, ScaleY.value, ScaleZ.value)
+            };
+
+            _vm.TransformObject.Execute(_selectedObject.Model, newTransform,
+                $"Transform {_selectedObject.DisplayName.Value}");
+        }
+
+        private void ConnectSnap()
+        {
+            SnapToGrid?.RegisterValueChangedCallback(e =>
+            {
+                if (_gizmo != null) _gizmo.SnapToGridEnabled = e.newValue;
+            });
+            SnapToTerrain?.RegisterValueChangedCallback(e =>
+            {
+                if (_gizmo != null) _gizmo.SnapToTerrainEnabled = e.newValue;
+            });
+        }
+
+        // ── Real-time transform display during gizmo drag ────────────────────
+
+        private void LateUpdate()
+        {
+            if (_selectedObject == null || _spawner == null) return;
+            if (_gizmo == null || !_gizmo.IsInteractingWithGizmo) return;
+            if (!_spawner.TryGetGameObject(_selectedObject.Model.Id, out GameObject go)) return;
+
+            Transform t = go.transform;
+            PosX.SetValueWithoutNotify(t.position.x);
+            PosY.SetValueWithoutNotify(t.position.y);
+            PosZ.SetValueWithoutNotify(t.position.z);
+
+            Vector3 euler = t.eulerAngles;
+            RotX.SetValueWithoutNotify(euler.x);
+            RotY.SetValueWithoutNotify(euler.y);
+            RotZ.SetValueWithoutNotify(euler.z);
+
+            ScaleX.SetValueWithoutNotify(t.localScale.x);
+            ScaleY.SetValueWithoutNotify(t.localScale.y);
+            ScaleZ.SetValueWithoutNotify(t.localScale.z);
         }
 
         // ── Selection ─────────────────────────────────────────────────────────

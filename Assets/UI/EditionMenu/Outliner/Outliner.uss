@@ -189,6 +189,25 @@
     background-color: rgb(100, 140, 210);
 }
 
+.settings-pane .transform-row {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 2px;
+}
+
+.settings-pane .transform-row .unity-base-field {
+    flex-grow: 1;
+    flex-shrink: 1;
+    margin-right: 4px;
+}
+
+.settings-pane .transform-row .unity-base-field__label {
+    min-width: 14px;
+    width: 14px;
+    margin-right: 2px;
+    -unity-text-align: middle-center;
+}
+
 .map-pane {
     flex-grow: 1;
     flex-shrink: 1;

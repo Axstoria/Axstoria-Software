@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using Loxodon.Framework.Contexts;
 using MapEditor.Presenter.View;
 using MapEditor.Presenter.ViewModels;
+using SceneEditor.Domain;
 using SceneEditor.Presenter.ViewModels;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -53,12 +54,15 @@ namespace SceneEditor.Presenter.View
 
             _onObjectsChanged = OnObjectsChanged;
             _vm.Map.Objects.CollectionChanged += _onObjectsChanged;
+
+            if (_gizmo != null) _gizmo.OnSelectionChanged += OnGizmoSelectionChanged;
         }
 
         private void OnDestroy()
         {
             if (_vm != null && _onObjectsChanged != null)
                 _vm.Map.Objects.CollectionChanged -= _onObjectsChanged;
+            if (_gizmo != null) _gizmo.OnSelectionChanged -= OnGizmoSelectionChanged;
         }
 
         private void OnObjectsChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -67,11 +71,13 @@ namespace SceneEditor.Presenter.View
             {
                 foreach (ObjectViewModel obj in e.NewItems)
                     AddEntry(obj);
+                RefreshLabels();
             }
             else if (e.Action == NotifyCollectionChangedAction.Remove)
             {
                 foreach (ObjectViewModel obj in e.OldItems)
                     RemoveEntry(obj.Model.Id);
+                RefreshLabels();
             }
             else if (e.Action == NotifyCollectionChangedAction.Reset)
             {
@@ -86,13 +92,9 @@ namespace SceneEditor.Presenter.View
             var row = new VisualElement { name = obj.Model.Id };
             row.AddToClassList(RowClass);
 
-            var label = new Label(DisplayNameOf(obj));
+            var label = new Label(ComputeLabel(obj));
             label.AddToClassList(NameClass);
-            obj.DisplayName.ValueChanged += (_, __) =>
-            {
-                label.text = DisplayNameOf(obj);
-                ApplyFilter(row, label.text);
-            };
+            obj.DisplayName.ValueChanged += (_, __) => RefreshLabels();
 
             var delete = new Button { text = "×" };
             delete.AddToClassList("outliner__delete");
@@ -103,7 +105,7 @@ namespace SceneEditor.Presenter.View
                 _vm.DeleteObject.Execute(obj.Model);
             });
 
-            row.RegisterCallback<ClickEvent>(_ => Select(obj, row));
+            row.RegisterCallback<ClickEvent>(_ => Select(obj));
 
             row.Add(label);
             row.Add(delete);
@@ -121,15 +123,23 @@ namespace SceneEditor.Presenter.View
             _rows.Remove(id);
         }
 
-        private void Select(ObjectViewModel obj, VisualElement row)
+        private void Select(ObjectViewModel obj)
         {
-            _selectedRow?.RemoveFromClassList(RowSelectedClass);
-            row.AddToClassList(RowSelectedClass);
-            _selectedRow = row;
-
             if (_gizmo != null && _spawner != null &&
                 _spawner.TryGetGameObject(obj.Model.Id, out GameObject go))
                 _gizmo.Select(go, obj.Model);
+        }
+
+        private void OnGizmoSelectionChanged(SceneObject model)
+        {
+            _selectedRow?.RemoveFromClassList(RowSelectedClass);
+            _selectedRow = null;
+            if (model == null) return;
+            if (_rows.TryGetValue(model.Id, out VisualElement row))
+            {
+                row.AddToClassList(RowSelectedClass);
+                _selectedRow = row;
+            }
         }
 
         private void Filter(string query)
@@ -149,7 +159,33 @@ namespace SceneEditor.Presenter.View
             row.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
         }
 
-        private static string DisplayNameOf(ObjectViewModel obj)
+        private string ComputeLabel(ObjectViewModel obj)
+        {
+            string baseName = BaseNameOf(obj);
+            int index = 0, total = 0;
+            foreach (ObjectViewModel other in _vm.Map.Objects)
+            {
+                if (BaseNameOf(other) != baseName) continue;
+                if (other.Model.Id == obj.Model.Id) index = total;
+                total++;
+            }
+            if (total <= 1) return baseName;
+            return index == 0 ? baseName : $"{baseName} ({index + 1})";
+        }
+
+        private void RefreshLabels()
+        {
+            foreach (ObjectViewModel obj in _vm.Map.Objects)
+            {
+                if (!_rows.TryGetValue(obj.Model.Id, out VisualElement row)) continue;
+                Label label = row.Q<Label>(className: NameClass);
+                if (label == null) continue;
+                label.text = ComputeLabel(obj);
+                ApplyFilter(row, label.text);
+            }
+        }
+
+        private static string BaseNameOf(ObjectViewModel obj)
             => string.IsNullOrEmpty(obj.DisplayName.Value) ? "(unnamed)" : obj.DisplayName.Value;
     }
 }

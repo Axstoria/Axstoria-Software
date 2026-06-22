@@ -105,6 +105,14 @@ namespace EditorShell.Presenter.View
 
             _onImported = HandleImported;
             _vm.ImportAsset.OnImported += _onImported;
+
+            ReloadImportedAssetsFromManifest();
+        }
+
+        private void ReloadImportedAssetsFromManifest()
+        {
+            foreach (var entry in _vm.ImportAsset.GetAllImportedAssets())
+                _vm.ImportAsset.ExecuteFromPath(entry.importPath, entry.id, entry.category, entry.displayName);
         }
 
         private void OnDestroy()
@@ -150,6 +158,7 @@ namespace EditorShell.Presenter.View
         {
             go.transform.SetParent(_importedHolder, false);
 
+            ScenePrefabRegistry.Register(obj.Id, go);
             ScenePrefabRegistry.RegisterCatalog("Imported", obj.DisplayName, go);
 
             BrowserCategory cat = _categories.Find(c => c != null && c.name == "Imported");
