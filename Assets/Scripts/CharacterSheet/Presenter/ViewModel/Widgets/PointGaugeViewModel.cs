@@ -1,5 +1,5 @@
 using CharacterSheet.App.UseCase;
-using CharacterSheet.Domain;
+using CharacterSheet.Domain.Widgets;
 
 namespace CharacterSheet.Presenter.ViewModel.Widgets
 {
@@ -7,36 +7,14 @@ namespace CharacterSheet.Presenter.ViewModel.Widgets
     {
         private readonly PointGaugeWidget _gauge;
 
-        private int _maxPoints;
-        public int MaxPoints
-        {
-            get => _maxPoints;
-            set
-            {
-                Set(ref _maxPoints, value);
-                _gauge.MaxPoints = MaxPoints;
-            }
-        }
-        
-        private bool _fillByValue;
-        public bool FillByValue
-        {
-            get => _fillByValue;
-            set
-            {
-                Set(ref _fillByValue, value);
-                _gauge.FillByValue = _fillByValue;
-            }
-        }
-
         public PointGaugeViewModel(PointGaugeWidget widget, 
             UpdateWidgetAppearanceUseCase appearance, 
             UpdateWidgetLayoutUseCase updateLayout, 
-            UpdatePointGaugeWidgetUseCase up) : base(widget, appearance, updateLayout)
+            UpdateWidgetTitleUseCase updateTitle,
+            GetStatUseCase getStat,
+            UpdatePointGaugeWidgetUseCase up) : base(widget, appearance, updateLayout, updateTitle, getStat)
         {
             _gauge = widget;
-            _maxPoints = widget.MaxPoints;
-            _fillByValue = widget.FillByValue;
         }
     }
 }

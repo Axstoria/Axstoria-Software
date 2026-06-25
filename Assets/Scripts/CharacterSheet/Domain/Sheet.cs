@@ -1,21 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace CharacterSheet.Domain
 {
     public class Sheet
     {
-        public string Id { get; }
+        public string Id { get; set; } = Guid.NewGuid().ToString();
         public List<SheetWidget> Widgets { get; } = new();
         public List<StatValue> Stats { get; } = new();
         
         public event Action<StatValue> OnStatAdded;
         public event Action<StatValue> OnStatRemoved;
-        public event Action<SheetWidget> OnWidgetAdded;
-        public event Action<SheetWidget> OnWidgetRemoved;
-        public event Action OnAppearanceChanged;
+        [field: JsonIgnore] public event Action<SheetWidget> OnWidgetAdded;
+        [field: JsonIgnore] public event Action<SheetWidget> OnWidgetRemoved;
+        [field: JsonIgnore] public event Action OnAppearanceChanged;
         
         public StatValue GetStat(string statId) => Stats.FirstOrDefault(s => s.Id == statId);
         public bool HasStat(string statId) => Stats.Any(s => s.Id == statId);
@@ -50,16 +51,69 @@ namespace CharacterSheet.Domain
             Widgets.Remove(widget);
             OnWidgetRemoved?.Invoke(widget);
         }
-        
-        public bool HasBorder { get; set; }
-        public float BorderThickness { get; set; }
-        public Color BorderColor { get; set; } = Color.black;
-        public Color BackgroundColor { get; set; } = Color.white;
-        public string BackgroundImagePath { get; set; }
-        
-        public Sheet(string id)
+
+        private bool _hasBorder;
+
+        public bool HasBorder
         {
-            Id = id;
+            get => _hasBorder;
+            set 
+            {
+                if (_hasBorder == value) return;
+                _hasBorder = value;
+                OnAppearanceChanged?.Invoke();
+            }
+        }
+
+        private float _borderThickness = 4F;
+
+        public float BorderThickness
+        {
+            get => _borderThickness;
+            set
+            {
+                if (_borderThickness == value)  return;
+                _borderThickness = value;
+                OnAppearanceChanged?.Invoke();
+            }
+        }
+        
+        private Color _borderColor = Color.black;
+
+        public Color BorderColor
+        {
+            get => _borderColor;
+            set
+            {
+                if (_borderColor == value) return;
+                _borderColor = value;
+                OnAppearanceChanged?.Invoke();
+            }
+        }
+        private Color _backgroundColor = Color.white;
+
+        public Color BackgroundColor
+        {
+            get => _backgroundColor;
+            set
+            {
+                if (_backgroundColor == value) return;
+                _backgroundColor = value;
+                OnAppearanceChanged?.Invoke();
+            }
+        }
+
+        private string _backgroundImagePath;
+
+        public string BackgroundImagePath
+        {
+            get => _backgroundImagePath;
+            set
+            {
+                if (_backgroundImagePath == value) return;
+                _backgroundImagePath = value;
+                OnAppearanceChanged?.Invoke();
+            }
         }
     }
 }

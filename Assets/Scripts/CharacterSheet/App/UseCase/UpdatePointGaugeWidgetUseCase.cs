@@ -1,5 +1,5 @@
 using CharacterSheet.App.DTO;
-using CharacterSheet.Domain;
+using CharacterSheet.Domain.Widgets;
 using UnityEngine;
 
 namespace CharacterSheet.App.UseCase

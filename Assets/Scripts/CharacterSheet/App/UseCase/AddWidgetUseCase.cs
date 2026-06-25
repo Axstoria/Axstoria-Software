@@ -7,12 +7,11 @@ namespace CharacterSheet.App.UseCase
 {
     public class AddWidgetUseCase
     {
-        public string Execute(Sheet sheet, WidgetType type, Rect layout)
+        public string Execute(Sheet sheet, WidgetType type)
         {
-           var id = Guid.NewGuid().ToString();
-           var widget = WidgetFactory.Create(id, type, layout);
+           var widget = WidgetFactory.Create(type);
            sheet.AddWidget(widget);
-           return id;
+           return widget.Id;
         }
     }
 }

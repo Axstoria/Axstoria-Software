@@ -7,13 +7,15 @@ namespace Shared.Domain
         public string Id { get; }
         public string Name { get; }
         public StatType Type { get; }
-        public float value { get; }
-        public float Min { get; }
-        public float Max { get; }
+        public float AbsoluteMin { get; set; }
+        public float AbsoluteMax { get; set; }
         
-        public Stat(string id, string name) {
+        public Stat(string id, string name, StatType type, float min = 0, float max = 100) {
             Id = id;
             Name = name;
+            Type = type;
+            AbsoluteMin = min;
+            AbsoluteMax = max;
         }
     }
 }

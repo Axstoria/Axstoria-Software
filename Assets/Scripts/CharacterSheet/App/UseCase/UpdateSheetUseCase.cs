@@ -6,11 +6,18 @@ namespace CharacterSheet.App.UseCase
     public class UpdateSheetUseCase
     {
         public void Execute(Sheet sheet, AppearanceDTO dto) {
-            sheet.HasBorder       = dto.HasBorder;
-            sheet.BorderThickness = dto.BorderThickness;
-            sheet.BorderColor     = dto.BorderColor;
-            sheet.BackgroundColor = dto.BackgroundColor;
-            sheet.BackgroundImagePath = dto.BackgroundImagePath;
+            if (dto.HasBorder.HasValue)
+                sheet.HasBorder       = dto.HasBorder.Value;
+            if (dto.BorderColor.HasValue)
+                sheet.BorderThickness = dto.BorderThickness.Value;
+            if (dto.BorderColor.HasValue)
+                sheet.BorderColor     = dto.BorderColor.Value;
+            if (dto.BackgroundColor.HasValue)
+                sheet.BackgroundColor = dto.BackgroundColor.Value;
+            if (dto.BackgroundImagePath != null)
+            {
+                sheet.BackgroundImagePath = dto.BackgroundImagePath;
+            }
             //sheet.OnAppearanceChanged?.Invoke();
         }
     }

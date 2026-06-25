@@ -5,12 +5,21 @@ namespace CharacterSheet.App.UseCase
 {
     public class BindStatToWidgetUseCase
     {
-        public void Execute(Sheet sheet, string widgetId, string statId)
+        
+        private readonly IStatDefinitionRepository _definitions;
+
+        public BindStatToWidgetUseCase(IStatDefinitionRepository definitions)
         {
-            if (!sheet.HasStat(statId)) return;
-            var widget = sheet.Widgets.FirstOrDefault(w => w.Id == widgetId);
+            _definitions = definitions;
+        }
+        
+        public void Execute(SheetWidget widget, string statId)
+        {
+            if (!_definitions.Exists(statId)) return;
             if (widget == null) return;
-            widget.Stats.Add(new WidgetStatBinding(statId));
+            var stat = new WidgetStatBinding();
+            stat.StatId = statId;
+            widget.AddStat(stat);
         }
     } 
 }

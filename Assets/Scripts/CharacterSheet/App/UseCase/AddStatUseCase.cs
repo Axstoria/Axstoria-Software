@@ -5,6 +5,11 @@ namespace CharacterSheet.App.UseCase
     public class AddStatUseCase
     {
         private readonly IStatDefinitionRepository _definitions;
+
+        public AddStatUseCase(IStatDefinitionRepository definitions)
+        {
+            _definitions = definitions;
+        }
         
         public void Execute(Sheet sheet, string statId,  float initialValue = 0f)
         {

@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using CharacterSheet.App.DTO;
 using CharacterSheet.App.UseCase;
 using CharacterSheet.Domain;
 using Loxodon.Framework.Commands;
@@ -9,124 +11,114 @@ namespace CharacterSheet.Presenter.ViewModel
 {
     public abstract class WidgetViewModel : ObservableObject
     {
-        protected readonly SheetWidget _widget;
-        
+        private readonly SheetWidget _widget;
+
         public string Id => _widget.Id;
         
-        protected UpdateWidgetAppearanceUseCase updateAppearance;
-        protected UpdateWidgetLayoutUseCase updateLayout;
-        
+        public ObservableList<StatViewModel> BoundStats { get; } = new();
+
+        private UpdateWidgetAppearanceUseCase _updateAppearance;
+        private UpdateWidgetLayoutUseCase _updateLayout;
+        private UpdateWidgetTitleUseCase _updateTitle;
+        private GetStatUseCase _getStat;
+
         // ── Command ───────────────────────────────────────────────────────────
-        public ICommand UpdateLayoutCommand { get; }
-        
-        public event Action<Rect> OnLayoutChanged;
+        public ICommand<Rect> UpdateLayoutCommand { get; }
+        public ICommand<string> UpdateTitleCommand { get; }
+        public ICommand<AppearanceDTO> UpdateAppearanceCommand { get; }
         public event Action<WidgetViewModel> OnSelected;
-        
+
         public void Select() => OnSelected?.Invoke(this);
-        
+
         private bool _isSelected;
+
         public bool IsSelected
         {
             get => _isSelected;
-            set => Set(ref _isSelected, value); 
+            set => Set(ref _isSelected, value);
         }
 
-        private Rect _layout;
-        public Rect Layout
-        {
-            get => _layout;
-            set
-            {
-                if (_layout.Equals(value)) return;
+        public Rect Layout => _widget.Layout;
+        public bool HasBorder => _widget.HasBorder;
+        public float BorderThickness => _widget.BorderThickness;
+        public Color BorderColor => _widget.BorderColor;
+        public Color BackgroundColor => _widget.BackgroundColor;
+        public string BackgroundImagePath => _widget.BackgroundImagePath;
+        public string Title => _widget.Title;
 
-                _layout = value;
-                _widget.Layout = value;
-                OnLayoutChanged?.Invoke(_layout);
-                RaisePropertyChanged(nameof(Layout));
-            }
-        }
-
-        private bool _hasBorder;
-        public bool HasBorder
-        {
-            get => _hasBorder;
-            set
-            {
-                Set(ref _hasBorder, value);
-                _widget.HasBorder = value;
-            }
-        }
-        
-        private float _borderThickness;
-        public float BorderThickness
-        {
-            get => _borderThickness;
-            set
-            {
-                Set(ref _borderThickness, value);
-                _widget.BorderThickness = value;
-            }
-        }
-        
-        private Color _borderColor;
-        public Color BorderColor
-        {
-            get => _borderColor;
-            set
-            {
-                Set(ref _borderColor, value);
-                _widget.BorderColor = value;
-            }
-        }
-        
-        private Color _backgroundColor;
-        public Color BackgroundColor
-        {
-            get => _backgroundColor;
-            set
-            {
-                Set(ref _backgroundColor, value);
-                _widget.BackgroundColor = value;
-            }
-        }
-
-        public ObservableList<WidgetStatBinding> BoundStats { get; } = new();
-
-        private readonly Action<Rect> _onLayoutChanged;
-        
-        protected WidgetViewModel(SheetWidget widget, UpdateWidgetAppearanceUseCase updateAppearance, UpdateWidgetLayoutUseCase updateLayout)
+        protected WidgetViewModel(SheetWidget widget,
+            UpdateWidgetAppearanceUseCase updateAppearance,
+            UpdateWidgetLayoutUseCase updateLayout,
+            UpdateWidgetTitleUseCase updateTitle,
+            GetStatUseCase getStat)
         {
             _widget = widget;
-            
-            _layout = widget.Layout;
-            _hasBorder = widget.HasBorder;
-            _borderThickness = widget.BorderThickness;
-            _borderColor = widget.BorderColor;
-            _backgroundColor = widget.BackgroundColor;
-            
-            this.updateAppearance = updateAppearance;
-            this.updateLayout = updateLayout;
-            
+
+            _updateAppearance = updateAppearance;
+            _updateLayout = updateLayout;
+            _updateTitle = updateTitle;
+            _getStat = getStat;
+
             foreach (var binding in widget.Stats)
-                BoundStats.Add(binding);
+                LoadStat(binding);
 
-            _onLayoutChanged = rect =>
-            {
-                _layout = rect;
-                RaisePropertyChanged(nameof(Layout));
-            };
+            _widget.OnLayoutChanged += HandleLayoutChanged;
+            UpdateLayoutCommand = new SimpleCommand<Rect>(rec => { updateLayout.Execute(_widget, rec); });
 
-            UpdateLayoutCommand = new SimpleCommand<Rect>(rec =>
+            _widget.OnAppearanceChanged += HandleAppearanceChanged;
+            UpdateAppearanceCommand = new SimpleCommand<AppearanceDTO>(appearance =>
             {
-                Debug.Log(rec);
-                updateLayout.Execute(_widget, rec);
-                Layout = _widget.Layout;
+                updateAppearance.Execute(_widget, appearance);
             });
+
+            _widget.OnContentChanged += HandleContentChanged;
+            UpdateTitleCommand = new SimpleCommand<string>(text => { updateTitle.Execute(_widget, text); });
+            
+            _widget.OnStatAdded += HandleStatAdded;
+            _widget.OnStatRemoved += HandleStatRemoved;
+        }
+
+        private void LoadStat(WidgetStatBinding stat)
+        {
+            BoundStats.Add(new StatViewModel(stat, _getStat.Execute(stat.StatId)));
+        }
+
+        private void HandleLayoutChanged() => RaisePropertyChanged(nameof(Layout));
+
+        private void HandleAppearanceChanged()
+        {
+            RaisePropertyChanged(nameof(HasBorder));
+            RaisePropertyChanged(nameof(BorderThickness));
+            RaisePropertyChanged(nameof(BorderColor));
+            RaisePropertyChanged(nameof(BackgroundColor));
+            RaisePropertyChanged(nameof(BackgroundImagePath));
+        }
+
+        private void HandleContentChanged() => RaisePropertyChanged(nameof(Title));
+
+        private void HandleStatAdded(WidgetStatBinding stat)
+        {
+            LoadStat(stat);
+        }
+
+        private void HandleStatRemoved(WidgetStatBinding stat)
+        {
+            var boundStat = BoundStats.FirstOrDefault(s => s.Id == stat.StatId);
+            if (boundStat != null) {
+                BoundStats.Remove(boundStat);
+                boundStat.Dispose();
+            }
         }
 
         public void Dispose()
         {
-            
+            if (_widget != null) {
+                _widget.OnLayoutChanged -= HandleLayoutChanged;
+                _widget.OnAppearanceChanged -= HandleAppearanceChanged;
+                _widget.OnContentChanged -= HandleContentChanged;
+                _widget.OnStatAdded -= HandleStatAdded;
+                _widget.OnStatRemoved -= HandleStatRemoved;
+            }
         }
     }
 }

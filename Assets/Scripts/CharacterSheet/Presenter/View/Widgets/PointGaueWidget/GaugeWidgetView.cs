@@ -7,7 +7,6 @@ namespace CharacterSheet.Presenter.View.Widgets
 {
     public class GaugeWidgetView : WidgetView
     {
-        [SerializeField] private Transform pointsContainer;
         [SerializeField] private GameObject pointPrefab;
         
         private PointGaugeViewModel _vm;

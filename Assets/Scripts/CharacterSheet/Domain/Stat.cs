@@ -15,11 +15,3 @@ namespace CharacterSheet.Domain
         }
     }
 }
-
-// Le bloc — un ensemble de valeurs de stats
-/*public class StatBlock {
-    public List<StatValue> Values { get; } = new();
-
-    public StatValue Get(string statId) { ... }
-    public void Set(string statId, float value) { ... }
-}*/

@@ -14,7 +14,5 @@ namespace CharacterSheet.Domain.Widgets
         public bool ShowValue { get; set; } = true;
         public int Segments { get; set; }
         public bool StackBars { get; set; } = true;
-        
-        public BarWidget(string id, Rect layout) : base(id, layout) {}
     }
 }

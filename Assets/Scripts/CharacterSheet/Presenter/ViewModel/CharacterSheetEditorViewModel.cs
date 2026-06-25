@@ -39,7 +39,6 @@ namespace CharacterSheet.Presenter.ViewModel
             
             AddWidgetCommand = new SimpleCommand<WidgetType>(type =>
             {
-                Debug.Log("create widget");
                 if (currentSheet != null)
                     currentSheet.AddWidgetCommand.Execute(type);
             });

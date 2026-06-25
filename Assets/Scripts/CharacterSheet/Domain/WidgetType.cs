@@ -4,10 +4,15 @@ namespace CharacterSheet.Domain
 {
     public enum WidgetType
     {
-        PointGauge,
-        ValueIndicator,
-        StatBlock,
-        Bar,
-        Text 
+        PointGauge, 
+        Bar, 
+        Text, 
+        Label, 
+        Counter,
+        Checkbox, 
+        Cycler, 
+        Dropdown, 
+        SlotGrid, 
+        StatDistributor
     }
 }

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using CharacterSheet.Domain;
-using CharacterSheet.Presenter.View.Widgets;
 using CharacterSheet.Presenter.ViewModel;
 using CharacterSheet.Presenter.ViewModel.Widgets;
 using Loxodon.Framework.Binding;
@@ -18,19 +17,19 @@ namespace CharacterSheet.Presenter.View
         public WidgetType widgetType;
         public GameObject prefab;
     }
-    
+
     public class SheetView : UIView, IPointerClickHandler
     {
         [SerializeField] private Image background;
         [SerializeField] private Image border;
         [SerializeField] private HorizontalLayoutGroup borderLayoutGroup;
-        
+
         [SerializeField] private Transform widgetContainer;
         [SerializeField] private GameObject pointGaugeWidgetPrefab;
-        
+
         private SheetViewModel _vm;
         private readonly Dictionary<string, WidgetView> _widgets = new Dictionary<string, WidgetView>();
-        
+
         public float BorderThickness
         {
             get
@@ -46,37 +45,37 @@ namespace CharacterSheet.Presenter.View
                 borderLayoutGroup.padding.right = t;
                 borderLayoutGroup.padding.top = t;
                 borderLayoutGroup.padding.bottom = t;
-                
+
                 borderLayoutGroup.SetLayoutHorizontal();
                 borderLayoutGroup.SetLayoutVertical();
             }
         }
 
-        public void Initialize(SheetViewModel vm)
+        public void Initialize(SheetViewModel viewModel)
         {
-            _vm = vm;
-            
+            _vm = viewModel;
+
             var bindingSet = this.CreateBindingSet<SheetView, SheetViewModel>();
-            
+
             bindingSet.Bind(background).For(v => v.color)
                 .To(vm => vm.BackgroundColor);
             bindingSet.Bind(border).For(v => v.enabled)
                 .To(vm => vm.HasBorder);
-            
+
             bindingSet.Bind(border)
                 .For(v => v.color)
                 .To(vm => vm.BorderColor);
-            
+
             bindingSet.Bind(this)
                 .For(v => v.BorderThickness)
                 .To(vm => vm.BorderThickness);
-            
+
             bindingSet.Build();
-            
-            foreach (var widget in vm.Widgets)
+
+            foreach (var widget in _vm.Widgets)
                 SpawnWidgetView(widget);
-            
-            vm.Widgets.CollectionChanged += OnWidgetsChanged;
+
+            _vm.Widgets.CollectionChanged += OnWidgetsChanged;
         }
 
         private void OnWidgetsChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -104,8 +103,7 @@ namespace CharacterSheet.Presenter.View
 
         private void DestroyWidgetViews(string id)
         {
-            if (_widgets.TryGetValue(id, out WidgetView view))
-            {
+            if (_widgets.TryGetValue(id, out WidgetView view)) {
                 Destroy(view.gameObject);
                 _widgets.Remove(id);
             }
@@ -113,10 +111,10 @@ namespace CharacterSheet.Presenter.View
 
         protected override void OnDestroy()
         {
-            if (_vm != null && _vm.Widgets != null)
-            {
+            if (_vm != null && _vm.Widgets != null) {
                 _vm.Widgets.CollectionChanged -= OnWidgetsChanged;
             }
+
             base.OnDestroy();
         }
 

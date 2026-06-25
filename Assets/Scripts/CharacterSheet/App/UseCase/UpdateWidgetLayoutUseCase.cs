@@ -8,9 +8,8 @@ namespace CharacterSheet.App.UseCase
     {
         public void Execute(SheetWidget widget, Rect dto)
         {
-            Debug.Log(dto);
             if (dto.width < 100)
-                dto.width = 80;
+                dto.width = 200;
             widget.Layout = dto;
         }
     }
