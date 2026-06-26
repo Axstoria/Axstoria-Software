@@ -17,7 +17,7 @@ namespace CharacterSheet.Presenter.ViewModel
             get => currentSheet;
             private set => Set(ref currentSheet, value);
         }
-        
+
         private WidgetViewModel selectedWidget;
 
         public WidgetViewModel SelectedWidget
@@ -25,26 +25,29 @@ namespace CharacterSheet.Presenter.ViewModel
             get => selectedWidget;
             private set => Set(ref selectedWidget, value);
         }
-        
-        SheetViewModelFactory _sheetFactory;
+
+        private readonly SheetViewModelFactory _sheetFactory;
+
         // ── Use Case ──────────────────────────────────────────────────────────
         private readonly LoadUseCases _loadSheet;
+
         private readonly SaveUseCases _saveSheet;
+
         // ── Command ───────────────────────────────────────────────────────────
         public ICommand UndoCommand { get; }
         public ICommand RedoCommand { get; }
         public ICommand SaveCommand { get; }
         public ICommand<WidgetType> AddWidgetCommand { get; }
+        public ICommand RemoveWidgetCommand { get; }
         public ICommand SaveSheetCommand { get; }
         public ICommand<string> AddStatCommand { get; }
 
         public CharacterSheetEditorViewModel(SheetViewModelFactory factory, LoadUseCases load, SaveUseCases save)
         {
-            
             _loadSheet = load;
             _saveSheet = save;
             _sheetFactory = factory;
-            
+
             string lastSheetId = PlayerPrefs.GetString("LastOpenedSheetId", string.Empty);
 
             var sheet = _loadSheet.Execute(lastSheetId);
@@ -52,16 +55,19 @@ namespace CharacterSheet.Presenter.ViewModel
                 LoadSheet(_sheetFactory.Create(sheet));
             else
                 LoadSheet(_sheetFactory.Create(new Sheet()));
-            
-            AddWidgetCommand = new SimpleCommand<WidgetType>(type =>
+
+            AddWidgetCommand = new SimpleCommand<WidgetType>(type => { currentSheet?.AddWidgetCommand.Execute(type); });
+
+            RemoveWidgetCommand = new SimpleCommand<object>(_ =>
             {
-                if (currentSheet != null)
-                    currentSheet.AddWidgetCommand.Execute(type);
+                if (selectedWidget != null) {
+                    currentSheet?.RemoveWidgetCommand.Execute(selectedWidget.Id);
+                    selectedWidget = null;
+                }
             });
-            
+
             SaveSheetCommand = new SimpleCommand<object>(_ =>
             {
-                Debug.Log("save command");
                 SaveCurrentSheet();
             });
 
@@ -71,31 +77,30 @@ namespace CharacterSheet.Presenter.ViewModel
                     currentSheet.AddStatCommand.Execute(id);
             });
         }
-        
+
         public void SaveCurrentSheet()
         {
             if (CurrentSheet == null) return;
-            Debug.Log($"Saving sheet {CurrentSheet.Id}");
+
             _saveSheet.Execute(CurrentSheet.RuntimeSheet);
-            
+
             PlayerPrefs.SetString("LastOpenedSheetId", CurrentSheet.Id);
             PlayerPrefs.Save();
         }
 
         private void LoadSheet(SheetViewModel sheet)
         {
-            Debug.Log($"Loading sheet {sheet.Id}");
             CurrentSheet?.Dispose();
             CurrentSheet = sheet;
-            
+
             CurrentSheet.OnWidgetSelected += vm =>
             {
                 if (SelectedWidget == vm) return;
-                
+
                 if (SelectedWidget != null) SelectedWidget.IsSelected = false;
-                
+
                 SelectedWidget = vm;
-                
+
                 if (SelectedWidget != null) SelectedWidget.IsSelected = true;
             };
         }
@@ -106,7 +111,7 @@ namespace CharacterSheet.Presenter.ViewModel
                 SaveCurrentSheet();
                 CurrentSheet?.Dispose();
             }
-            
+
             base.Dispose(disposing);
         }
     }

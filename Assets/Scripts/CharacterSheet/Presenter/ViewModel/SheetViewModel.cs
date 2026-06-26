@@ -28,6 +28,7 @@ namespace CharacterSheet.Presenter.ViewModel
 
         // ── Command ───────────────────────────────────────────────────────────
         public ICommand AddWidgetCommand { get; }
+        public ICommand<string> RemoveWidgetCommand { get; }
         public ICommand AddStatCommand { get; }
 
         /*public ObservableList<StatViewModel> Stats { get; } = new();*/
@@ -69,38 +70,28 @@ namespace CharacterSheet.Presenter.ViewModel
             _bindStatToWidget = bindStatToWidget;
             _unbindStat = unbindStat;
 
-            foreach (var widget in sheet.Widgets) {
-                var vm = widgetFactory.Create(widget);
-                vm.OnSelected += OnWidgetSelected;
-                Widgets.Add(vm);
-            }
+                foreach (var widget in sheet.Widgets) {
+                    var vm = widgetFactory.Create(widget);
+                    vm.OnSelected += HandleWidgetSelected;
+                    Widgets.Add(vm);
+                }
+                
 
-            /*_onStatAdded     = stat   => Stats.Add(new StatViewModel(stat));
-            _onStatRemoved   = stat =>
-            {
-                var vm = Stats.FirstOrDefault(s => s.Id == stat.Id);
-                if (vm != null)
+                _onWidgetAdded = widget =>
                 {
-                    Stats.Remove(vm);
-                    vm.Dispose();
-                }
-            };*/
-
-            _onWidgetAdded = widget =>
-            {
-                var vm = widgetFactory.Create(widget);
-                vm.OnSelected += OnWidgetSelected;
-                Widgets.Add(vm);
-            };
-            _onWidgetRemoved = widget =>
-            {
-                var vm = Widgets.FirstOrDefault(w => w.Id == widget.Id);
-                if (vm != null) {
-                    vm.OnSelected -= OnWidgetSelected;
-                    vm.Dispose();
-                    Widgets.Remove(vm);
-                }
-            };
+                    var vm = widgetFactory.Create(widget);
+                    vm.OnSelected += HandleWidgetSelected;
+                    Widgets.Add(vm);
+                };
+                _onWidgetRemoved = widget =>
+                {
+                    var vm = Widgets.FirstOrDefault(w => w.Id == widget.Id);
+                    if (vm != null) {
+                        vm.OnSelected -= HandleWidgetSelected;
+                        vm.Dispose();
+                        Widgets.Remove(vm);
+                    }
+                };
 
             _sheet.OnAppearanceChanged += HandleAppearanceChanged;
             UpdateAppearanceCommand = new SimpleCommand<AppearanceDTO>(appearance =>
@@ -117,8 +108,18 @@ namespace CharacterSheet.Presenter.ViewModel
             {
                 addWidget.Execute(_sheet, type);
             });
+            
+            RemoveWidgetCommand = new SimpleCommand<string>(id =>
+            {
+                _removeWidget.Execute(_sheet, id);
+            });
 
             AddStatCommand = new SimpleCommand<String>(id => { addStat.Execute(_sheet, id); });
+        }
+        
+        private void HandleWidgetSelected(WidgetViewModel widgetVM)
+        {
+            OnWidgetSelected?.Invoke(widgetVM);
         }
 
         private void HandleAppearanceChanged()

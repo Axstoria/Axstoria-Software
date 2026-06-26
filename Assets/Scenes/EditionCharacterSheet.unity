@@ -1142,7 +1142,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterSheet.Presenter.View.CharacterSheetEditorView
   widgetContainer: {fileID: 1215075403}
-  saveButton: {fileID: 0}
+  saveButton: {fileID: 1802082935}
   addWidgetButton: {fileID: 560520157}
   sheetPrefab: {fileID: 427290070764095152, guid: 4bd456b4301765fcd8049680d9ec5841, type: 3}
 --- !u!225 &1125174729
