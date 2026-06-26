@@ -12,6 +12,7 @@ namespace CharacterSheet.Presenter.ViewModel
     public class SheetViewModel : ObservableObject
     {
         private readonly Sheet _sheet;
+        public Sheet RuntimeSheet => _sheet;
         private readonly WidgetViewModelFactory _factory;
 
         public string Id => _sheet.Id;
@@ -56,6 +57,7 @@ namespace CharacterSheet.Presenter.ViewModel
             BindStatToWidgetUseCase bindStatToWidget,
             UnbindStatUseCase unbindStat)
         {
+            
             _sheet = sheet;
             _factory = widgetFactory;
 
@@ -111,7 +113,10 @@ namespace CharacterSheet.Presenter.ViewModel
             sheet.OnWidgetAdded += _onWidgetAdded;
             sheet.OnWidgetRemoved += _onWidgetRemoved;
 
-            AddWidgetCommand = new SimpleCommand<WidgetType>(type => { addWidget.Execute(_sheet, type); });
+            AddWidgetCommand = new SimpleCommand<WidgetType>(type =>
+            {
+                addWidget.Execute(_sheet, type);
+            });
 
             AddStatCommand = new SimpleCommand<String>(id => { addStat.Execute(_sheet, id); });
         }

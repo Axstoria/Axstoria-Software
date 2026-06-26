@@ -12,8 +12,8 @@ namespace CharacterSheet.Domain
         public List<SheetWidget> Widgets { get; } = new();
         public List<StatValue> Stats { get; } = new();
         
-        public event Action<StatValue> OnStatAdded;
-        public event Action<StatValue> OnStatRemoved;
+        [field: JsonIgnore] public event Action<StatValue> OnStatAdded;
+        [field: JsonIgnore] public event Action<StatValue> OnStatRemoved;
         [field: JsonIgnore] public event Action<SheetWidget> OnWidgetAdded;
         [field: JsonIgnore] public event Action<SheetWidget> OnWidgetRemoved;
         [field: JsonIgnore] public event Action OnAppearanceChanged;

@@ -12,7 +12,7 @@ namespace CharacterSheet.Presenter.View
     public class CharacterSheetEditorView : UIView
     {
         [SerializeField] private Transform widgetContainer;
-        [SerializeField] private Button addStatButton;
+        [SerializeField] private Button saveButton;
         [SerializeField] private Button addWidgetButton;
         [SerializeField] private GameObject sheetPrefab;
 
@@ -44,6 +44,10 @@ namespace CharacterSheet.Presenter.View
                .For(v => v.onClick)
                .To(x => x.AddWidgetCommand)
                .CommandParameter(WidgetType.PointGauge);
+
+           bindingSet.Bind(saveButton)
+               .For(v => v.onClick)
+               .To(x => x.SaveSheetCommand);
            
            /*bindingSet.Bind(addStatButton)
                .For(v => v.onClick)
@@ -51,16 +55,5 @@ namespace CharacterSheet.Presenter.View
            
            bindingSet.Build();
         }
-
-        /*private void OnViewModelPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(CharacterSheetEditorViewModel.SelectedWidget))
-                OnSelectedWidgetChanged(OnSelectedWidgetChanged(_vm.SelectedWidget));
-        }
-
-        private void OnSelectedWidgetChanged(WidgetViewModel widget)
-        {
-            
-        }*/
     }
 }

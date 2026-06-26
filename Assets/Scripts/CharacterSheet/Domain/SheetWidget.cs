@@ -108,11 +108,10 @@ namespace CharacterSheet.Domain
             }
         }
 
-        public string AddStat(WidgetStatBinding stat)
+        public void AddStat(WidgetStatBinding stat)
         {
             Stats.Add(stat);
             OnStatAdded?.Invoke(stat);
-            return stat.StatId;
         }
 
         public void RemoveStat(string statId)

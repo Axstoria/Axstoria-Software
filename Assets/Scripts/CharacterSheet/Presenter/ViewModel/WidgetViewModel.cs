@@ -17,10 +17,11 @@ namespace CharacterSheet.Presenter.ViewModel
         
         public ObservableList<StatViewModel> BoundStats { get; } = new();
 
-        private UpdateWidgetAppearanceUseCase _updateAppearance;
-        private UpdateWidgetLayoutUseCase _updateLayout;
-        private UpdateWidgetTitleUseCase _updateTitle;
-        private GetStatUseCase _getStat;
+        // ── Use Case ───────────────────────────────────────────────────────────
+        private readonly UpdateWidgetAppearanceUseCase _updateAppearance;
+        private readonly UpdateWidgetLayoutUseCase _updateLayout;
+        private readonly UpdateWidgetTitleUseCase _updateTitle;
+        private readonly GetStatUseCase _getStat;
 
         // ── Command ───────────────────────────────────────────────────────────
         public ICommand<Rect> UpdateLayoutCommand { get; }

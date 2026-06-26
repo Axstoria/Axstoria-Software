@@ -6,6 +6,8 @@ using UnityEngine;
 using Loxodon.Framework;
 using Loxodon.Framework.Binding;
 using Loxodon.Framework.Contexts;
+using Shared.Domain;
+using Shared.Infrastructure;
 
 namespace CharacterSheet.Presenter
 {
@@ -22,6 +24,8 @@ namespace CharacterSheet.Presenter
 
             IStatDefinitionRepository statRepo = new StatDefinitionRepository();
             container.Register<IStatDefinitionRepository>(statRepo);
+            ISaveRepository jsonRepo = new JsonFileSaveRepository("CharacterSheet");
+            container.Register<ISaveRepository>(jsonRepo);
             
             // ── Use cases ─────────────────────────────────────────────────────
             container.Register<UpdatePointGaugeWidgetUseCase>(new UpdatePointGaugeWidgetUseCase());
@@ -29,28 +33,24 @@ namespace CharacterSheet.Presenter
             container.Register<UpdateWidgetLayoutUseCase>(new UpdateWidgetLayoutUseCase());
             container.Register<UpdateWidgetTitleUseCase>(new UpdateWidgetTitleUseCase());
             container.Register<GetStatUseCase>(new GetStatUseCase(statRepo));
-
-            var addStat = new AddStatUseCase(statRepo);
-            var removeStat = new RemoveStatUseCase();
-            var addWidget = new AddWidgetUseCase();
-            var removeWidget = new RemoveWidgetUseCase();
-            var bindStatToWidget =  new BindStatToWidgetUseCase(statRepo);
-            var unbindStatToWidget = new UnbindStatUseCase();
-            var updateSheet = new UpdateSheetUseCase();
+            
+            container.Register<AddStatUseCase>(new AddStatUseCase(statRepo));
+            container.Register<RemoveStatUseCase>(new RemoveStatUseCase());
+            container.Register<AddWidgetUseCase>(new AddWidgetUseCase());
+            container.Register<RemoveWidgetUseCase>(new RemoveWidgetUseCase());
+            container.Register<BindStatToWidgetUseCase>(new BindStatToWidgetUseCase(statRepo));
+            container.Register<UnbindStatUseCase>(new UnbindStatUseCase());
+            container.Register<UpdateSheetUseCase>(new UpdateSheetUseCase());
+            container.Register<SaveUseCases>(new SaveUseCases(jsonRepo));
+            container.Register<LoadUseCases>(new LoadUseCases(jsonRepo));
             
             var widgetFactory = new WidgetViewModelFactory(container);
+            container.Register<WidgetViewModelFactory>(widgetFactory);
+            var sheetFactory = new SheetViewModelFactory(container);
             
-            var sheet = new SheetViewModel(new Sheet(), 
-                widgetFactory,
-                addStat,
-                removeStat,
-                updateSheet,
-                addWidget,
-                removeWidget,
-                bindStatToWidget,
-                unbindStatToWidget);
-            
-            var vm = new CharacterSheetEditorViewModel(sheet);
+            var vm = new CharacterSheetEditorViewModel(sheetFactory, 
+                container.Resolve<LoadUseCases>(),
+                container.Resolve<SaveUseCases>());
             
             Context.GetApplicationContext()
                 .GetContainer()
