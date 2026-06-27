@@ -94,7 +94,10 @@ namespace MapEditor.Presenter.View
                 pos = SnapPositionToTerrain(pos, t);
 
             if (SnapToGridEnabled || SnapToTerrainEnabled)
+            {
                 t.position = pos;
+                _gizmo.SetPivotPoint();
+            }
 
             string label = _gizmo.transformType switch
             {
