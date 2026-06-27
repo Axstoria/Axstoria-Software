@@ -10,21 +10,26 @@ namespace CharacterSheet.Presenter.ViewModel
     public class WidgetViewModelFactory
     {
         private readonly IServiceContainer _container;
-        
+
         public WidgetViewModelFactory(IServiceContainer container)
         {
             _container = container;
         }
-        
+
         public WidgetViewModel Create(SheetWidget widget) => widget switch
         {
             PointGaugeWidget g => new PointGaugeViewModel(g,
-            _container.Resolve<UpdateWidgetAppearanceUseCase>(),
-            _container.Resolve<UpdateWidgetLayoutUseCase>(),
-            _container.Resolve<UpdateWidgetTitleUseCase>(),
-            _container.Resolve<GetStatUseCase>(),
-            _container.Resolve<UpdatePointGaugeWidgetUseCase>())
-            ,
+                _container.Resolve<UpdateWidgetAppearanceUseCase>(),
+                _container.Resolve<UpdateWidgetLayoutUseCase>(),
+                _container.Resolve<UpdateWidgetTitleUseCase>(),
+                _container.Resolve<GetStatUseCase>(),
+                _container.Resolve<UpdatePointGaugeWidgetUseCase>()),
+            TextWidget t => new TextWidgetViewModel(t,
+                _container.Resolve<UpdateWidgetAppearanceUseCase>(),
+                _container.Resolve<UpdateWidgetLayoutUseCase>(),
+                _container.Resolve<UpdateWidgetTitleUseCase>(),
+                _container.Resolve<GetStatUseCase>(),
+                _container.Resolve<UpdateTextWidgetUseCase>()),
             _ => throw new AbandonedMutexException()
         };
     }

@@ -73,4 +73,12 @@ namespace CharacterSheet.App.UseCase
             widget?.RemoveStat(statId);
         }
     }
+    
+    public class UpdateStatValueUseCase
+    {
+        public void Execute(Sheet sheet, string statId)
+        {
+            return;
+        }
+    }
 }

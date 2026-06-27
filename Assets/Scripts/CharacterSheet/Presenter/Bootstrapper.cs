@@ -8,6 +8,7 @@ using Loxodon.Framework.Binding;
 using Loxodon.Framework.Contexts;
 using Shared.Domain;
 using Shared.Infrastructure;
+using Unity.VisualScripting;
 
 namespace CharacterSheet.Presenter
 {
@@ -29,13 +30,12 @@ namespace CharacterSheet.Presenter
             
             // ── Use cases ─────────────────────────────────────────────────────
             container.Register<UpdatePointGaugeWidgetUseCase>(new UpdatePointGaugeWidgetUseCase());
+            container.Register<UpdateTextWidgetUseCase>(new UpdateTextWidgetUseCase());
             container.Register<UpdateWidgetAppearanceUseCase>(new UpdateWidgetAppearanceUseCase());
             container.Register<UpdateWidgetLayoutUseCase>(new UpdateWidgetLayoutUseCase());
             container.Register<UpdateWidgetTitleUseCase>(new UpdateWidgetTitleUseCase());
             container.Register<GetStatUseCase>(new GetStatUseCase(statRepo));
             
-            container.Register<AddStatUseCase>(new AddStatUseCase(statRepo));
-            container.Register<RemoveStatUseCase>(new RemoveStatUseCase());
             container.Register<AddWidgetUseCase>(new AddWidgetUseCase());
             container.Register<RemoveWidgetUseCase>(new RemoveWidgetUseCase());
             container.Register<BindStatToWidgetUseCase>(new BindStatToWidgetUseCase(statRepo));

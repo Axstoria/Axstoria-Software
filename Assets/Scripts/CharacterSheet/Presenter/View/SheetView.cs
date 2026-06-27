@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using CharacterSheet.Domain;
+using CharacterSheet.Presenter.View.Widgets;
 using CharacterSheet.Presenter.ViewModel;
 using CharacterSheet.Presenter.ViewModel.Widgets;
 using Loxodon.Framework.Binding;
@@ -26,6 +27,7 @@ namespace CharacterSheet.Presenter.View
 
         [SerializeField] private Transform widgetContainer;
         [SerializeField] private GameObject pointGaugeWidgetPrefab;
+        [SerializeField] private GameObject textWidgetPrefab;
 
         private SheetViewModel _vm;
         private readonly Dictionary<string, WidgetView> _widgets = new Dictionary<string, WidgetView>();
@@ -93,6 +95,7 @@ namespace CharacterSheet.Presenter.View
             var widgetPrefab = vm switch
             {
                 PointGaugeViewModel => pointGaugeWidgetPrefab,
+                TextWidgetViewModel => textWidgetPrefab,
                 _ => null
             };
             var go = Instantiate(widgetPrefab, widgetContainer);

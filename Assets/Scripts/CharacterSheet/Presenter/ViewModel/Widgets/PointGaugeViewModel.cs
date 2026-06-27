@@ -16,5 +16,10 @@ namespace CharacterSheet.Presenter.ViewModel.Widgets
         {
             _gauge = widget;
         }
+
+        protected override void HandleContentChanged()
+        {
+            
+        }
     }
 }

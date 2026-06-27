@@ -1,9 +1,17 @@
-using UnityEngine;
-
-namespace CharacterSheet.Domain
+namespace CharacterSheet.Domain.Widgets
 {
     public class TextWidget : SheetWidget
     {
-        public string Template { get; } = "enter text...";
+        private string _textTemplate = "enter text...";
+        public string TextTemplate
+        {
+            get => _textTemplate;
+            set
+            {
+                if (_textTemplate == value) return;
+                _textTemplate = value;
+                RaiseContentChanged();
+            }
+        }
     }
 }

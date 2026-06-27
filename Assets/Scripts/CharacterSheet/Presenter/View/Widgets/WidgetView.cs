@@ -1,14 +1,13 @@
 using System.Collections.Specialized;
 using CharacterSheet.Presenter.ViewModel;
 using Loxodon.Framework.Binding;
-using Loxodon.Framework.ViewModels;
 using Loxodon.Framework.Views;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace CharacterSheet.Presenter.View
+namespace CharacterSheet.Presenter.View.Widgets
 {
     public abstract class WidgetView : UIView, IPointerClickHandler
     {
@@ -16,10 +15,10 @@ namespace CharacterSheet.Presenter.View
         [SerializeField] private Image border;
         [SerializeField] private RectTransform backgroundOffset;
         [SerializeField] private GameObject selectionBorder;
-        
+
         [SerializeField] private Transform content;
         [SerializeField] private GameObject statContainerPrefab;
-        
+
         public TMP_InputField title;
 
         private WidgetViewModel _vm;
@@ -40,7 +39,7 @@ namespace CharacterSheet.Presenter.View
                 backgroundOffset.offsetMax = new Vector2(-t, -t);
             }
         }
-        
+
         public Rect WidgetLayout
         {
             get => new Rect(RectTransform.anchoredPosition, RectTransform.sizeDelta);
@@ -51,35 +50,33 @@ namespace CharacterSheet.Presenter.View
                 RectTransform.sizeDelta = value.size;
             }
         }
-        
-        //private RectTransform RectTransform => _rectTransform ??= GetComponent<RectTransform>();
 
         protected override void Start()
         {
             base.Start();
-            
+
             _vm = this.BindingContext().DataContext as WidgetViewModel;
-            if(_vm == null) return;
-            
+            if (_vm == null) return;
+
             var bindingSet = this.CreateBindingSet<WidgetView, WidgetViewModel>();
-            
+
             bindingSet.Bind(background).For(v => v.color)
                 .To(vm => vm.BackgroundColor);
             bindingSet.Bind(border).For(v => v.enabled)
                 .To(vm => vm.HasBorder);
-            
+
             bindingSet.Bind(border)
                 .For(v => v.color)
                 .To(vm => vm.BorderColor);
-            
+
             bindingSet.Bind(this)
                 .For(v => v.BorderThickness)
                 .To(vm => vm.BorderThickness);
-            
+
             bindingSet.Bind(this)
                 .For(v => v.WidgetLayout)
                 .To(vm => vm.Layout);
-            
+
             bindingSet.Bind(title)
                 .For(v => v.text)
                 .To(vm => vm.Title)
@@ -88,7 +85,7 @@ namespace CharacterSheet.Presenter.View
             bindingSet.Bind(title)
                 .For(v => v.onEndEdit)
                 .To(vm => vm.UpdateTitleCommand);
-            
+
             bindingSet.Bind(selectionBorder).For(v => v.activeSelf).To(vm => vm.IsSelected);
 
             bindingSet.Build();
@@ -98,20 +95,19 @@ namespace CharacterSheet.Presenter.View
 
         private void OnStatCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            switch (e.Action)
-            {
+            switch (e.Action) {
                 case NotifyCollectionChangedAction.Add:
-                    foreach (StatViewModel newStat in e.NewItems)
-                    {
-                        CreateStatElement(newStat);
+                    foreach (StatViewModel newStat in e.NewItems) {
+                        OnStatAdded(newStat);
                     }
+
                     break;
 
                 case NotifyCollectionChangedAction.Remove:
-                    foreach (StatViewModel oldStat in e.OldItems)
-                    {
-                        DestroyStatElement(oldStat);
+                    foreach (StatViewModel oldStat in e.OldItems) {
+                        OnStatRemoved(oldStat);
                     }
+
                     break;
 
                 case NotifyCollectionChangedAction.Reset:
@@ -120,22 +116,20 @@ namespace CharacterSheet.Presenter.View
             }
         }
 
-        private void CreateStatElement(StatViewModel stat)
+        protected virtual void OnStatAdded(StatViewModel stat)
         {
-            GameObject go =  Instantiate(statContainerPrefab, content);
+            GameObject go = Instantiate(statContainerPrefab, content);
             IStatContainerView view = go.GetComponent<IStatContainerView>();
-            
+
             if (view != null)
                 view.SetDataContext(stat);
         }
 
-        private void DestroyStatElement(StatViewModel stat)
+        protected virtual void OnStatRemoved(StatViewModel stat)
         {
-            foreach (Transform child in content)
-            {
+            foreach (Transform child in content) {
                 IStatContainerView statView = child.GetComponent<IStatContainerView>();
-                if (statView != null && statView.GetDataContext() == stat)
-                {
+                if (statView != null && statView.GetDataContext() == stat) {
                     Destroy(child.gameObject);
                     break;
                 }
@@ -150,11 +144,9 @@ namespace CharacterSheet.Presenter.View
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (eventData.button == PointerEventData.InputButton.Left)
-            {
+            if (eventData.button == PointerEventData.InputButton.Left) {
                 _vm.Select();
             }
         }
     }
-    
 }

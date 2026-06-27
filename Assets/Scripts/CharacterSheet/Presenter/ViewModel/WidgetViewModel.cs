@@ -14,7 +14,7 @@ namespace CharacterSheet.Presenter.ViewModel
         private readonly SheetWidget _widget;
 
         public string Id => _widget.Id;
-        
+
         public ObservableList<StatViewModel> BoundStats { get; } = new();
 
         // ── Use Case ───────────────────────────────────────────────────────────
@@ -72,11 +72,12 @@ namespace CharacterSheet.Presenter.ViewModel
                 updateAppearance.Execute(_widget, appearance);
             });
 
-            _widget.OnContentChanged += HandleContentChanged;
+            _widget.OnTitleChanged += HandleTitleChanged;
             UpdateTitleCommand = new SimpleCommand<string>(text => { updateTitle.Execute(_widget, text); });
-            
+
             _widget.OnStatAdded += HandleStatAdded;
             _widget.OnStatRemoved += HandleStatRemoved;
+            _widget.OnContentChanged += HandleContentChanged;
         }
 
         private void LoadStat(WidgetStatBinding stat)
@@ -95,7 +96,7 @@ namespace CharacterSheet.Presenter.ViewModel
             RaisePropertyChanged(nameof(BackgroundImagePath));
         }
 
-        private void HandleContentChanged() => RaisePropertyChanged(nameof(Title));
+        private void HandleTitleChanged() => RaisePropertyChanged(nameof(Title));
 
         private void HandleStatAdded(WidgetStatBinding stat)
         {
@@ -111,14 +112,17 @@ namespace CharacterSheet.Presenter.ViewModel
             }
         }
 
+        protected abstract void HandleContentChanged();
+
         public void Dispose()
         {
             if (_widget != null) {
                 _widget.OnLayoutChanged -= HandleLayoutChanged;
                 _widget.OnAppearanceChanged -= HandleAppearanceChanged;
-                _widget.OnContentChanged -= HandleContentChanged;
+                _widget.OnTitleChanged -= HandleTitleChanged;
                 _widget.OnStatAdded -= HandleStatAdded;
                 _widget.OnStatRemoved -= HandleStatRemoved;
+                _widget.OnContentChanged -= HandleContentChanged;
             }
         }
     }

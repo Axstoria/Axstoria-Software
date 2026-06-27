@@ -18,8 +18,6 @@ namespace CharacterSheet.Presenter.ViewModel
             return new SheetViewModel(
                 sheet,
                 _container.Resolve<WidgetViewModelFactory>(),
-                _container.Resolve<AddStatUseCase>(),
-                _container.Resolve<RemoveStatUseCase>(),
                 _container.Resolve<UpdateSheetUseCase>(),
                 _container.Resolve<AddWidgetUseCase>(),
                 _container.Resolve<RemoveWidgetUseCase>(),

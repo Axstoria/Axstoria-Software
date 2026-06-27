@@ -414,7 +414,7 @@ GameObject:
   - component: {fileID: 1624141723497578444}
   - component: {fileID: 3539696661907115186}
   m_Layer: 0
-  m_Name: GaugeWidgetPrefab
+  m_Name: GaugeWidgetPrefab 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -483,7 +483,7 @@ MonoBehaviour:
   backgroundOffset: {fileID: 2245692860774631798}
   selectionBorder: {fileID: 7472083690358765410}
   content: {fileID: 1040497297985283911}
-  statContainerPrefab: {fileID: 3551831912475706928, guid: 8b0e7a39035b384ddb273dd27405683c, type: 3}
+  statContainerPrefab: {fileID: 0}
   title: {fileID: 9009133344452687275}
   pointPrefab: {fileID: 971860844769312412, guid: 69a399514ef95f32f8d7abdb9e70a6dd, type: 3}
 --- !u!1 &902088673056608845
@@ -621,7 +621,6 @@ GameObject:
   - component: {fileID: 573277781395288959}
   - component: {fileID: 9009133344452687275}
   - component: {fileID: 6186993354951453026}
-  - component: {fileID: 7968654855942784008}
   m_Layer: 0
   m_Name: Title
   m_TagString: Untagged
@@ -808,18 +807,6 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
---- !u!114 &7968654855942784008
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3175901723251091958}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eefca451f27b498a81455b9e3ba965ae, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CharacterSheet.Presenter.View.EditableTextField
 --- !u!1 &3517882628485882188
 GameObject:
   m_ObjectHideFlags: 0

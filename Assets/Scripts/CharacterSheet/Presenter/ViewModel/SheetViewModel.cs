@@ -18,8 +18,6 @@ namespace CharacterSheet.Presenter.ViewModel
         public string Id => _sheet.Id;
 
         // ── Use Case ───────────────────────────────────────────────────────────
-        private readonly AddStatUseCase _addStat;
-        private readonly RemoveStatUseCase _removeStat;
         private readonly UpdateSheetUseCase _updateSheet;
         private readonly AddWidgetUseCase _addWidget;
         private readonly RemoveWidgetUseCase _removeWidget;
@@ -29,9 +27,7 @@ namespace CharacterSheet.Presenter.ViewModel
         // ── Command ───────────────────────────────────────────────────────────
         public ICommand AddWidgetCommand { get; }
         public ICommand<string> RemoveWidgetCommand { get; }
-        public ICommand AddStatCommand { get; }
 
-        /*public ObservableList<StatViewModel> Stats { get; } = new();*/
         public ObservableList<WidgetViewModel> Widgets { get; } = new();
 
         public bool HasBorder => _sheet.HasBorder;
@@ -40,8 +36,6 @@ namespace CharacterSheet.Presenter.ViewModel
         public Color BackgroundColor => _sheet.BackgroundColor;
         public string BackgroundImagePath => _sheet.BackgroundImagePath;
 
-        /*private readonly Action<StatValue> _onStatAdded;
-        private readonly Action<StatValue> _onStatRemoved;*/
         private readonly Action<SheetWidget> _onWidgetAdded;
         private readonly Action<SheetWidget> _onWidgetRemoved;
 
@@ -50,48 +44,43 @@ namespace CharacterSheet.Presenter.ViewModel
 
         public SheetViewModel(Sheet sheet,
             WidgetViewModelFactory widgetFactory,
-            AddStatUseCase addStat,
-            RemoveStatUseCase removeStat,
             UpdateSheetUseCase updateSheet,
             AddWidgetUseCase addWidget,
             RemoveWidgetUseCase removeWidget,
             BindStatToWidgetUseCase bindStatToWidget,
             UnbindStatUseCase unbindStat)
         {
-            
             _sheet = sheet;
             _factory = widgetFactory;
 
-            _addStat = addStat;
-            _removeStat = removeStat;
             _updateSheet = updateSheet;
             _addWidget = addWidget;
             _removeWidget = removeWidget;
             _bindStatToWidget = bindStatToWidget;
             _unbindStat = unbindStat;
 
-                foreach (var widget in sheet.Widgets) {
-                    var vm = widgetFactory.Create(widget);
-                    vm.OnSelected += HandleWidgetSelected;
-                    Widgets.Add(vm);
-                }
-                
+            foreach (var widget in sheet.Widgets) {
+                var vm = widgetFactory.Create(widget);
+                vm.OnSelected += HandleWidgetSelected;
+                Widgets.Add(vm);
+            }
 
-                _onWidgetAdded = widget =>
-                {
-                    var vm = widgetFactory.Create(widget);
-                    vm.OnSelected += HandleWidgetSelected;
-                    Widgets.Add(vm);
-                };
-                _onWidgetRemoved = widget =>
-                {
-                    var vm = Widgets.FirstOrDefault(w => w.Id == widget.Id);
-                    if (vm != null) {
-                        vm.OnSelected -= HandleWidgetSelected;
-                        vm.Dispose();
-                        Widgets.Remove(vm);
-                    }
-                };
+
+            _onWidgetAdded = widget =>
+            {
+                var vm = widgetFactory.Create(widget);
+                vm.OnSelected += HandleWidgetSelected;
+                Widgets.Add(vm);
+            };
+            _onWidgetRemoved = widget =>
+            {
+                var vm = Widgets.FirstOrDefault(w => w.Id == widget.Id);
+                if (vm != null) {
+                    vm.OnSelected -= HandleWidgetSelected;
+                    vm.Dispose();
+                    Widgets.Remove(vm);
+                }
+            };
 
             _sheet.OnAppearanceChanged += HandleAppearanceChanged;
             UpdateAppearanceCommand = new SimpleCommand<AppearanceDTO>(appearance =>
@@ -99,24 +88,14 @@ namespace CharacterSheet.Presenter.ViewModel
                 updateSheet.Execute(_sheet, appearance);
             });
 
-            /*sheet.OnStatAdded     += _onStatAdded;
-            sheet.OnStatRemoved   += _onStatRemoved;*/
             sheet.OnWidgetAdded += _onWidgetAdded;
             sheet.OnWidgetRemoved += _onWidgetRemoved;
 
-            AddWidgetCommand = new SimpleCommand<WidgetType>(type =>
-            {
-                addWidget.Execute(_sheet, type);
-            });
-            
-            RemoveWidgetCommand = new SimpleCommand<string>(id =>
-            {
-                _removeWidget.Execute(_sheet, id);
-            });
+            AddWidgetCommand = new SimpleCommand<WidgetType>(type => { addWidget.Execute(_sheet, type); });
 
-            AddStatCommand = new SimpleCommand<String>(id => { addStat.Execute(_sheet, id); });
+            RemoveWidgetCommand = new SimpleCommand<string>(id => { _removeWidget.Execute(_sheet, id); });
         }
-        
+
         private void HandleWidgetSelected(WidgetViewModel widgetVM)
         {
             OnWidgetSelected?.Invoke(widgetVM);

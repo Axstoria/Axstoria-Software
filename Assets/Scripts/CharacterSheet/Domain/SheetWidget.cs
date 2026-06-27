@@ -14,7 +14,9 @@ namespace CharacterSheet.Domain
         [field: JsonIgnore] public event Action<WidgetStatBinding> OnStatRemoved;
         [field: JsonIgnore] public event Action OnLayoutChanged;
         [field: JsonIgnore] public event Action OnAppearanceChanged;
+        [field: JsonIgnore] public event Action OnTitleChanged;
         [field: JsonIgnore] public event Action OnContentChanged;
+        
         
         private Rect _layout =  new Rect(0, 0, 250, 200);
 
@@ -104,7 +106,7 @@ namespace CharacterSheet.Domain
             {
                 if (_title == value) return;
                 _title = value;
-                OnContentChanged?.Invoke();
+                OnTitleChanged?.Invoke();
             }
         }
 
@@ -120,6 +122,11 @@ namespace CharacterSheet.Domain
             if (stat == null) return;
             Stats.Remove(stat);
             OnStatRemoved?.Invoke(stat);
+        }
+
+        protected void RaiseContentChanged()
+        {
+            OnContentChanged?.Invoke();
         }
     }
 }

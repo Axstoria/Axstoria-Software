@@ -14,7 +14,8 @@ namespace CharacterSheet.Presenter.View
     {
         [SerializeField] private Transform widgetContainer;
         [SerializeField] private Button saveButton;
-        [SerializeField] private Button addWidgetButton;
+        [SerializeField] private Button addPointGaugeWidgetButton;
+        [SerializeField] private Button addTextWidgetButton;
         [SerializeField] private GameObject sheetPrefab;
         private GameInputs _inputs;
 
@@ -44,6 +45,11 @@ namespace CharacterSheet.Presenter.View
 
         private void OnDeleteWidgetPerformed(InputAction.CallbackContext context)
         {
+            if (UnityEngine.EventSystems.EventSystem.current != null) {
+                GameObject currentSelected = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject;
+                if (currentSelected != null && currentSelected.GetComponent<TMPro.TMP_InputField>() != null) return;
+            }
+
             if (_vm != null && _vm.RemoveWidgetCommand.CanExecute(null)) {
                 _vm.RemoveWidgetCommand.Execute(null);
             }
@@ -53,18 +59,19 @@ namespace CharacterSheet.Presenter.View
         {
             var bindingSet = this.CreateBindingSet<CharacterSheetEditorView, CharacterSheetEditorViewModel>();
 
-            bindingSet.Bind(addWidgetButton)
+            bindingSet.Bind(addPointGaugeWidgetButton)
                 .For(v => v.onClick)
                 .To(x => x.AddWidgetCommand)
                 .CommandParameter(WidgetType.PointGauge);
 
+            bindingSet.Bind(addTextWidgetButton)
+                .For(v => v.onClick)
+                .To(x => x.AddWidgetCommand)
+                .CommandParameter(WidgetType.Text);
+
             bindingSet.Bind(saveButton)
                 .For(v => v.onClick)
                 .To(x => x.SaveSheetCommand);
-
-            /*bindingSet.Bind(addStatButton)
-                .For(v => v.onClick)
-                .To(x => x.AddStatCommand);*/
 
             bindingSet.Build();
         }

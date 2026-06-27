@@ -10,20 +10,20 @@ namespace CharacterSheet.Presenter.ViewModel
     public class CharacterSheetEditorViewModel : ViewModelBase
     {
         // ── Sub-ViewModels ────────────────────────────────────────────────────
-        private SheetViewModel currentSheet;
+        private SheetViewModel _currentSheet;
 
         public SheetViewModel CurrentSheet
         {
-            get => currentSheet;
-            private set => Set(ref currentSheet, value);
+            get => _currentSheet;
+            private set => Set(ref _currentSheet, value);
         }
 
-        private WidgetViewModel selectedWidget;
+        private WidgetViewModel _selectedWidget;
 
         public WidgetViewModel SelectedWidget
         {
-            get => selectedWidget;
-            private set => Set(ref selectedWidget, value);
+            get => _selectedWidget;
+            private set => Set(ref _selectedWidget, value);
         }
 
         private readonly SheetViewModelFactory _sheetFactory;
@@ -40,7 +40,6 @@ namespace CharacterSheet.Presenter.ViewModel
         public ICommand<WidgetType> AddWidgetCommand { get; }
         public ICommand RemoveWidgetCommand { get; }
         public ICommand SaveSheetCommand { get; }
-        public ICommand<string> AddStatCommand { get; }
 
         public CharacterSheetEditorViewModel(SheetViewModelFactory factory, LoadUseCases load, SaveUseCases save)
         {
@@ -51,34 +50,24 @@ namespace CharacterSheet.Presenter.ViewModel
             string lastSheetId = PlayerPrefs.GetString("LastOpenedSheetId", string.Empty);
 
             var sheet = _loadSheet.Execute(lastSheetId);
-            if (sheet != null)
-                LoadSheet(_sheetFactory.Create(sheet));
-            else
-                LoadSheet(_sheetFactory.Create(new Sheet()));
+            LoadSheet(sheet != null ? _sheetFactory.Create(sheet) : _sheetFactory.Create(new Sheet()));
 
-            AddWidgetCommand = new SimpleCommand<WidgetType>(type => { currentSheet?.AddWidgetCommand.Execute(type); });
+            AddWidgetCommand = new SimpleCommand<WidgetType>(type =>
+            {
+                _currentSheet?.AddWidgetCommand.Execute(type);
+            });
 
             RemoveWidgetCommand = new SimpleCommand<object>(_ =>
             {
-                if (selectedWidget != null) {
-                    currentSheet?.RemoveWidgetCommand.Execute(selectedWidget.Id);
-                    selectedWidget = null;
-                }
+                if (_selectedWidget == null) return;
+                _currentSheet?.RemoveWidgetCommand.Execute(_selectedWidget.Id);
+                _selectedWidget = null;
             });
 
-            SaveSheetCommand = new SimpleCommand<object>(_ =>
-            {
-                SaveCurrentSheet();
-            });
-
-            AddStatCommand = new SimpleCommand<String>(id =>
-            {
-                if (currentSheet != null)
-                    currentSheet.AddStatCommand.Execute(id);
-            });
+            SaveSheetCommand = new SimpleCommand<object>(_ => { SaveCurrentSheet(); });
         }
 
-        public void SaveCurrentSheet()
+        private void SaveCurrentSheet()
         {
             if (CurrentSheet == null) return;
 

@@ -1,4 +1,5 @@
 using System;
+using CharacterSheet.Presenter.View.Widgets;
 using CharacterSheet.Presenter.ViewModel;
 using Loxodon.Framework.Binding;
 using UnityEngine;
@@ -11,7 +12,7 @@ namespace CharacterSheet.Presenter.View
         private Canvas _canvas;
         private RectTransform _rectTransform;
         private WidgetView _view;
-        
+
         public void Awake()
         {
             _canvas = GetComponentInParent<Canvas>();
@@ -33,8 +34,7 @@ namespace CharacterSheet.Presenter.View
             if (_view == null) return;
             var viewModel = _view.BindingContext().DataContext as WidgetViewModel;
 
-            if (viewModel != null)
-            {
+            if (viewModel != null) {
                 Rect finalRect = new Rect(
                     _rectTransform.anchoredPosition.x,
                     _rectTransform.anchoredPosition.y,
@@ -42,8 +42,7 @@ namespace CharacterSheet.Presenter.View
                     _rectTransform.sizeDelta.y
                 );
 
-                if (viewModel.UpdateLayoutCommand.CanExecute(finalRect))
-                {
+                if (viewModel.UpdateLayoutCommand.CanExecute(finalRect)) {
                     viewModel.UpdateLayoutCommand.Execute(finalRect);
                 }
             }
