@@ -126,7 +126,8 @@
     padding: 6px 10px 12px 10px;
 }
 
-.settings-pane .settings-subhead {
+.settings-pane .settings-subhead,
+.selected-object .settings-subhead {
     margin-top: 12px;
     margin-bottom: 6px;
     padding-bottom: 3px;
@@ -138,7 +139,8 @@
     border-bottom-color: rgb(80, 80, 80);
 }
 
-.settings-pane .settings-caption {
+.settings-pane .settings-caption,
+.selected-object .settings-caption {
     margin-top: 6px;
     margin-bottom: 1px;
     font-size: 12px;
@@ -189,23 +191,95 @@
     background-color: rgb(100, 140, 210);
 }
 
-.settings-pane .transform-row {
+.settings-pane .transform-row,
+.selected-object .transform-row {
     flex-direction: row;
     align-items: center;
     margin-top: 2px;
 }
 
-.settings-pane .transform-row .unity-base-field {
+.settings-pane .transform-row .unity-base-field,
+.selected-object .transform-row .unity-base-field {
     flex-grow: 1;
     flex-shrink: 1;
     margin-right: 4px;
 }
 
-.settings-pane .transform-row .unity-base-field__label {
+.settings-pane .transform-row .unity-base-field__label,
+.selected-object .transform-row .unity-base-field__label {
     min-width: 14px;
     width: 14px;
     margin-right: 2px;
     -unity-text-align: middle-center;
+}
+
+.selected-object {
+    flex-direction: column;
+    flex-grow: 0;
+    flex-shrink: 0;
+    background-color: rgb(50, 50, 50);
+    height: 200px;
+}
+
+.selected-object__resize-handle {
+    position: absolute;
+    top: -5px;
+    left: 0;
+    right: 0;
+    height: 10px;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.selected-object__header {
+    flex-direction: row;
+    align-items: center;
+    height: 32px;
+    background-color: rgb(42, 42, 42);
+    border-bottom-width: 1px;
+    border-bottom-color: rgb(70, 70, 70);
+}
+
+.selected-object__title {
+    flex-grow: 1;
+    margin-left: 10px;
+    color: rgb(220, 220, 220);
+    font-size: 13.5px;
+    -unity-font-style: bold;
+}
+
+.selected-object__scroll {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+.selected-object__content {
+    padding: 6px 10px 24px 10px;
+}
+
+.selected-object .unity-label,
+.selected-object .unity-base-field__label {
+    color: rgb(225, 225, 225);
+}
+
+.selected-object .unity-base-field__label {
+    font-size: 12px;
+}
+
+.selected-object .unity-base-field__input {
+    font-size: 12px;
+}
+
+.selected-object .unity-base-text-field__input {
+    background-color: rgb(38, 38, 38);
+    border-color: rgb(70, 70, 70);
+    color: rgb(240, 240, 240);
+    --unity-cursor-color: rgb(240, 240, 240);
+    height: 24px;
+    padding: 2px 6px;
+}
+
+.selected-object .unity-base-text-field__input .unity-text-element {
+    color: rgb(240, 240, 240);
 }
 
 .map-pane {

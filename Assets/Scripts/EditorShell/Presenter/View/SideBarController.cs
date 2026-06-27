@@ -99,9 +99,12 @@ namespace EditorShell.Presenter.View
         private IPanel _uiPanel;
         private MapEditorViewModel _vm;
 
+        private VisualElement _outlinerPane;
+
         public void Init(VisualElement root)
         {
-            _uiPanel = root.panel;
+            _uiPanel      = root.panel;
+            _outlinerPane = root.Q<VisualElement>("outliner-pane");
 
             _gizmo   = FindFirstObjectByType<TransformGizmoView>();
             _spawner = FindFirstObjectByType<SceneObjectSpawnerView>();
@@ -218,6 +221,8 @@ namespace EditorShell.Presenter.View
 
         private void Update()
         {
+            HandleRightClickDeselect();
+
             if (!Input.GetMouseButtonDown(0)) return;
             if (_spawner == null || _vm == null) return;
             if (_gizmo != null && _gizmo.IsInteractingWithGizmo) return;
@@ -240,6 +245,31 @@ namespace EditorShell.Presenter.View
 
             // Click on empty space → deselect
             if (_gizmo != null) _gizmo.Deselect();
+        }
+
+        private void HandleRightClickDeselect()
+        {
+            if (_gizmo == null) return;
+            if (!Input.GetMouseButtonDown(1)) return;
+            if (!IsPointerOverOutliner()) return;
+
+            _gizmo.Deselect();
+        }
+
+        private bool IsPointerOverOutliner()
+        {
+            if (_uiPanel == null || _outlinerPane == null) return false;
+            var screen = Input.mousePosition;
+            var panelPos = RuntimePanelUtils.ScreenToPanel(
+                _uiPanel, new Vector2(screen.x, Screen.height - screen.y));
+
+            VisualElement picked = _uiPanel.Pick(panelPos);
+            while (picked != null)
+            {
+                if (picked == _outlinerPane) return true;
+                picked = picked.parent;
+            }
+            return false;
         }
 
         private bool IsPointerOverUI()

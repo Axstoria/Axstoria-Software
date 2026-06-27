@@ -79,29 +79,6 @@
                         <engine:Toggle name="toggle-snap-grid" label="Snap to Grid" value="false" />
                         <engine:Toggle name="toggle-snap-terrain" label="Snap to Terrain" value="false" />
                     </engine:Foldout>
-                    <engine:Foldout name="foldout-selected-transform" text="Selected Object" enabled="true" value="false">
-                        <engine:Label name="label-no-selection" text="No object selected." class="settings-caption" />
-                        <engine:VisualElement name="transform-fields" style="display: none;">
-                            <engine:Label text="POSITION" class="settings-subhead" />
-                            <engine:VisualElement class="transform-row">
-                                <engine:FloatField name="field-pos-x" label="X" />
-                                <engine:FloatField name="field-pos-y" label="Y" />
-                                <engine:FloatField name="field-pos-z" label="Z" />
-                            </engine:VisualElement>
-                            <engine:Label text="ROTATION" class="settings-subhead" />
-                            <engine:VisualElement class="transform-row">
-                                <engine:FloatField name="field-rot-x" label="X" />
-                                <engine:FloatField name="field-rot-y" label="Y" />
-                                <engine:FloatField name="field-rot-z" label="Z" />
-                            </engine:VisualElement>
-                            <engine:Label text="SCALE" class="settings-subhead" />
-                            <engine:VisualElement class="transform-row">
-                                <engine:FloatField name="field-scale-x" label="X" />
-                                <engine:FloatField name="field-scale-y" label="Y" />
-                                <engine:FloatField name="field-scale-z" label="Z" />
-                            </engine:VisualElement>
-                        </engine:VisualElement>
-                    </engine:Foldout>
                 </engine:VisualElement>
             </engine:ScrollView>
         </engine:VisualElement>
@@ -147,6 +124,37 @@
             <engine:ScrollView name="outliner-scroll" class="outliner__scroll themed-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto">
                 <engine:VisualElement name="outliner-list" class="outliner__list" />
             </engine:ScrollView>
+            <engine:VisualElement name="selected-object" class="selected-object">
+                <engine:VisualElement name="selected-object-resize-handle" class="selected-object__resize-handle" />
+                <engine:VisualElement name="selected-object-header" class="selected-object__header">
+                    <engine:Label text="Details" class="selected-object__title" />
+                </engine:VisualElement>
+                <engine:ScrollView name="selected-object-scroll" class="selected-object__scroll themed-scroll" mode="Vertical" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto">
+                    <engine:VisualElement name="selected-object-content" class="selected-object__content">
+                        <engine:Label name="label-no-selection" text="No object selected." class="settings-caption" />
+                        <engine:VisualElement name="transform-fields" style="display: none;">
+                            <engine:Label text="POSITION" class="settings-subhead" />
+                            <engine:VisualElement class="transform-row">
+                                <engine:FloatField name="field-pos-x" label="X" />
+                                <engine:FloatField name="field-pos-y" label="Y" />
+                                <engine:FloatField name="field-pos-z" label="Z" />
+                            </engine:VisualElement>
+                            <engine:Label text="ROTATION" class="settings-subhead" />
+                            <engine:VisualElement class="transform-row">
+                                <engine:FloatField name="field-rot-x" label="X" />
+                                <engine:FloatField name="field-rot-y" label="Y" />
+                                <engine:FloatField name="field-rot-z" label="Z" />
+                            </engine:VisualElement>
+                            <engine:Label text="SCALE" class="settings-subhead" />
+                            <engine:VisualElement class="transform-row">
+                                <engine:FloatField name="field-scale-x" label="X" />
+                                <engine:FloatField name="field-scale-y" label="Y" />
+                                <engine:FloatField name="field-scale-z" label="Z" />
+                            </engine:VisualElement>
+                        </engine:VisualElement>
+                    </engine:VisualElement>
+                </engine:ScrollView>
+            </engine:VisualElement>
         </engine:VisualElement>
         <engine:Button name="settings-reopen-tab" text="›" tooltip="Show Settings" class="panel-reopen-tab panel-reopen-tab--left" />
         <engine:Button name="outliner-reopen-tab" text="‹" tooltip="Show Outliner" class="panel-reopen-tab panel-reopen-tab--right" />

@@ -56,6 +56,8 @@ namespace EditorShell.Presenter.View
             if (outlinerPane != null)
                 this.AddComponent<OutlinerView>().Init(outlinerPane);
 
+            this.AddComponent<SelectedObjectPanelController>().Init(root, _resizeCursor);
+
             this.AddComponent<SplitLayoutController>().Init(root, _resizeCursor);
 
             var sidePanels = this.AddComponent<SidePanelToggleController>();
