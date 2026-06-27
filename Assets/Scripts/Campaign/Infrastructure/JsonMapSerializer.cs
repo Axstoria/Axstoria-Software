@@ -4,6 +4,7 @@ using Campaign.App.Port;
 using Grid.Domain;
 using MapEditor.Domain;
 using SceneEditor.Domain;
+using Shared.Domain;
 using UnityEngine;
 using DomainGrid = Grid.Domain.Grid;
 
@@ -25,13 +26,21 @@ namespace Campaign.Infrastructure
 
         private static MapDataDTO ToDTO(Map map)
         {
+            var tagList = new TagDTO[map.Tags.All.Count];
+            for (int i = 0; i < map.Tags.All.Count; i++)
+            {
+                var t = map.Tags.All[i];
+                tagList[i] = new TagDTO { id = t.Id, name = t.Name, hexColor = t.HexColor };
+            }
+
             var dto = new MapDataDTO
             {
-                mapId   = map.Id,
-                mapName = map.Name,
-                savedAt = DateTime.UtcNow.ToString("o"),
-                terrain = TerrainToDTO(map.TerrainLayout),
-                objects = new List<SceneObjectDTO>()
+                mapId          = map.Id,
+                mapName        = map.Name,
+                savedAt        = DateTime.UtcNow.ToString("o"),
+                tagDefinitions = tagList,
+                terrain        = TerrainToDTO(map.TerrainLayout),
+                objects        = new List<SceneObjectDTO>()
             };
 
             foreach (var obj in map.Objects)
@@ -48,6 +57,10 @@ namespace Campaign.Infrastructure
                 Name          = dto.mapName,
                 TerrainLayout = TerrainFromDTO(dto.terrain)
             };
+
+            if (dto.tagDefinitions != null)
+                foreach (var tagDTO in dto.tagDefinitions)
+                    map.Tags.Add(new Tag { Id = tagDTO.id, Name = tagDTO.name, HexColor = tagDTO.hexColor });
 
             if (dto.objects != null)
                 foreach (var objDTO in dto.objects)
@@ -95,6 +108,8 @@ namespace Campaign.Infrastructure
         private static SceneObjectDTO ObjectToDTO(SceneObject obj)
         {
             var t = obj.Transform;
+            var tagArray = new string[obj.Tags.Count];
+            obj.Tags.CopyTo(tagArray);
             return new SceneObjectDTO
             {
                 id          = obj.Id,
@@ -103,6 +118,7 @@ namespace Campaign.Infrastructure
                 modelPath   = obj.ModelPath,
                 isImported  = obj.IsImported,
                 importPath  = obj.ImportPath,
+                tags        = tagArray,
                 posX   = t?.Position.x ?? 0, posY   = t?.Position.y ?? 0, posZ   = t?.Position.z ?? 0,
                 rotX   = t?.Rotation.x ?? 0, rotY   = t?.Rotation.y ?? 0,
                 rotZ   = t?.Rotation.z ?? 0, rotW   = t?.Rotation.w ?? 1,
@@ -112,7 +128,7 @@ namespace Campaign.Infrastructure
 
         private static SceneObject ObjectFromDTO(SceneObjectDTO dto)
         {
-            return new SceneObject
+            var obj = new SceneObject
             {
                 Id          = dto.id,
                 DisplayName = dto.displayName,
@@ -127,6 +143,12 @@ namespace Campaign.Infrastructure
                     Scale    = new Vector3(dto.scaleX, dto.scaleY, dto.scaleZ)
                 }
             };
+
+            if (dto.tags != null)
+                foreach (var tagId in dto.tags)
+                    obj.Tags.Add(tagId);
+
+            return obj;
         }
     }
 }

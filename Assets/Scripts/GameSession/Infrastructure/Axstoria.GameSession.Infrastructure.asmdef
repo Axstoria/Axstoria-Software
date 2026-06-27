@@ -1,7 +1,8 @@
 {
-    "name": "Axstoria.SceneEditor.Domain",
-    "rootNamespace": "SceneEditor.Domain",
+    "name": "Axstoria.GameSession.Infrastructure",
+    "rootNamespace": "GameSession.Infrastructure",
     "references": [
+        "Axstoria.GameSession.Domain",
         "Axstoria.Shared.Domain"
     ],
     "includePlatforms": [],
@@ -12,5 +13,5 @@
     "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],
-    "noEngineReferences": false
+    "noEngineReferences": true
 }

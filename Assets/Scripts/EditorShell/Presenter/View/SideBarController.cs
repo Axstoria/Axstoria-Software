@@ -106,11 +106,16 @@ namespace EditorShell.Presenter.View
         private bool          _isExpanded = true;
         private const float   ExpandedWidth = 350f;
 
+        // --- Context menu ---
+        private VisualElement _contextMenu;
+        private VisualElement _root;
+
         private IPanel _uiPanel;
         private MapEditorViewModel _vm;
 
         public void Init(VisualElement root)
         {
+            _root    = root;
             _uiPanel = root.panel;
 
             _gizmo   = FindFirstObjectByType<TransformGizmoView>();
@@ -144,6 +149,7 @@ namespace EditorShell.Presenter.View
             ConnectSnap();
             ConnectOutliner();
             ConnectSelectedTransform();
+            SetupContextMenu();
         }
 
         // ── UI element queries ────────────────────────────────────────────────
@@ -233,10 +239,18 @@ namespace EditorShell.Presenter.View
 
         private void Update()
         {
-            if (!Input.GetMouseButtonDown(0)) return;
             if (_spawner == null || _vm == null) return;
             if (_gizmo != null && _gizmo.IsInteractingWithGizmo) return;
-            if (IsPointerOverUI()) return;
+
+            bool leftClick  = Input.GetMouseButtonDown(0);
+            bool rightClick = Input.GetMouseButtonDown(1);
+
+            if (!leftClick && !rightClick) return;
+            if (IsPointerOverUI())
+            {
+                if (leftClick) HideContextMenu();
+                return;
+            }
 
             var cam = UnityEngine.Camera.main;
             if (cam == null) return;
@@ -248,14 +262,45 @@ namespace EditorShell.Presenter.View
                 {
                     foreach (ObjectViewModel obj in _vm.Map.Objects)
                     {
-                        if (obj.Model.Id == id) { SelectObject(obj); return; }
+                        if (obj.Model.Id != id) continue;
+
+                        if (rightClick && IsCurrentPlayerGM())
+                        {
+                            SelectObject(obj);
+                            ShowTagContextMenu(obj, Input.mousePosition);
+                            return;
+                        }
+
+                        if (leftClick)
+                        {
+                            if (CanInteract(obj.Model)) SelectObject(obj);
+                        }
+                        return;
                     }
+                }
+                else
+                {
+                    Debug.Log($"[SideBarController] Raycast hit '{hit.collider.gameObject.name}' but TryGetId failed — object may not be in spawned registry.");
                 }
             }
 
-            // Click on empty space → deselect
-            if (_gizmo != null) _gizmo.Deselect();
-            SetSelectedObject(null);
+            if (leftClick)
+            {
+                HideContextMenu();
+                if (_gizmo != null) _gizmo.Deselect();
+                SetSelectedObject(null);
+            }
+        }
+
+        private bool IsCurrentPlayerGM()
+            => _vm.Session?.CurrentPlayer?.IsGameMaster ?? true;
+
+        private bool CanInteract(SceneEditor.Domain.SceneModel obj)
+        {
+            if (_vm.Session == null || _vm.Permissions == null) return true;
+            var player = _vm.Session.CurrentPlayer;
+            if (player == null) return true;
+            return player.IsGameMaster || _vm.Permissions.HasAccess(player, obj);
         }
 
         private bool IsPointerOverUI()
@@ -264,7 +309,10 @@ namespace EditorShell.Presenter.View
             var screen = Input.mousePosition;
             var panelPos = RuntimePanelUtils.ScreenToPanel(
                 _uiPanel, new Vector2(screen.x, Screen.height - screen.y));
-            return _uiPanel.Pick(panelPos) != null;
+            var picked = _uiPanel.Pick(panelPos);
+            // The root VisualElement spans the entire screen; only treat a pick as
+            // "over UI" when an actual interactive child element is hit.
+            return picked != null && picked != _root;
         }
 
         // ── System connections ────────────────────────────────────────────────
@@ -602,6 +650,106 @@ namespace EditorShell.Presenter.View
             ScaleX.SetValueWithoutNotify(t.localScale.x);
             ScaleY.SetValueWithoutNotify(t.localScale.y);
             ScaleZ.SetValueWithoutNotify(t.localScale.z);
+        }
+
+        // ── Tag context menu (GM only) ────────────────────────────────────────
+
+        private void SetupContextMenu()
+        {
+            _contextMenu = new VisualElement();
+            _contextMenu.style.position          = Position.Absolute;
+            _contextMenu.style.display           = DisplayStyle.None;
+            _contextMenu.style.minWidth          = 160;
+            _contextMenu.style.paddingTop        = _contextMenu.style.paddingBottom = 4;
+            _contextMenu.style.borderTopLeftRadius     = 4;
+            _contextMenu.style.borderTopRightRadius    = 4;
+            _contextMenu.style.borderBottomLeftRadius  = 4;
+            _contextMenu.style.borderBottomRightRadius = 4;
+            _contextMenu.style.backgroundColor   = new StyleColor(new Color(0.15f, 0.15f, 0.15f, 0.97f));
+            _root?.Add(_contextMenu);
+        }
+
+        private void ShowTagContextMenu(ObjectViewModel obj, Vector2 screenPos)
+        {
+            if (_contextMenu == null || _vm == null) return;
+            _contextMenu.Clear();
+
+            var header = new Label("Assign Tags");
+            header.style.unityFontStyleAndWeight = FontStyle.Bold;
+            header.style.paddingLeft = header.style.paddingRight = 10;
+            header.style.paddingTop  = header.style.paddingBottom = 3;
+            header.style.color = new StyleColor(new Color(0.7f, 0.7f, 0.7f));
+            _contextMenu.Add(header);
+
+            var divider = new VisualElement();
+            divider.style.height = 1;
+            divider.style.marginTop = divider.style.marginBottom = 2;
+            divider.style.backgroundColor = new StyleColor(new Color(0.35f, 0.35f, 0.35f));
+            _contextMenu.Add(divider);
+
+            foreach (var tag in _vm.Map.Model.Tags.All)
+            {
+                var capturedTag = tag;
+                bool hasTag = obj.Model.Tags.Contains(capturedTag.Id);
+
+                var row = new VisualElement();
+                row.style.flexDirection = FlexDirection.Row;
+                row.style.alignItems    = Align.Center;
+                row.style.paddingLeft   = row.style.paddingRight  = 10;
+                row.style.paddingTop    = row.style.paddingBottom = 3;
+
+                var check = new Label(hasTag ? "✓" : "   ");
+                check.style.width = 16;
+                check.style.color = new StyleColor(new Color(0.4f, 0.8f, 0.4f));
+
+                var nameLabel = new Label(capturedTag.Name);
+                nameLabel.style.flexGrow = 1;
+                nameLabel.style.color    = new StyleColor(Color.white);
+
+                row.Add(check);
+                row.Add(nameLabel);
+
+                bool wasSelected = hasTag;
+                row.RegisterCallback<MouseDownEvent>(_ =>
+                {
+                    _vm.AssignTagToObject.Execute(obj.Model, capturedTag.Id, !wasSelected);
+                    HideContextMenu();
+                });
+                row.RegisterCallback<MouseEnterEvent>(_ =>
+                    row.style.backgroundColor = new StyleColor(new Color(0.25f, 0.25f, 0.25f)));
+                row.RegisterCallback<MouseLeaveEvent>(_ =>
+                    row.style.backgroundColor = StyleKeyword.Null);
+
+                _contextMenu.Add(row);
+            }
+
+            var sep = new VisualElement();
+            sep.style.height = 1;
+            sep.style.marginTop = sep.style.marginBottom = 4;
+            sep.style.backgroundColor = new StyleColor(new Color(0.35f, 0.35f, 0.35f));
+            _contextMenu.Add(sep);
+
+            var createBtn = new Button(() =>
+            {
+                HideContextMenu();
+                _vm.CreateTag.Execute("New Tag");
+            }) { text = "+ Create Tag" };
+            createBtn.style.marginLeft  = createBtn.style.marginRight  = 4;
+            createBtn.style.marginBottom = 2;
+            _contextMenu.Add(createBtn);
+
+            var panelPos = RuntimePanelUtils.ScreenToPanel(
+                _uiPanel, new Vector2(screenPos.x, Screen.height - screenPos.y));
+            _contextMenu.style.left = panelPos.x;
+            _contextMenu.style.top  = panelPos.y;
+            _contextMenu.style.display = DisplayStyle.Flex;
+            _contextMenu.BringToFront();
+        }
+
+        private void HideContextMenu()
+        {
+            if (_contextMenu != null)
+                _contextMenu.style.display = DisplayStyle.None;
         }
 
         // ── Selection ─────────────────────────────────────────────────────────

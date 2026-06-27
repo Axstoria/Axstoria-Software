@@ -11,6 +11,7 @@ namespace Campaign.Infrastructure
         public string mapId;
         public string mapName;
 
+        public TagDTO[]             tagDefinitions;
         public TerrainDTO           terrain;
         public List<SceneObjectDTO> objects;
     }
@@ -28,14 +29,23 @@ namespace Campaign.Infrastructure
     }
 
     [Serializable]
-    public class SceneObjectDTO
+    public class TagDTO
     {
         public string id;
-        public string displayName;
-        public string category;
-        public string modelPath;
-        public bool   isImported;
-        public string importPath;
+        public string name;
+        public string hexColor;
+    }
+
+    [Serializable]
+    public class SceneObjectDTO
+    {
+        public string   id;
+        public string   displayName;
+        public string   category;
+        public string   modelPath;
+        public bool     isImported;
+        public string   importPath;
+        public string[] tags;
 
         public float posX, posY, posZ;
         public float rotX, rotY, rotZ, rotW;

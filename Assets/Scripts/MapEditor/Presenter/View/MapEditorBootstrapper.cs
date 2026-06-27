@@ -3,6 +3,9 @@ using Campaign.App.Port;
 using Campaign.App.UseCase;
 using Campaign.Infrastructure;
 using Camera.Domain;
+using GameSession.App.UseCase;
+using GameSession.Domain;
+using GameSession.Infrastructure;
 using Grid.Domain;
 using MapEditor.App.UseCase;
 using MapEditor.Domain;
@@ -69,22 +72,39 @@ namespace MapEditor.Presenter.View
             IMapSerializer     serializer = new JsonMapSerializer();
             IFileDialogService dialog     = new FileDialogService();
 
+            // ── Session & permissions ─────────────────────────────────────────
+            ISessionContext     session     = new LocalSessionContext();
+            IPermissionService  permissions = new PermissionService();
+
             // ── Use cases ─────────────────────────────────────────────────────
-            var placeObject     = new PlaceObjectUseCase(map, grid, history);
-            var deleteObject    = new DeleteObjectUseCase(map, grid, history);
-            var transformObject = new TransformObjectUseCase(history);
-            var generateTerrain = new GenerateTerrainUseCase(history, grid, map);
-            var saveMap         = new SaveMapUseCase(serializer, dialog);
-            var loadMap         = new LoadMapUseCase(serializer, dialog);
-            var importAsset     = new ImportAssetUseCase(dialog);
+            var placeObject      = new PlaceObjectUseCase(map, grid, history, session);
+            var deleteObject     = new DeleteObjectUseCase(map, grid, history, session, permissions);
+            var transformObject  = new TransformObjectUseCase(history, session, permissions);
+            var generateTerrain  = new GenerateTerrainUseCase(history, grid, map);
+            var saveMap          = new SaveMapUseCase(serializer, dialog);
+            var loadMap          = new LoadMapUseCase(serializer, dialog);
+            var importAsset      = new ImportAssetUseCase(dialog);
+            var createTag        = new CreateTagUseCase(map.Tags);
+            var deleteTag        = new DeleteTagUseCase(map);
+            var assignTagToObj   = new AssignTagToObjectUseCase(history);
+            var assignTagToPlayer = new AssignTagToPlayerUseCase(session);
 
             // ── ViewModel ─────────────────────────────────────────────────────
-            _vm = new MapEditorViewModel(
-                map, cameraState, history,
-                placeObject, deleteObject, transformObject, generateTerrain,
-                saveMap, loadMap, importAsset);
+            try
+            {
+                _vm = new MapEditorViewModel(
+                    map, cameraState, history,
+                    placeObject, deleteObject, transformObject, generateTerrain,
+                    saveMap, loadMap, importAsset,
+                    session, permissions,
+                    createTag, deleteTag, assignTagToObj, assignTagToPlayer);
 
-            _vm.Register();
+                _vm.Register();
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"[MapEditorBootstrapper] Failed to initialise ViewModel: {e}");
+            }
         }
     }
 }

@@ -3,6 +3,8 @@ using Campaign.App.UseCase;
 using Camera.Domain;
 using Camera.Presenter.ViewModels;
 using DomainGrid = Grid.Domain.Grid;
+using GameSession.App.UseCase;
+using GameSession.Domain;
 using Loxodon.Framework.Contexts;
 using Loxodon.Framework.Observables;
 using MapEditor.App.UseCase;
@@ -30,37 +32,57 @@ namespace MapEditor.Presenter.ViewModels
         public ObservableProperty<bool>   IsBusy          { get; } = new();
 
         // ── Use cases ─────────────────────────────────────────────────────────
-        public PlaceObjectUseCase     PlaceObject     { get; }
-        public DeleteObjectUseCase    DeleteObject    { get; }
-        public TransformObjectUseCase TransformObject { get; }
-        public GenerateTerrainUseCase GenerateTerrain { get; }
-        public SaveMapUseCase         SaveMap         { get; }
-        public LoadMapUseCase         LoadMap         { get; }
-        public ImportAssetUseCase     ImportAsset     { get; }
+        public PlaceObjectUseCase      PlaceObject      { get; }
+        public DeleteObjectUseCase     DeleteObject     { get; }
+        public TransformObjectUseCase  TransformObject  { get; }
+        public GenerateTerrainUseCase  GenerateTerrain  { get; }
+        public SaveMapUseCase          SaveMap          { get; }
+        public LoadMapUseCase          LoadMap          { get; }
+        public ImportAssetUseCase      ImportAsset      { get; }
+        public CreateTagUseCase        CreateTag        { get; }
+        public DeleteTagUseCase        DeleteTag        { get; }
+        public AssignTagToObjectUseCase AssignTagToObject { get; }
+        public AssignTagToPlayerUseCase AssignTagToPlayer { get; }
+
+        // ── Session & permissions ─────────────────────────────────────────────
+        public ISessionContext    Session     { get; }
+        public IPermissionService Permissions { get; }
 
         public MapEditorViewModel(
-            Map                   map,
-            CameraState           cameraState,
-            CommandHistory        history,
-            PlaceObjectUseCase    placeObject,
-            DeleteObjectUseCase   deleteObject,
+            Map                    map,
+            CameraState            cameraState,
+            CommandHistory         history,
+            PlaceObjectUseCase     placeObject,
+            DeleteObjectUseCase    deleteObject,
             TransformObjectUseCase transformObject,
             GenerateTerrainUseCase generateTerrain,
-            SaveMapUseCase        saveMap,
-            LoadMapUseCase        loadMap,
-            ImportAssetUseCase    importAsset)
+            SaveMapUseCase         saveMap,
+            LoadMapUseCase         loadMap,
+            ImportAssetUseCase     importAsset,
+            ISessionContext        session,
+            IPermissionService     permissions,
+            CreateTagUseCase       createTag,
+            DeleteTagUseCase       deleteTag,
+            AssignTagToObjectUseCase assignTagToObject,
+            AssignTagToPlayerUseCase assignTagToPlayer)
         {
             _history = history;
 
-            Map             = new MapViewModel(map);
-            Camera          = new CameraViewModel(cameraState);
-            PlaceObject     = placeObject;
-            DeleteObject    = deleteObject;
-            TransformObject = transformObject;
-            GenerateTerrain = generateTerrain;
-            SaveMap         = saveMap;
-            LoadMap         = loadMap;
-            ImportAsset     = importAsset;
+            Map              = new MapViewModel(map);
+            Camera           = new CameraViewModel(cameraState);
+            PlaceObject      = placeObject;
+            DeleteObject     = deleteObject;
+            TransformObject  = transformObject;
+            GenerateTerrain  = generateTerrain;
+            SaveMap          = saveMap;
+            LoadMap          = loadMap;
+            ImportAsset      = importAsset;
+            Session          = session;
+            Permissions      = permissions;
+            CreateTag        = createTag;
+            DeleteTag        = deleteTag;
+            AssignTagToObject = assignTagToObject;
+            AssignTagToPlayer = assignTagToPlayer;
 
             _history.OnHistoryChanged += SyncHistoryState;
             SyncHistoryState();

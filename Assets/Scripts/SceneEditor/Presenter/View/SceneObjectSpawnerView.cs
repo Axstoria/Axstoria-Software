@@ -95,7 +95,23 @@ namespace SceneEditor.Presenter.View
             SceneObjectView view = instance.GetComponent<SceneObjectView>() ?? instance.AddComponent<SceneObjectView>();
             view.Init(domain);
 
+            EnsureColliders(instance);
+
             _spawned[domain.Id] = instance;
+        }
+
+        private static void EnsureColliders(GameObject root)
+        {
+            if (root.GetComponentsInChildren<Collider>(includeInactive: true).Length > 0) return;
+
+            // Add a MeshCollider to every mesh in the hierarchy so raycasting can hit the object.
+            foreach (MeshFilter mf in root.GetComponentsInChildren<MeshFilter>(includeInactive: true))
+                if (mf.sharedMesh != null)
+                    mf.gameObject.AddComponent<MeshCollider>();
+
+            // Fallback when the prefab has no mesh at all (e.g. an empty pivot).
+            if (root.GetComponentsInChildren<Collider>(includeInactive: true).Length == 0)
+                root.AddComponent<BoxCollider>();
         }
 
         public bool TryGetGameObject(string id, out GameObject go)

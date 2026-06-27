@@ -80,6 +80,12 @@ namespace MapEditor.Presenter.View
         {
             if (_domainObj == null || _vm == null || _gizmo.mainTargetRoot == null) return;
 
+            if (_vm.Session != null && _vm.Permissions != null)
+            {
+                var player = _vm.Session.CurrentPlayer;
+                if (player != null && !player.IsGameMaster && !_vm.Permissions.HasAccess(player, _domainObj)) return;
+            }
+
             Transform t   = _gizmo.mainTargetRoot;
             Vector3   pos = t.position;
 

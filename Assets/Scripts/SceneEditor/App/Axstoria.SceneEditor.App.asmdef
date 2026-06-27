@@ -6,7 +6,8 @@
         "Axstoria.Shared.App",
         "Axstoria.SceneEditor.Domain",
         "Axstoria.Grid.Domain",
-        "Axstoria.MapEditor.Domain"
+        "Axstoria.MapEditor.Domain",
+        "Axstoria.GameSession.Domain"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

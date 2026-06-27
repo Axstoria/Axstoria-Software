@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using SceneEditor.Domain;
+using Shared.Domain;
 
 namespace MapEditor.Domain
 {
@@ -9,6 +10,7 @@ namespace MapEditor.Domain
         public string Id   { get; set; }
         public string Name { get; set; }
 
+        public TagCollection     Tags          { get; set; } = new();
         public List<Token>       Tokens        { get; set; } = new();
         public List<Structure>   Structures    { get; set; } = new();
         public List<SceneObject> Objects       { get; set; } = new();
