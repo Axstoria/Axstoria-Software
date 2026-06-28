@@ -18,6 +18,7 @@ namespace CharacterSheet.Presenter.View.Widgets.CounterWidget
             var bindingSet = this.CreateBindingSet<WidgetView, WidgetViewModel>();
 
             bindingSet.Build();
+            _vm.AddStatCommand.Execute("attack");
         }
     }
 }

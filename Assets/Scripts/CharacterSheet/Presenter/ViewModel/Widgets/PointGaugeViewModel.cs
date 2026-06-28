@@ -2,6 +2,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using CharacterSheet.App.UseCase;
 using CharacterSheet.Domain.Widgets;
+using Loxodon.Framework.Observables;
 
 namespace CharacterSheet.Presenter.ViewModel.Widgets
 {
@@ -9,12 +10,13 @@ namespace CharacterSheet.Presenter.ViewModel.Widgets
     {
         private readonly PointGaugeWidget _gauge;
 
-        public PointGaugeViewModel(PointGaugeWidget widget, 
+        public PointGaugeViewModel(PointGaugeWidget widget,
+            BindStatToWidgetUseCase bindStatToWidgetUseCase,
             UpdateWidgetAppearanceUseCase appearance, 
             UpdateWidgetLayoutUseCase updateLayout, 
             UpdateWidgetTitleUseCase updateTitle,
             GetStatUseCase getStat,
-            UpdatePointGaugeWidgetUseCase up) : base(widget, appearance, updateLayout, updateTitle, getStat)
+            UpdatePointGaugeWidgetUseCase up) : base(widget, bindStatToWidgetUseCase, appearance, updateLayout, updateTitle, getStat)
         {
             _gauge = widget;
             BoundStats.CollectionChanged += OnBoundStatsChanged;
@@ -53,8 +55,20 @@ namespace CharacterSheet.Presenter.ViewModel.Widgets
         
         public class PointItemViewModel : WidgetItemViewModel
         {
+            public ObservableList<int> PointStates { get; } = new();
             public PointItemViewModel(BoundStatViewModel boundStat) : base(boundStat)
             {
+                UpdatePoints();
+                
+                BaseStat.PropertyChanged += (s, e) => UpdatePoints();
+            }
+            
+            private void UpdatePoints()
+            {
+                PointStates.Clear();
+                for (var i = 0; i < BaseStat.MaxValue; i++) {
+                    PointStates.Add(i < BaseStat.CurrentValue ? 1 : 0);
+                }
             }
         }
     }

@@ -29,12 +29,14 @@ namespace CharacterSheet.Presenter.ViewModel
         private readonly UpdateWidgetAppearanceUseCase _updateAppearance;
         private readonly UpdateWidgetLayoutUseCase _updateLayout;
         private readonly UpdateWidgetTitleUseCase _updateTitle;
+        private readonly BindStatToWidgetUseCase _bindStat;
         private readonly GetStatUseCase _getStat;
 
         // ── Command ───────────────────────────────────────────────────────────
         public ICommand<Rect> UpdateLayoutCommand { get; }
         public ICommand<string> UpdateTitleCommand { get; }
         public ICommand<AppearanceDTO> UpdateAppearanceCommand { get; }
+        public ICommand<string> AddStatCommand { get; }
         public event Action<WidgetViewModel> OnSelected;
 
         public void Select() => OnSelected?.Invoke(this);
@@ -56,6 +58,7 @@ namespace CharacterSheet.Presenter.ViewModel
         public string Title => _widget.Title;
 
         protected WidgetViewModel(SheetWidget widget,
+            BindStatToWidgetUseCase bindStatToWidgetUseCase,
             UpdateWidgetAppearanceUseCase updateAppearance,
             UpdateWidgetLayoutUseCase updateLayout,
             UpdateWidgetTitleUseCase updateTitle,
@@ -66,22 +69,25 @@ namespace CharacterSheet.Presenter.ViewModel
             _updateAppearance = updateAppearance;
             _updateLayout = updateLayout;
             _updateTitle = updateTitle;
+            _bindStat = bindStatToWidgetUseCase;
             _getStat = getStat;
 
             foreach (var binding in widget.Stats)
                 LoadStat(binding);
 
             _widget.OnLayoutChanged += HandleLayoutChanged;
-            UpdateLayoutCommand = new SimpleCommand<Rect>(rec => { updateLayout.Execute(_widget, rec); });
+            UpdateLayoutCommand = new SimpleCommand<Rect>(rec => { _updateLayout.Execute(_widget, rec); });
 
             _widget.OnAppearanceChanged += HandleAppearanceChanged;
             UpdateAppearanceCommand = new SimpleCommand<AppearanceDTO>(appearance =>
             {
-                updateAppearance.Execute(_widget, appearance);
+                _updateAppearance.Execute(_widget, appearance);
             });
 
             _widget.OnTitleChanged += HandleTitleChanged;
-            UpdateTitleCommand = new SimpleCommand<string>(text => { updateTitle.Execute(_widget, text); });
+            UpdateTitleCommand = new SimpleCommand<string>(text => { _updateTitle.Execute(_widget, text); });
+
+            AddStatCommand = new SimpleCommand<string>(id => {_bindStat.Execute(_widget, id); });
 
             _widget.OnStatAdded += HandleStatAdded;
             _widget.OnStatRemoved += HandleStatRemoved;

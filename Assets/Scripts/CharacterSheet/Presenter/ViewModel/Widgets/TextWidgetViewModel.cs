@@ -25,11 +25,12 @@ namespace CharacterSheet.Presenter.ViewModel.Widgets
         }
 
         public TextWidgetViewModel(TextWidget widget,
+            BindStatToWidgetUseCase bindStatToWidgetUseCase,
             UpdateWidgetAppearanceUseCase appearance,
             UpdateWidgetLayoutUseCase updateLayout,
             UpdateWidgetTitleUseCase updateTitle,
             GetStatUseCase getStat,
-            UpdateTextWidgetUseCase up) : base(widget, appearance, updateLayout, updateTitle, getStat)
+            UpdateTextWidgetUseCase up) : base(widget, bindStatToWidgetUseCase, appearance, updateLayout, updateTitle, getStat)
         {
             _gauge = widget;
             _updateText = up;

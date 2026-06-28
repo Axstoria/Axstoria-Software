@@ -17,7 +17,7 @@ namespace CharacterSheet.Infrastructure
         public StatDefinitionRepository()
         {
             var life = _definitions.FirstOrDefault(s => s.Id == "hp");
-            life.AbsoluteMax = 100f;
+            life.AbsoluteMax = 8f;
         }
 
         public bool Exists(string statId)
