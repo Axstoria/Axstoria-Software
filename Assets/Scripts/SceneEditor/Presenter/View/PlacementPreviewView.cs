@@ -81,10 +81,13 @@ namespace SceneEditor.Presenter.View
         {
             if (_previewInstance == null || _pendingObject == null || cell == null) return;
 
+            var origin = new GridCoord(cell.X, cell.Z);
+            if (!_vm.PlaceObject.CanPlace(_cachedFootprint, origin)) return;
+
             var (wx, wy, wz) = _vm.Grid.GridToWorld(cell.X, cell.Z);
             _pendingObject.Transform.Position = new Vector3(wx, wy, wz);
 
-            _vm.PlaceObject.Execute(_pendingObject, new GridCoord(cell.X, cell.Z), _cachedFootprint);
+            _vm.PlaceObject.Execute(_pendingObject, origin, _cachedFootprint);
             CancelPreview();
         }
 

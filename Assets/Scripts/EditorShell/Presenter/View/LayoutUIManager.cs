@@ -1,4 +1,5 @@
 using MapEditor.Presenter.View;
+using SceneEditor.Presenter.View;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -8,6 +9,7 @@ namespace EditorShell.Presenter.View
     public class LayoutUIManager : MonoBehaviour
     {
         public UIDocument uiDoc;
+        [SerializeField] private Texture2D _resizeCursor;
         [Header("References")]
         private EditionToolbarUIManager toolbarManager;
         private ViewportUIManager       viewportManager;
@@ -32,9 +34,9 @@ namespace EditorShell.Presenter.View
 
             viewportManager = this.AddComponent<ViewportUIManager>();
             viewportManager.Init(root, viewport, theme);
-            toolbarManager.AddToggleableUI(viewportManager);
 
             this.AddComponent<ViewSwitcherController>().Init(root);
+            this.AddComponent<SnapToolbarController>().Init(root);
             this.AddComponent<ToolsBarController>().Init(root);
             var moveFlyout   = this.AddComponent<MoveFlyoutController>();
             var layersFlyout = this.AddComponent<LayersFlyoutController>();
@@ -50,6 +52,21 @@ namespace EditorShell.Presenter.View
             GetComponentInChildren<PrefabBrowserView>()?.Init(root);
             this.AddComponent<TooltipController>().Init(root);
             this.AddComponent<SideBarController>().Init(root);
+
+            VisualElement outlinerPane = root.Q<VisualElement>("outliner-pane");
+            if (outlinerPane != null)
+                this.AddComponent<OutlinerView>().Init(outlinerPane);
+
+            this.AddComponent<SelectedObjectPanelController>().Init(root, _resizeCursor);
+
+            this.AddComponent<SplitLayoutController>().Init(root, _resizeCursor);
+
+            var sidePanels = this.AddComponent<SidePanelToggleController>();
+            sidePanels.Init(root);
+            toolbarManager.AddViewMenuEntry("Settings", _ => sidePanels.ToggleSettings(),
+                _ => sidePanels.IsSettingsPresent ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
+            toolbarManager.AddViewMenuEntry("Outliner", _ => sidePanels.ToggleOutliner(),
+                _ => sidePanels.IsOutlinerPresent ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
         }
     }
 }
