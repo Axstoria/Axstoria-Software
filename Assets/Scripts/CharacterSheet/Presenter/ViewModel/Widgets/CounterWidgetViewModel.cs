@@ -2,35 +2,31 @@ using System.Collections.Specialized;
 using System.Linq;
 using CharacterSheet.App.UseCase;
 using CharacterSheet.Domain.Widgets;
+using Loxodon.Framework.Observables;
+using UnityEngine;
 
 namespace CharacterSheet.Presenter.ViewModel.Widgets
 {
-    public class PointGaugeViewModel : WidgetViewModel
+    public class CounterWidgetViewModel : WidgetViewModel
     {
-        private readonly PointGaugeWidget _gauge;
+        private readonly CounterWidget _counter;
 
-        public PointGaugeViewModel(PointGaugeWidget widget, 
+        public CounterWidgetViewModel(CounterWidget widget, 
             UpdateWidgetAppearanceUseCase appearance, 
             UpdateWidgetLayoutUseCase updateLayout, 
             UpdateWidgetTitleUseCase updateTitle,
-            GetStatUseCase getStat,
-            UpdatePointGaugeWidgetUseCase up) : base(widget, appearance, updateLayout, updateTitle, getStat)
+            GetStatUseCase getStat) : base(widget, appearance, updateLayout, updateTitle, getStat)
         {
-            _gauge = widget;
+            _counter = widget;
             BoundStats.CollectionChanged += OnBoundStatsChanged;
         }
 
-        protected override void HandleContentChanged()
-        {
-            
-        }
-        
         private void OnBoundStatsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action) {
                 case NotifyCollectionChangedAction.Add:
                     foreach (BoundStatViewModel newStat in e.NewItems) {
-                        Items.Add(new PointItemViewModel(newStat));
+                        Items.Add(new CounterItemViewModel(newStat));
                     }
 
                     break;
@@ -50,10 +46,25 @@ namespace CharacterSheet.Presenter.ViewModel.Widgets
                     break;
             }
         }
-        
-        public class PointItemViewModel : WidgetItemViewModel
+
+        protected override void HandleContentChanged()
         {
-            public PointItemViewModel(BoundStatViewModel boundStat) : base(boundStat)
+            throw new System.NotImplementedException();
+        }
+        
+        public class CounterItemViewModel : WidgetItemViewModel
+        {
+            
+            public string FormattedText 
+            {
+                get => BaseStat.MaxValue > 0 
+                    ? $"{BaseStat.DisplayName} : {BaseStat.CurrentValue} / {BaseStat.MaxValue}" 
+                    : $"{BaseStat.DisplayName} : {BaseStat.CurrentValue}";
+            }
+
+            public Color TextColor => BaseStat.Color; 
+
+            public CounterItemViewModel(BoundStatViewModel boundStat) : base(boundStat)
             {
             }
         }

@@ -90,21 +90,21 @@ namespace CharacterSheet.Presenter.View.Widgets
 
             bindingSet.Build();
 
-            _vm.BoundStats.CollectionChanged += OnStatCollectionChanged;
+            _vm.Items.CollectionChanged += OnStatCollectionChanged;
         }
 
         private void OnStatCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action) {
                 case NotifyCollectionChangedAction.Add:
-                    foreach (StatViewModel newStat in e.NewItems) {
+                    foreach (WidgetItemViewModel newStat in e.NewItems) {
                         OnStatAdded(newStat);
                     }
 
                     break;
 
                 case NotifyCollectionChangedAction.Remove:
-                    foreach (StatViewModel oldStat in e.OldItems) {
+                    foreach (WidgetItemViewModel oldStat in e.OldItems) {
                         OnStatRemoved(oldStat);
                     }
 
@@ -116,20 +116,20 @@ namespace CharacterSheet.Presenter.View.Widgets
             }
         }
 
-        protected virtual void OnStatAdded(StatViewModel stat)
+        protected virtual void OnStatAdded(WidgetItemViewModel boundStat)
         {
             GameObject go = Instantiate(statContainerPrefab, content);
             IStatContainerView view = go.GetComponent<IStatContainerView>();
 
             if (view != null)
-                view.SetDataContext(stat);
+                view.SetDataContext(boundStat);
         }
 
-        protected virtual void OnStatRemoved(StatViewModel stat)
+        protected virtual void OnStatRemoved(WidgetItemViewModel boundStat)
         {
             foreach (Transform child in content) {
                 IStatContainerView statView = child.GetComponent<IStatContainerView>();
-                if (statView != null && statView.GetDataContext() == stat) {
+                if (statView != null && statView.GetDataContext() == boundStat) {
                     Destroy(child.gameObject);
                     break;
                 }

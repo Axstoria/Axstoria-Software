@@ -1,3 +1,4 @@
+using AssetImporter.AssetImporter.App;
 using CharacterSheet.App.DTO;
 using CharacterSheet.Domain;
 using UnityEngine;
@@ -31,6 +32,11 @@ namespace CharacterSheet.App.UseCase
             }
             //widget.OnAppearanceChanged?.Invoke();
         }
+    }
+
+    public class UpdateBackgroundUseCase
+    {
+        private readonly IImageImportService _imageImporter;
     }
 
     public class UpdateWidgetTitleUseCase

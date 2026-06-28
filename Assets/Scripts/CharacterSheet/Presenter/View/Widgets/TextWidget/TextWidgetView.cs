@@ -58,11 +58,11 @@ namespace CharacterSheet.Presenter.View.Widgets.TextWidget
             inputField.text = _vm.DisplayedText;
         }
 
-        protected override void OnStatAdded(StatViewModel newStat)
+        protected override void OnStatAdded(WidgetItemViewModel newBoundStat)
         {
         }
 
-        protected override void OnStatRemoved(StatViewModel stat)
+        protected override void OnStatRemoved(WidgetItemViewModel boundStat)
         {
         }
     }

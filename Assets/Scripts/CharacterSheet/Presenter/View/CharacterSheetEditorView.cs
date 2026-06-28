@@ -16,6 +16,7 @@ namespace CharacterSheet.Presenter.View
         [SerializeField] private Button saveButton;
         [SerializeField] private Button addPointGaugeWidgetButton;
         [SerializeField] private Button addTextWidgetButton;
+        [SerializeField] private Button addCounterWidgetButton;
         [SerializeField] private GameObject sheetPrefab;
         private GameInputs _inputs;
 
@@ -68,6 +69,11 @@ namespace CharacterSheet.Presenter.View
                 .For(v => v.onClick)
                 .To(x => x.AddWidgetCommand)
                 .CommandParameter(WidgetType.Text);
+            
+            bindingSet.Bind(addCounterWidgetButton)
+                .For(v => v.onClick)
+                .To(x => x.AddWidgetCommand)
+                .CommandParameter(WidgetType.Counter);
 
             bindingSet.Bind(saveButton)
                 .For(v => v.onClick)

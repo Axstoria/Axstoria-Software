@@ -5,8 +5,6 @@ namespace CharacterSheet.Presenter.View
 {
     public abstract class IStatContainerView : UIView
     {
-        protected StatViewModel _vm;
-        
-        
+        protected WidgetItemViewModel _vm;
     }
 }

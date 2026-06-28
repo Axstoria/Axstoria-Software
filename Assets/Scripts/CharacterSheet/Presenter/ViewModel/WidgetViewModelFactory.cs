@@ -30,6 +30,11 @@ namespace CharacterSheet.Presenter.ViewModel
                 _container.Resolve<UpdateWidgetTitleUseCase>(),
                 _container.Resolve<GetStatUseCase>(),
                 _container.Resolve<UpdateTextWidgetUseCase>()),
+            CounterWidget c => new CounterWidgetViewModel(c,
+                _container.Resolve<UpdateWidgetAppearanceUseCase>(),
+                _container.Resolve<UpdateWidgetLayoutUseCase>(),
+                _container.Resolve<UpdateWidgetTitleUseCase>(),
+                _container.Resolve<GetStatUseCase>()),
             _ => throw new AbandonedMutexException()
         };
     }

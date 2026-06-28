@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace CharacterSheet.Presenter.ViewModel
 {
-    public class StatViewModel : ObservableObject
+    public class BoundStatViewModel : ObservableObject
     {
         private readonly WidgetStatBinding _binding;
         private readonly Stat _definition;
@@ -22,7 +22,7 @@ namespace CharacterSheet.Presenter.ViewModel
         public float MaxValue { get; private set; }
         public bool IsRanged => MaxValue > CurrentValue;
 
-        public StatViewModel(WidgetStatBinding binding, Stat definition)
+        public BoundStatViewModel(WidgetStatBinding binding, Stat definition)
         {
             _binding = binding;
             _definition = definition;

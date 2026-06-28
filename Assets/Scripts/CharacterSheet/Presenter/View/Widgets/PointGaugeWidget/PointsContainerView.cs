@@ -1,4 +1,5 @@
 using CharacterSheet.Presenter.ViewModel;
+using CharacterSheet.Presenter.ViewModel.Widgets;
 using Loxodon.Framework.Binding;
 using UnityEngine;
 
@@ -8,18 +9,13 @@ namespace CharacterSheet.Presenter.View.Widgets.PointGaugeWidget
     {
         [SerializeField] private GameObject iconPrefab;
 
-        private StatViewModel _vm;
-
         protected override void Start()
         {
             base.Start();
 
-            _vm = this.BindingContext().DataContext as StatViewModel;
+            _vm = this.BindingContext().DataContext as PointGaugeViewModel.PointItemViewModel;
             if (_vm == null) return;
-
-            for (int i = 0; i < _vm.MaxValue; i++) {
-                GameObject go = Instantiate(iconPrefab, transform);
-            }
+            
         }
     }
 }

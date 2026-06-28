@@ -28,6 +28,7 @@ namespace CharacterSheet.Presenter.View
         [SerializeField] private Transform widgetContainer;
         [SerializeField] private GameObject pointGaugeWidgetPrefab;
         [SerializeField] private GameObject textWidgetPrefab;
+        [SerializeField] private GameObject counterWidgetPrefab;
 
         private SheetViewModel _vm;
         private readonly Dictionary<string, WidgetView> _widgets = new Dictionary<string, WidgetView>();
@@ -96,6 +97,7 @@ namespace CharacterSheet.Presenter.View
             {
                 PointGaugeViewModel => pointGaugeWidgetPrefab,
                 TextWidgetViewModel => textWidgetPrefab,
+                CounterWidgetViewModel => counterWidgetPrefab,
                 _ => null
             };
             var go = Instantiate(widgetPrefab, widgetContainer);

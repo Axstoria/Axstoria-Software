@@ -79,6 +79,7 @@ MonoBehaviour:
   widgetContainer: {fileID: 8620503938146341756}
   pointGaugeWidgetPrefab: {fileID: 878651292198826942, guid: 32778071e8e34e8d0bea26f6e5fb1eb2, type: 3}
   textWidgetPrefab: {fileID: 878651292198826942, guid: 074ba326f9b049db7a8a461f7ed9900a, type: 3}
+  counterWidgetPrefab: {fileID: 878651292198826942, guid: 04741d5c9bf2c6ad981516127c824908, type: 3}
 --- !u!114 &3200118630775709065
 MonoBehaviour:
   m_ObjectHideFlags: 0

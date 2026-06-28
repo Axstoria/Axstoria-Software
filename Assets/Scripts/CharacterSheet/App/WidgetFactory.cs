@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace CharacterSheet.App
 {
-    public class WidgetFactory
+    public static class WidgetFactory
     {
         public static SheetWidget Create(WidgetType type)
         {
@@ -19,6 +19,8 @@ namespace CharacterSheet.App
                     return new TextWidget();
                 case WidgetType.Bar:
                     return new BarWidget();
+                case WidgetType.Counter:
+                    return new CounterWidget();
                 default: throw new InvalidOperationException($"Widget type {type} not supported");
             }
         }

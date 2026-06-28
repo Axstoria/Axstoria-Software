@@ -9,13 +9,21 @@ using UnityEngine;
 
 namespace CharacterSheet.Presenter.ViewModel
 {
+    public abstract class WidgetItemViewModel : ObservableObject
+    {
+        public string Id => BaseStat.Id;
+        public BoundStatViewModel BaseStat { get; }
+        protected WidgetItemViewModel(BoundStatViewModel stat) { BaseStat = stat; }
+    }
+    
     public abstract class WidgetViewModel : ObservableObject
     {
         private readonly SheetWidget _widget;
 
         public string Id => _widget.Id;
 
-        public ObservableList<StatViewModel> BoundStats { get; } = new();
+        public ObservableList<BoundStatViewModel> BoundStats { get; } = new();
+        public ObservableList<WidgetItemViewModel> Items { get; } = new ObservableList<WidgetItemViewModel>();  
 
         // ── Use Case ───────────────────────────────────────────────────────────
         private readonly UpdateWidgetAppearanceUseCase _updateAppearance;
@@ -82,7 +90,7 @@ namespace CharacterSheet.Presenter.ViewModel
 
         private void LoadStat(WidgetStatBinding stat)
         {
-            BoundStats.Add(new StatViewModel(stat, _getStat.Execute(stat.StatId)));
+            BoundStats.Add(new BoundStatViewModel(stat, _getStat.Execute(stat.StatId)));
         }
 
         private void HandleLayoutChanged() => RaisePropertyChanged(nameof(Layout));
