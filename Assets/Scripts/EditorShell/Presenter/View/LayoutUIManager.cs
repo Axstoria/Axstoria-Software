@@ -36,6 +36,7 @@ namespace EditorShell.Presenter.View
             viewportManager.Init(root, viewport, theme);
 
             this.AddComponent<ViewSwitcherController>().Init(root);
+            this.AddComponent<SnapToolbarController>().Init(root);
             this.AddComponent<ToolsBarController>().Init(root);
             var moveFlyout   = this.AddComponent<MoveFlyoutController>();
             var layersFlyout = this.AddComponent<LayersFlyoutController>();

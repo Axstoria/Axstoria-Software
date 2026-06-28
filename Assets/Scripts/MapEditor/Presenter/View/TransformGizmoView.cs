@@ -120,8 +120,8 @@ namespace MapEditor.Presenter.View
             var grid = _vm.Grid;
             if (grid == null) return pos;
             (int gx, int gz)             = grid.WorldToGrid(pos.x, pos.z);
-            (float wx, float wy, float wz) = grid.GridToWorld(gx, gz);
-            return new Vector3(wx, wy, wz);
+            (float wx, float _, float wz) = grid.GridToWorld(gx, gz);
+            return new Vector3(wx, pos.y, wz);
         }
 
         private static Vector3 SnapPositionToTerrain(Vector3 pos, Transform target)

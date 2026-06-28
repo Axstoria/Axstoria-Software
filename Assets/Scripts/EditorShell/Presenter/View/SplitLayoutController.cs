@@ -7,7 +7,7 @@ namespace EditorShell.Presenter.View
     {
         private const float SettingsMin = 160f;
         private const float OutlinerMin = 160f;
-        private const float MapMin      = 200f;
+        private const float MapMin      = 280f;
         private const float HandleWidth = 8f;
 
         private static readonly Vector2 ResizeCursorHotspot = new Vector2(16, 16);

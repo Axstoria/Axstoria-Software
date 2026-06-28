@@ -74,10 +74,6 @@ namespace EditorShell.Presenter.View
         public Slider       GridOpacity      { get; private set; }
         public Toggle       TransparentSides { get; private set; }
 
-        // --- Snap ---
-        public Toggle SnapToGrid    { get; private set; }
-        public Toggle SnapToTerrain { get; private set; }
-
         // --- Selected Object Transform ---
         public FloatField PosX   { get; private set; }
         public FloatField PosY   { get; private set; }
@@ -117,7 +113,6 @@ namespace EditorShell.Presenter.View
             BindCameraElements(root);
             BindLightElements(root);
             BindTerrainGridElements(root);
-            BindSnapElements(root);
             BindSelectedTransformElements(root);
 
             VisualElement settingsPane = root.Q<VisualElement>("settings-pane");
@@ -137,7 +132,6 @@ namespace EditorShell.Presenter.View
             ConnectCamera();
             ConnectLight();
             ConnectTerrainGrid();
-            ConnectSnap();
             ConnectSelectedTransform();
         }
 
@@ -194,12 +188,6 @@ namespace EditorShell.Presenter.View
             GridColorB       = root.Q<Slider>("slider-grid-color-b");
             GridOpacity      = root.Q<Slider>("slider-grid-opacity");
             TransparentSides = root.Q<Toggle>("toggle-transparent-sides");
-        }
-
-        private void BindSnapElements(VisualElement root)
-        {
-            SnapToGrid    = root.Q<Toggle>("toggle-snap-grid");
-            SnapToTerrain = root.Q<Toggle>("toggle-snap-terrain");
         }
 
         private void BindSelectedTransformElements(VisualElement root)
@@ -521,18 +509,6 @@ namespace EditorShell.Presenter.View
 
             _vm.TransformObject.Execute(_selectedObject.Model, newTransform,
                 $"Transform {_selectedObject.DisplayName.Value}");
-        }
-
-        private void ConnectSnap()
-        {
-            SnapToGrid?.RegisterValueChangedCallback(e =>
-            {
-                if (_gizmo != null) _gizmo.SnapToGridEnabled = e.newValue;
-            });
-            SnapToTerrain?.RegisterValueChangedCallback(e =>
-            {
-                if (_gizmo != null) _gizmo.SnapToTerrainEnabled = e.newValue;
-            });
         }
 
         // ── Real-time transform display during gizmo drag ────────────────────

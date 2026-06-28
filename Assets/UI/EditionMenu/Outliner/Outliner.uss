@@ -285,7 +285,7 @@
 .map-pane {
     flex-grow: 1;
     flex-shrink: 1;
-    min-width: 200px;
+    min-width: 280px;
 }
 
 .outliner {
