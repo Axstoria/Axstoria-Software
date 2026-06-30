@@ -6,7 +6,6 @@ using SceneEditor.Domain;
 using SceneEditor.Presenter.View;
 using SceneEditor.Presenter.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -75,10 +74,6 @@ namespace EditorShell.Presenter.View
         public Slider       GridOpacity      { get; private set; }
         public Toggle       TransparentSides { get; private set; }
 
-        // --- Snap ---
-        public Toggle SnapToGrid    { get; private set; }
-        public Toggle SnapToTerrain { get; private set; }
-
         // --- Selected Object Transform ---
         public FloatField PosX   { get; private set; }
         public FloatField PosY   { get; private set; }
@@ -94,24 +89,18 @@ namespace EditorShell.Presenter.View
         private ObjectViewModel _selectedObject;
         private EventHandler    _onSelectedTransformChanged;
 
-        // --- Outliner ---
-        public TextField      OutlinerSearch    { get; private set; }
+        // --- Selection ---
         public Action<ObjectViewModel> OnObjectSelected;
-        private VisualElement _outlinerList;
-
-        // --- Toggle ---
-        private Button        _btnToggle;
-        private VisualElement _scroll;
-        private VisualElement _sideBar;
-        private bool          _isExpanded = true;
-        private const float   ExpandedWidth = 350f;
 
         private IPanel _uiPanel;
         private MapEditorViewModel _vm;
 
+        private VisualElement _outlinerPane;
+
         public void Init(VisualElement root)
         {
-            _uiPanel = root.panel;
+            _uiPanel      = root.panel;
+            _outlinerPane = root.Q<VisualElement>("outliner-pane");
 
             _gizmo   = FindFirstObjectByType<TransformGizmoView>();
             _spawner = FindFirstObjectByType<SceneObjectSpawnerView>();
@@ -121,17 +110,19 @@ namespace EditorShell.Presenter.View
             if (_spawner == null)
                 Debug.LogWarning("[SideBarController] SceneObjectSpawnerView not found in scene.");
 
-            _sideBar   = root.Q<VisualElement>("side-bar");
-            _btnToggle = root.Q<Button>("btn-sidebar-toggle");
-            _scroll    = root.Q<ScrollView>("side-bar-scroll");
-            _btnToggle.clicked += ToggleSidebar;
-
             BindCameraElements(root);
             BindLightElements(root);
             BindTerrainGridElements(root);
-            BindSnapElements(root);
-            BindOutlinerElements(root);
             BindSelectedTransformElements(root);
+
+            VisualElement settingsPane = root.Q<VisualElement>("settings-pane");
+            settingsPane?.Query<Slider>().ForEach(slider =>
+            {
+                slider.RegisterCallback<PointerDownEvent>(
+                    _ => slider.AddToClassList("slider--dragging"), TrickleDown.TrickleDown);
+                slider.RegisterCallback<PointerCaptureOutEvent>(
+                    _ => slider.RemoveFromClassList("slider--dragging"));
+            });
 
             _vm = Context.GetApplicationContext()
                          .GetContainer()
@@ -141,8 +132,6 @@ namespace EditorShell.Presenter.View
             ConnectCamera();
             ConnectLight();
             ConnectTerrainGrid();
-            ConnectSnap();
-            ConnectOutliner();
             ConnectSelectedTransform();
         }
 
@@ -201,12 +190,6 @@ namespace EditorShell.Presenter.View
             TransparentSides = root.Q<Toggle>("toggle-transparent-sides");
         }
 
-        private void BindSnapElements(VisualElement root)
-        {
-            SnapToGrid    = root.Q<Toggle>("toggle-snap-grid");
-            SnapToTerrain = root.Q<Toggle>("toggle-snap-terrain");
-        }
-
         private void BindSelectedTransformElements(VisualElement root)
         {
             _labelNoSelection = root.Q<Label>("label-no-selection");
@@ -222,17 +205,12 @@ namespace EditorShell.Presenter.View
             ScaleZ = root.Q<FloatField>("field-scale-z");
         }
 
-        private void BindOutlinerElements(VisualElement root)
-        {
-            OutlinerSearch = root.Q<TextField>("outliner-search");
-            _outlinerList  = root.Q<VisualElement>("outliner-list");
-            OutlinerSearch.RegisterValueChangedCallback(e => FilterOutliner(e.newValue));
-        }
-
         // ── Scene click-to-select ─────────────────────────────────────────────
 
         private void Update()
         {
+            HandleRightClickDeselect();
+
             if (!Input.GetMouseButtonDown(0)) return;
             if (_spawner == null || _vm == null) return;
             if (_gizmo != null && _gizmo.IsInteractingWithGizmo) return;
@@ -255,7 +233,31 @@ namespace EditorShell.Presenter.View
 
             // Click on empty space → deselect
             if (_gizmo != null) _gizmo.Deselect();
-            SetSelectedObject(null);
+        }
+
+        private void HandleRightClickDeselect()
+        {
+            if (_gizmo == null) return;
+            if (!Input.GetMouseButtonDown(1)) return;
+            if (!IsPointerOverOutliner()) return;
+
+            _gizmo.Deselect();
+        }
+
+        private bool IsPointerOverOutliner()
+        {
+            if (_uiPanel == null || _outlinerPane == null) return false;
+            var screen = Input.mousePosition;
+            var panelPos = RuntimePanelUtils.ScreenToPanel(
+                _uiPanel, new Vector2(screen.x, Screen.height - screen.y));
+
+            VisualElement picked = _uiPanel.Pick(panelPos);
+            while (picked != null)
+            {
+                if (picked == _outlinerPane) return true;
+                picked = picked.parent;
+            }
+            return false;
         }
 
         private bool IsPointerOverUI()
@@ -424,7 +426,33 @@ namespace EditorShell.Presenter.View
             ScaleY.RegisterValueChangedCallback(_ => ApplyTransformFromFields());
             ScaleZ.RegisterValueChangedCallback(_ => ApplyTransformFromFields());
 
+            _vm.Map.Objects.CollectionChanged += OnSelectedObjectRemoved;
+            if (_gizmo != null) _gizmo.OnSelectionChanged += OnGizmoSelectionChanged;
+
             SetSelectedObject(null);
+        }
+
+        private void OnGizmoSelectionChanged(SceneObject model)
+        {
+            if (model == null) { SetSelectedObject(null); return; }
+            foreach (ObjectViewModel obj in _vm.Map.Objects)
+            {
+                if (obj.Model.Id == model.Id) { SetSelectedObject(obj); return; }
+            }
+            SetSelectedObject(null);
+        }
+
+        private void OnSelectedObjectRemoved(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action != NotifyCollectionChangedAction.Remove || _selectedObject == null) return;
+            foreach (ObjectViewModel obj in e.OldItems)
+            {
+                if (obj.Model.Id == _selectedObject.Model.Id)
+                {
+                    SetSelectedObject(null);
+                    return;
+                }
+            }
         }
 
         private void SetSelectedObject(ObjectViewModel obj)
@@ -483,104 +511,6 @@ namespace EditorShell.Presenter.View
                 $"Transform {_selectedObject.DisplayName.Value}");
         }
 
-        private void ConnectSnap()
-        {
-            SnapToGrid?.RegisterValueChangedCallback(e =>
-            {
-                if (_gizmo != null) _gizmo.SnapToGridEnabled = e.newValue;
-            });
-            SnapToTerrain?.RegisterValueChangedCallback(e =>
-            {
-                if (_gizmo != null) _gizmo.SnapToTerrainEnabled = e.newValue;
-            });
-        }
-
-        private void ConnectOutliner()
-        {
-            foreach (ObjectViewModel obj in _vm.Map.Objects)
-                AddOutlinerEntry(obj);
-
-            _vm.Map.Objects.CollectionChanged += OnObjectsChanged;
-        }
-
-        private void OnObjectsChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Add)
-                foreach (ObjectViewModel obj in e.NewItems)
-                    AddOutlinerEntry(obj);
-            else if (e.Action == NotifyCollectionChangedAction.Remove)
-                foreach (ObjectViewModel obj in e.OldItems)
-                {
-                    string removedName = obj.DisplayName.Value;
-                    _outlinerList.Q(obj.Model.Id)?.RemoveFromHierarchy();
-                    RefreshOutlinerLabels(removedName);
-                    if (_selectedObject != null && obj.Model.Id == _selectedObject.Model.Id)
-                        SetSelectedObject(null);
-                }
-            else if (e.Action == NotifyCollectionChangedAction.Reset)
-                _outlinerList.Clear();
-        }
-
-        // Recomputes the displayed label for every entry whose base name matches,
-        // so suffixes stay consistent after additions or deletions.
-        private void RefreshOutlinerLabels(string baseName)
-        {
-            foreach (ObjectViewModel obj in _vm.Map.Objects)
-            {
-                if (obj.DisplayName.Value != baseName) continue;
-                var row   = _outlinerList.Q(obj.Model.Id);
-                var lbl   = row?.Q<Label>();
-                if (lbl != null) lbl.text = ComputeOutlinerLabel(obj);
-            }
-        }
-
-        // Returns a display name with " (N)" suffix when other objects share the same base name.
-        private string ComputeOutlinerLabel(ObjectViewModel obj)
-        {
-            string baseName = obj.DisplayName.Value;
-            int index = 0, total = 0;
-            foreach (ObjectViewModel other in _vm.Map.Objects)
-            {
-                if (other.DisplayName.Value != baseName) continue;
-                if (other.Model.Id == obj.Model.Id) index = total;
-                total++;
-            }
-            if (total <= 1) return baseName;
-            return index == 0 ? baseName : $"{baseName} ({index + 1})";
-        }
-
-        private void AddOutlinerEntry(ObjectViewModel obj)
-        {
-            var row = new VisualElement { name = obj.Model.Id };
-            row.style.flexDirection  = FlexDirection.Row;
-            row.style.alignItems     = Align.Center;
-            row.style.paddingTop     = row.style.paddingBottom = 2;
-            row.style.paddingLeft    = row.style.paddingRight  = 4;
-
-            var label = new Label(ComputeOutlinerLabel(obj));
-            label.style.flexGrow = 1;
-            obj.DisplayName.ValueChanged += (_, __) =>
-            {
-                label.text = ComputeOutlinerLabel(obj);
-                RefreshOutlinerLabels(obj.DisplayName.Value);
-            };
-
-            var btnSelect = new Button(() => SelectObject(obj)) { text = "i" };
-            btnSelect.style.width   = btnSelect.style.height  = 20;
-            btnSelect.style.marginLeft = 2;
-
-            var btnDelete = new Button(() => _vm.DeleteObject.Execute(obj.Model)) { text = "X" };
-            btnDelete.style.width   = btnDelete.style.height  = 20;
-            btnDelete.style.marginLeft = 2;
-            btnDelete.style.backgroundColor = new StyleColor(new Color(0.78f, 0.24f, 0.24f));
-            btnDelete.style.color           = new StyleColor(Color.white);
-
-            row.Add(label);
-            row.Add(btnSelect);
-            row.Add(btnDelete);
-            _outlinerList.Add(row);
-        }
-
         // ── Real-time transform display during gizmo drag ────────────────────
 
         private void LateUpdate()
@@ -612,7 +542,6 @@ namespace EditorShell.Presenter.View
                 _spawner.TryGetGameObject(obj.Model.Id, out GameObject go))
                 _gizmo.Select(go, obj.Model);
 
-            SetSelectedObject(obj);
             OnObjectSelected?.Invoke(obj);
         }
 
@@ -626,45 +555,5 @@ namespace EditorShell.Presenter.View
 
         private void ApplyAmbientColor()
             => RenderSettings.ambientLight = new Color(AmbientColorR.value, AmbientColorG.value, AmbientColorB.value);
-
-        // ── Sidebar toggle ────────────────────────────────────────────────────
-
-        private void ToggleSidebar()
-        {
-            _isExpanded            = !_isExpanded;
-            _scroll.style.display  = _isExpanded ? DisplayStyle.Flex : DisplayStyle.None;
-            _sideBar.style.width   = _isExpanded ? ExpandedWidth : _btnToggle.resolvedStyle.width + 4;
-            _btnToggle.text        = _isExpanded ? "▶" : "▼";
-        }
-
-        // ── Outliner helpers ──────────────────────────────────────────────────
-
-        public void SetOutlinerItems(IEnumerable<string> names)
-        {
-            _outlinerList.Clear();
-            foreach (string name in names)
-                AddOutlinerItem(name);
-        }
-
-        public void AddOutlinerItem(string itemName)
-        {
-            var label = new Label(itemName) { name = itemName };
-            _outlinerList.Add(label);
-        }
-
-        public void RemoveOutlinerItem(string itemName)
-        {
-            _outlinerList.Q(itemName)?.RemoveFromHierarchy();
-        }
-
-        private void FilterOutliner(string query)
-        {
-            foreach (VisualElement child in _outlinerList.Children())
-            {
-                bool visible = string.IsNullOrEmpty(query)
-                    || child.name.Contains(query, StringComparison.OrdinalIgnoreCase);
-                child.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
-            }
-        }
     }
 }

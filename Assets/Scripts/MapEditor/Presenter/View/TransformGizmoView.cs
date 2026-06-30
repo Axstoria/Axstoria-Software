@@ -18,6 +18,8 @@ namespace MapEditor.Presenter.View
         public bool SnapToGridEnabled    { get; set; }
         public bool SnapToTerrainEnabled { get; set; }
 
+        public event System.Action<SceneObject> OnSelectionChanged;
+
         private void Start()
         {
             _gizmo = GetComponent<TransformGizmo>();
@@ -53,12 +55,14 @@ namespace MapEditor.Presenter.View
             _domainObj = domainObj;
             _gizmo.ClearTargets(addCommand: false);
             _gizmo.AddTarget(go.transform, addCommand: false);
+            OnSelectionChanged?.Invoke(domainObj);
         }
 
         public void Deselect()
         {
             _domainObj = null;
             _gizmo.ClearTargets(addCommand: false);
+            OnSelectionChanged?.Invoke(null);
         }
 
         // ── Delete key ────────────────────────────────────────────────────────
@@ -90,7 +94,10 @@ namespace MapEditor.Presenter.View
                 pos = SnapPositionToTerrain(pos, t);
 
             if (SnapToGridEnabled || SnapToTerrainEnabled)
+            {
                 t.position = pos;
+                _gizmo.SetPivotPoint();
+            }
 
             string label = _gizmo.transformType switch
             {
@@ -113,8 +120,8 @@ namespace MapEditor.Presenter.View
             var grid = _vm.Grid;
             if (grid == null) return pos;
             (int gx, int gz)             = grid.WorldToGrid(pos.x, pos.z);
-            (float wx, float wy, float wz) = grid.GridToWorld(gx, gz);
-            return new Vector3(wx, wy, wz);
+            (float wx, float _, float wz) = grid.GridToWorld(gx, gz);
+            return new Vector3(wx, pos.y, wz);
         }
 
         private static Vector3 SnapPositionToTerrain(Vector3 pos, Transform target)

@@ -3,7 +3,7 @@ using Camera.Presenter.ViewModels;
 using Loxodon.Framework.Contexts;
 using MapEditor.Presenter.ViewModels;
 using UnityEngine;
-using UnityEngine.EventSystems;
+using UnityEngine.UIElements;
 
 namespace Camera.Presenter.View
 {
@@ -18,6 +18,8 @@ namespace Camera.Presenter.View
         private Vector2 _lastMousePos;
         private bool    _orbitBlocked;
         private bool    _panBlocked;
+
+        private IPanel  _uiPanel;
 
         private void Start()
         {
@@ -95,6 +97,7 @@ namespace Camera.Presenter.View
         {
             float scroll = Input.GetAxis("Mouse ScrollWheel");
             if (Mathf.Approximately(scroll, 0f)) return;
+            if (IsPointerOverUI()) return;
 
             var s = _state.Settings;
 
@@ -148,7 +151,19 @@ namespace Camera.Presenter.View
             return ray.GetPoint(_state.Distance);
         }
 
-        private static bool IsPointerOverUI() =>
-            EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+        private bool IsPointerOverUI()
+        {
+            if (_uiPanel == null)
+            {
+                var doc = FindFirstObjectByType<UIDocument>();
+                _uiPanel = doc != null ? doc.rootVisualElement?.panel : null;
+                if (_uiPanel == null) return false;
+            }
+
+            Vector3 screen   = Input.mousePosition;
+            Vector2 panelPos = RuntimePanelUtils.ScreenToPanel(
+                _uiPanel, new Vector2(screen.x, Screen.height - screen.y));
+            return _uiPanel.Pick(panelPos) != null;
+        }
     }
 }

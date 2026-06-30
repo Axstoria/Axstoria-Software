@@ -50,11 +50,18 @@
     flex-shrink: 1;
 }
 
+.prefab-browser__grid .unity-scroll-view__content-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+}
+
 .prefab-browser__item {
     width: 96px;
     height: 128px;
     align-self: flex-start;
     margin-right: 8px;
+    margin-bottom: 8px;
     align-items: center;
     background-color: rgb(220, 220, 220);
     border-radius: 4px;

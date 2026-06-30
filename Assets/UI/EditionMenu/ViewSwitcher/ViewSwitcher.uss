@@ -1,7 +1,7 @@
 .view-switcher {
     position: absolute;
     top: 40px;
-    right: 10px;
+    right: 20px;
     flex-direction: row;
     background-color: rgb(192, 192, 192);
     border-width: 1px;
@@ -39,4 +39,40 @@
 
 .view-btn--top {
     background-image: url("camera-top.png");
+}
+
+.snap-bar {
+    position: absolute;
+    top: 20px;
+    right: 123px;
+    flex-direction: row;
+}
+
+.snap-chip {
+    flex-direction: row;
+    background-color: rgb(192, 192, 192);
+    border-width: 1px;
+    border-color: rgb(120, 120, 120);
+    border-radius: 4px;
+    padding: 2px;
+    margin: 0 4px;
+}
+
+.snap-btn {
+    font-size: 16px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(70, 70, 70);
+}
+
+.snap-btn.view-btn--selected {
+    color: rgb(255, 255, 255);
+}
+
+.snap-btn--grid {
+    background-image: url("snap-grid.png");
+}
+
+.snap-btn--terrain {
+    background-image: url("snap-terrain.png");
 }
