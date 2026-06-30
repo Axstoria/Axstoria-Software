@@ -6,34 +6,20 @@ using UnityEngine;
 
 namespace CharacterSheet.Domain
 {
-    public class Sheet
+    public class Sheet : IAppearanceTarget
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
         public List<SheetWidget> Widgets { get; } = new();
         public List<StatValue> Stats { get; } = new();
-        
-        [field: JsonIgnore] public event Action<StatValue> OnStatAdded;
-        [field: JsonIgnore] public event Action<StatValue> OnStatRemoved;
+
         [field: JsonIgnore] public event Action<SheetWidget> OnWidgetAdded;
         [field: JsonIgnore] public event Action<SheetWidget> OnWidgetRemoved;
         [field: JsonIgnore] public event Action OnAppearanceChanged;
+        [field: JsonIgnore] public event Action<string> OnPathChanged;
         
         public StatValue GetStat(string statId) => Stats.FirstOrDefault(s => s.Id == statId);
         public bool HasStat(string statId) => Stats.Any(s => s.Id == statId);
-
-        public void AddStat(StatValue stat)
-        {
-            Stats.Add(stat);
-            OnStatAdded?.Invoke(stat);
-        }
-
-        public void RemoveStat(string statId)
-        {
-            var stat = Stats.FirstOrDefault(s => s.Id == statId);
-            if (stat == null) return;
-            Stats.Remove(stat);
-            OnStatRemoved?.Invoke(stat);
-        }
+        
         
         public SheetWidget GetWidget(string widgetId) => Widgets.FirstOrDefault(w => w.Id == widgetId);
         public bool HasWidget(string widgetId) => Widgets.Any(s => s.Id == widgetId);
@@ -112,7 +98,7 @@ namespace CharacterSheet.Domain
             {
                 if (_backgroundImagePath == value) return;
                 _backgroundImagePath = value;
-                OnAppearanceChanged?.Invoke();
+                OnPathChanged?.Invoke(_backgroundImagePath);
             }
         }
     }

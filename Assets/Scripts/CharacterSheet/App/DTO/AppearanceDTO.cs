@@ -9,6 +9,5 @@ namespace CharacterSheet.App.DTO
         public float? BorderThickness { get; set; }
         public Color? BorderColor { get; set; }
         public Color? BackgroundColor { get; set; }
-        [CanBeNull] public string BackgroundImagePath { get; set; }
     }
 }

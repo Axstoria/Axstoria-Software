@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using AssetImporter.AssetImporter.App.UseCase;
 using CharacterSheet.App.DTO;
 using CharacterSheet.App.UseCase;
 using CharacterSheet.Domain;
@@ -17,16 +18,22 @@ namespace CharacterSheet.Presenter.ViewModel
 
         public string Id => _sheet.Id;
 
+        private readonly IImageLoaderService _imageLoader;
         // ── Use Case ───────────────────────────────────────────────────────────
-        private readonly UpdateSheetUseCase _updateSheet;
+        private readonly UpdateAppearanceUseCase _updateSheet;
+        private readonly UpdateBackgroundUseCase _updateBackground;
         private readonly AddWidgetUseCase _addWidget;
         private readonly RemoveWidgetUseCase _removeWidget;
-        private readonly BindStatToWidgetUseCase _bindStatToWidget;
-        private readonly UnbindStatUseCase _unbindStat;
 
         // ── Command ───────────────────────────────────────────────────────────
         public ICommand AddWidgetCommand { get; }
         public ICommand<string> RemoveWidgetCommand { get; }
+        public event Action<WidgetViewModel> OnWidgetSelected;
+        public ICommand<AppearanceDTO> UpdateAppearanceCommand { get; }
+        public ICommand SelectBackgroundCommand { get; }
+        
+        private readonly Action<SheetWidget> _onWidgetAdded;
+        private readonly Action<SheetWidget> _onWidgetRemoved;
 
         public ObservableList<WidgetViewModel> Widgets { get; } = new();
 
@@ -34,30 +41,34 @@ namespace CharacterSheet.Presenter.ViewModel
         public float BorderThickness => _sheet.BorderThickness;
         public Color BorderColor => _sheet.BorderColor;
         public Color BackgroundColor => _sheet.BackgroundColor;
-        public string BackgroundImagePath => _sheet.BackgroundImagePath;
+        private Sprite _backgroundSprite;
 
-        private readonly Action<SheetWidget> _onWidgetAdded;
-        private readonly Action<SheetWidget> _onWidgetRemoved;
-
-        public event Action<WidgetViewModel> OnWidgetSelected;
-        public ICommand<AppearanceDTO> UpdateAppearanceCommand { get; }
+        public Sprite BackgroundSprite
+        {
+            get => _backgroundSprite;
+            private set
+            {
+                _backgroundSprite = value; 
+                RaisePropertyChanged();
+            }
+        }
 
         public SheetViewModel(Sheet sheet,
             WidgetViewModelFactory widgetFactory,
-            UpdateSheetUseCase updateSheet,
+            UpdateAppearanceUseCase updateSheet,
+            UpdateBackgroundUseCase updateBackground,
+            IImageLoaderService imageService,
             AddWidgetUseCase addWidget,
-            RemoveWidgetUseCase removeWidget,
-            BindStatToWidgetUseCase bindStatToWidget,
-            UnbindStatUseCase unbindStat)
+            RemoveWidgetUseCase removeWidget)
         {
             _sheet = sheet;
             _factory = widgetFactory;
+            _imageLoader  = imageService;
 
             _updateSheet = updateSheet;
+            _updateBackground = updateBackground;
             _addWidget = addWidget;
             _removeWidget = removeWidget;
-            _bindStatToWidget = bindStatToWidget;
-            _unbindStat = unbindStat;
 
             foreach (var widget in sheet.Widgets) {
                 var vm = widgetFactory.Create(widget);
@@ -65,6 +76,8 @@ namespace CharacterSheet.Presenter.ViewModel
                 Widgets.Add(vm);
             }
 
+            if (!string.IsNullOrEmpty(_sheet.BackgroundImagePath))
+                LoadSprite(_sheet.BackgroundImagePath);
 
             _onWidgetAdded = widget =>
             {
@@ -88,6 +101,12 @@ namespace CharacterSheet.Presenter.ViewModel
                 updateSheet.Execute(_sheet, appearance);
             });
 
+            _sheet.OnPathChanged += LoadSprite;
+            SelectBackgroundCommand = new SimpleCommand<object>(_ =>
+            {
+                _updateBackground.Execute(_sheet);
+            });
+
             sheet.OnWidgetAdded += _onWidgetAdded;
             sheet.OnWidgetRemoved += _onWidgetRemoved;
 
@@ -101,13 +120,22 @@ namespace CharacterSheet.Presenter.ViewModel
             OnWidgetSelected?.Invoke(widgetVM);
         }
 
+        private void LoadSprite(string path)
+        {
+            if (_backgroundSprite != null) {
+                UnityEngine.Object.Destroy(_backgroundSprite.texture);
+                UnityEngine.Object.Destroy(_backgroundSprite);
+            }
+
+            BackgroundSprite = _imageLoader.LoadSprite(path);
+        }
+
         private void HandleAppearanceChanged()
         {
             RaisePropertyChanged(nameof(HasBorder));
             RaisePropertyChanged(nameof(BorderThickness));
             RaisePropertyChanged(nameof(BorderColor));
             RaisePropertyChanged(nameof(BackgroundColor));
-            RaisePropertyChanged(nameof(BackgroundImagePath));
         }
 
         public void ClearSelection()
@@ -122,6 +150,7 @@ namespace CharacterSheet.Presenter.ViewModel
             _sheet.OnWidgetAdded -= _onWidgetAdded;
             _sheet.OnWidgetRemoved -= _onWidgetRemoved;
 
+            _sheet.OnPathChanged -= LoadSprite;
             _sheet.OnAppearanceChanged -= HandleAppearanceChanged;
 
             /*foreach (var vm in Stats) vm.Dispose();*/

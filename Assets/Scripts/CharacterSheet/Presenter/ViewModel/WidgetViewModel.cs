@@ -26,7 +26,8 @@ namespace CharacterSheet.Presenter.ViewModel
         public ObservableList<WidgetItemViewModel> Items { get; } = new ObservableList<WidgetItemViewModel>();  
 
         // ── Use Case ───────────────────────────────────────────────────────────
-        private readonly UpdateWidgetAppearanceUseCase _updateAppearance;
+        private readonly UpdateAppearanceUseCase _updateAppearance;
+        private readonly UpdateBackgroundUseCase _updateBackground;
         private readonly UpdateWidgetLayoutUseCase _updateLayout;
         private readonly UpdateWidgetTitleUseCase _updateTitle;
         private readonly BindStatToWidgetUseCase _bindStat;
@@ -59,7 +60,8 @@ namespace CharacterSheet.Presenter.ViewModel
 
         protected WidgetViewModel(SheetWidget widget,
             BindStatToWidgetUseCase bindStatToWidgetUseCase,
-            UpdateWidgetAppearanceUseCase updateAppearance,
+            UpdateAppearanceUseCase updateAppearance,
+            UpdateBackgroundUseCase updateBackground,
             UpdateWidgetLayoutUseCase updateLayout,
             UpdateWidgetTitleUseCase updateTitle,
             GetStatUseCase getStat)
@@ -67,6 +69,7 @@ namespace CharacterSheet.Presenter.ViewModel
             _widget = widget;
 
             _updateAppearance = updateAppearance;
+            _updateBackground = updateBackground;
             _updateLayout = updateLayout;
             _updateTitle = updateTitle;
             _bindStat = bindStatToWidgetUseCase;

@@ -76,6 +76,7 @@ MonoBehaviour:
   background: {fileID: 590591494789618956}
   border: {fileID: 643979891646635313}
   borderLayoutGroup: {fileID: 7581106356480904449}
+  importImage: {fileID: 0}
   widgetContainer: {fileID: 8620503938146341756}
   pointGaugeWidgetPrefab: {fileID: 878651292198826942, guid: 32778071e8e34e8d0bea26f6e5fb1eb2, type: 3}
   textWidgetPrefab: {fileID: 878651292198826942, guid: 074ba326f9b049db7a8a461f7ed9900a, type: 3}

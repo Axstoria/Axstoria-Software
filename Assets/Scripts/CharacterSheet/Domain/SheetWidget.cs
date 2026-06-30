@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace CharacterSheet.Domain
 {
-    public abstract class SheetWidget
+    public abstract class SheetWidget : IAppearanceTarget
     {
         public string Id { get; } = Guid.NewGuid().ToString();
         

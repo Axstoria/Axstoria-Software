@@ -24,7 +24,11 @@ namespace CharacterSheet.Presenter.View
         [SerializeField] private Image background;
         [SerializeField] private Image border;
         [SerializeField] private HorizontalLayoutGroup borderLayoutGroup;
+        
+        [Tooltip("Config Button")]
+        [SerializeField] private Button importImage;
 
+        [Tooltip("Widgets Prefab")]
         [SerializeField] private Transform widgetContainer;
         [SerializeField] private GameObject pointGaugeWidgetPrefab;
         [SerializeField] private GameObject textWidgetPrefab;
@@ -72,6 +76,12 @@ namespace CharacterSheet.Presenter.View
             bindingSet.Bind(this)
                 .For(v => v.BorderThickness)
                 .To(vm => vm.BorderThickness);
+            
+            bindingSet.Bind(background)
+                .For(v => v.sprite)
+                .To(vm => vm.BackgroundSprite);
+
+            /*bindingSet.Bind(importImage).For(v => v.onClick).To(vm => vm.SelectBackgroundCommand);*/
 
             bindingSet.Build();
 

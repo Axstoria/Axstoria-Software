@@ -1,3 +1,6 @@
+using AssetImporter.AssetImporter.App;
+using AssetImporter.AssetImporter.App.UseCase;
+using AssetImporter.AssetImporter.Infrastructure;
 using CharacterSheet.App.UseCase;
 using CharacterSheet.Domain;
 using CharacterSheet.Infrastructure;
@@ -6,8 +9,10 @@ using UnityEngine;
 using Loxodon.Framework;
 using Loxodon.Framework.Binding;
 using Loxodon.Framework.Contexts;
+using Shared.App.Port;
 using Shared.Domain;
 using Shared.Infrastructure;
+using Shared.Infrastructure.Shared.Infrastructure;
 using Unity.VisualScripting;
 
 namespace CharacterSheet.Presenter
@@ -23,24 +28,30 @@ namespace CharacterSheet.Presenter
             BindingServiceBundle bindingBundle = new BindingServiceBundle(container);
             bindingBundle.Start();
 
+            IFileDialogService dialog     = new FileDialogService();
             IStatDefinitionRepository statRepo = new StatDefinitionRepository();
-            container.Register<IStatDefinitionRepository>(statRepo);
             ISaveRepository jsonRepo = new JsonFileSaveRepository("CharacterSheet");
+            var imageService = new ImageService(dialog);
+            
+            container.Register<IImageLoaderService>(imageService);
+            container.Register<IImageImportService>(imageService);
+            container.Register<IStatDefinitionRepository>(statRepo);
             container.Register<ISaveRepository>(jsonRepo);
             
             // ── Use cases ─────────────────────────────────────────────────────
             container.Register<UpdatePointGaugeWidgetUseCase>(new UpdatePointGaugeWidgetUseCase());
             container.Register<UpdateTextWidgetUseCase>(new UpdateTextWidgetUseCase());
-            container.Register<UpdateWidgetAppearanceUseCase>(new UpdateWidgetAppearanceUseCase());
             container.Register<UpdateWidgetLayoutUseCase>(new UpdateWidgetLayoutUseCase());
             container.Register<UpdateWidgetTitleUseCase>(new UpdateWidgetTitleUseCase());
             container.Register<GetStatUseCase>(new GetStatUseCase(statRepo));
+            
+            container.Register<UpdateAppearanceUseCase>(new UpdateAppearanceUseCase());
+            container.Register<UpdateBackgroundUseCase>(new UpdateBackgroundUseCase(imageService));
             
             container.Register<AddWidgetUseCase>(new AddWidgetUseCase());
             container.Register<RemoveWidgetUseCase>(new RemoveWidgetUseCase());
             container.Register<BindStatToWidgetUseCase>(new BindStatToWidgetUseCase(statRepo));
             container.Register<UnbindStatUseCase>(new UnbindStatUseCase());
-            container.Register<UpdateSheetUseCase>(new UpdateSheetUseCase());
             container.Register<SaveUseCases>(new SaveUseCases(jsonRepo));
             container.Register<LoadUseCases>(new LoadUseCases(jsonRepo));
             

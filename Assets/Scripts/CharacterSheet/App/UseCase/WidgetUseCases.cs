@@ -14,30 +14,6 @@ namespace CharacterSheet.App.UseCase
             widget.Layout = dto;
         }
     }
-    
-    public class UpdateWidgetAppearanceUseCase
-    {
-        public void Execute(SheetWidget widget, AppearanceDTO dto) {
-            if (dto.HasBorder.HasValue)
-                widget.HasBorder       = dto.HasBorder.Value;
-            if (dto.BorderThickness.HasValue)
-                widget.BorderThickness = dto.BorderThickness.Value;
-            if (dto.BorderColor.HasValue)
-                widget.BorderColor     = dto.BorderColor.Value;
-            if (dto.BackgroundColor.HasValue)
-                widget.BackgroundColor = dto.BackgroundColor.Value;
-            if (dto.BackgroundImagePath != null)
-            {
-                widget.BackgroundImagePath = dto.BackgroundImagePath;
-            }
-            //widget.OnAppearanceChanged?.Invoke();
-        }
-    }
-
-    public class UpdateBackgroundUseCase
-    {
-        private readonly IImageImportService _imageImporter;
-    }
 
     public class UpdateWidgetTitleUseCase
     {

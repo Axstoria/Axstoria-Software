@@ -2,7 +2,7 @@ using System.IO;
 using Shared.Domain;
 using UnityEngine;
 
-namespace Shared.Infrastructure
+namespace Shared.Infrastructure.Shared.Infrastructure
 {
     public class JsonFileSaveRepository : ISaveRepository
     {

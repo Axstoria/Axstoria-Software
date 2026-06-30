@@ -13,10 +13,11 @@ namespace CharacterSheet.Presenter.ViewModel.Widgets
 
         public CounterWidgetViewModel(CounterWidget widget, 
             BindStatToWidgetUseCase bindStatToWidgetUseCase,
-            UpdateWidgetAppearanceUseCase appearance, 
+            UpdateAppearanceUseCase appearance, 
+            UpdateBackgroundUseCase background,
             UpdateWidgetLayoutUseCase updateLayout, 
             UpdateWidgetTitleUseCase updateTitle,
-            GetStatUseCase getStat) : base(widget, bindStatToWidgetUseCase, appearance, updateLayout, updateTitle, getStat)
+            GetStatUseCase getStat) : base(widget, bindStatToWidgetUseCase, appearance, background, updateLayout, updateTitle, getStat)
         {
             _counter = widget;
             BoundStats.CollectionChanged += OnBoundStatsChanged;
