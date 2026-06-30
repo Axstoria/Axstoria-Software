@@ -3,6 +3,7 @@
     "rootNamespace": "Shared.Infrastructure",
     "references": [
         "Axstoria.Shared.App",
+        "Axstoria.Shared.Domain",
         "StandaloneFileBrowser"
     ],
     "includePlatforms": [],

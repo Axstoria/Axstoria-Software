@@ -8,6 +8,7 @@ using CharacterSheet.Presenter.ViewModel;
 using UnityEngine;
 using Loxodon.Framework;
 using Loxodon.Framework.Binding;
+using Loxodon.Framework.Binding.Binders;
 using Loxodon.Framework.Contexts;
 using Shared.App.Port;
 using Shared.Domain;
@@ -25,8 +26,10 @@ namespace CharacterSheet.Presenter
             var context = Context.GetApplicationContext();
             var container = context.GetContainer();
             
-            BindingServiceBundle bindingBundle = new BindingServiceBundle(container);
-            bindingBundle.Start();
+            if (container.Resolve<IBinder>() == null) {
+                BindingServiceBundle bindingBundle = new BindingServiceBundle(container);
+                bindingBundle.Start();
+            }
 
             IFileDialogService dialog     = new FileDialogService();
             IStatDefinitionRepository statRepo = new StatDefinitionRepository();
