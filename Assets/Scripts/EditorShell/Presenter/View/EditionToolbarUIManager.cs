@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using Fab.UITKDropdown;
 using Loxodon.Framework.Contexts;
 using MapEditor.Domain;
@@ -60,8 +59,7 @@ namespace EditorShell.Presenter.View
             fileMenu.AppendAction("Import Asset",          OnImportAssetClicked);
             fileMenu.AppendAction("Open/Rules",            null);
             fileMenu.AppendAction("Open/Sheets",           null);
-            fileMenu.AppendAction("Link to object/Notes",  null);
-            fileMenu.AppendAction("Link to object/Sheets", null);
+            fileMenu.AppendAction("Link to object",  OnLinkToObjectClicked);
 
             root.Q<Button>("file-button").clickable.clickedWithEventInfo +=
                 evt => dropdown.Open(fileMenu, evt);
@@ -103,6 +101,18 @@ namespace EditorShell.Presenter.View
                 else
                     viewMenu.AppendAction(entry.Name, entry.Callback);
             }
+        }
+
+        public Action OnLinkToObjectRequested;
+        private void OnLinkToObjectClicked(DropdownMenuAction action)
+        {
+            var vm = Context.GetApplicationContext().GetContainer().Resolve<MapEditorViewModel>();
+            if (vm == null)
+            {
+                Debug.LogWarning("[EditionToolbarUIManager] MapEditorViewModel not registered, cannot link.");
+                return;
+            }
+            OnLinkToObjectRequested?.Invoke();
         }
 
         private void OnImportAssetClicked(DropdownMenuAction action)

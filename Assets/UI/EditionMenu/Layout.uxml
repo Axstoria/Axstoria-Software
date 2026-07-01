@@ -154,6 +154,15 @@
                                 <engine:FloatField name="field-scale-y" label="Y" />
                                 <engine:FloatField name="field-scale-z" label="Z" />
                             </engine:VisualElement>
+                            <engine:Label text="NOTES" class="settings-subhead" />
+                            <engine:VisualElement name="notes-list" />
+                            <engine:Label name="label-no-notes" text="No notes." class="settings-caption" />
+                            <engine:Label text="TAGS" class="settings-subhead" />
+                            <engine:VisualElement name="tags-list" />
+                            <engine:Label name="label-no-tags" text="No tags." class="settings-caption" />
+                            <engine:Label text="SHEETS" class="settings-subhead" />
+                            <engine:VisualElement name="sheets-list" />
+                            <engine:Label name="label-no-sheets" text="No sheets." class="settings-caption" />
                         </engine:VisualElement>
                     </engine:VisualElement>
                 </engine:ScrollView>

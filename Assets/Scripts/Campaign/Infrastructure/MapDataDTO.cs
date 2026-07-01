@@ -1,14 +1,36 @@
 using System;
 using System.Collections.Generic;
-using SceneEditor.Domain;
 
 namespace Campaign.Infrastructure
 {
     [Serializable]
+    public abstract class MetadataValueDTO { }
+
+    [Serializable]
+    public class NoteValueDTO : MetadataValueDTO
+    {
+        public string Text { get; set; }
+    }
+
+    [Serializable]
+    public class TagValueDTO : MetadataValueDTO
+    {
+        public string Id       { get; set; }
+        public string Name     { get; set; }
+        public string HexColor { get; set; } = "#FFFFFF";
+    }
+
+    [Serializable]
+    public class SheetValueDTO : MetadataValueDTO
+    {
+        // TODO: Implement this class when sheets are done
+    }
+
+    [Serializable]
     public class MetadataEntryDTO
     {
         public string EntryType;
-        public string EntryValue;
+        public MetadataValueDTO EntryValue;
     }
 
     [Serializable]

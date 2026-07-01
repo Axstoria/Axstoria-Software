@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Campaign.App.Port;
-using Grid.Domain;
 using MapEditor.Domain;
 using SceneEditor.Domain;
 using UnityEngine;
@@ -107,7 +106,7 @@ namespace Campaign.Infrastructure
                 metadata = obj.Metadata?.Select(m => new MetadataEntryDTO
                 {
                     EntryType = m.EntryType,
-                    EntryValue = m.EntryValue,
+                    EntryValue = ValueToDTO(m.EntryValue),
                 }).ToList() ?? new List<MetadataEntryDTO>(),
                 posX   = t?.Position.x ?? 0, posY   = t?.Position.y ?? 0, posZ   = t?.Position.z ?? 0,
                 rotX   = t?.Rotation.x ?? 0, rotY   = t?.Rotation.y ?? 0,
@@ -115,6 +114,14 @@ namespace Campaign.Infrastructure
                 scaleX = t?.Scale.x    ?? 1, scaleY = t?.Scale.y    ?? 1, scaleZ = t?.Scale.z    ?? 1
             };
         }
+
+        private static MetadataValueDTO ValueToDTO(MetadataValue value) => value switch
+        {
+            NoteValue note => new NoteValueDTO { Text = note.Text },
+            TagValue tag => new TagValueDTO { Id = tag.Id, Name = tag.Name, HexColor = tag.HexColor },
+            SheetValue _ => new SheetValueDTO(),
+            _ => throw new ArgumentException($"Unknown MetadataValue type: {value.GetType().Name}")
+        };
 
         private static SceneObject ObjectFromDTO(SceneObjectDTO dto)
         {
@@ -129,7 +136,7 @@ namespace Campaign.Infrastructure
                 Metadata    = dto.metadata?.Select(m => new MetadataEntry
                 {
                     EntryType = m.EntryType,
-                    EntryValue = m.EntryValue,
+                    EntryValue = ValueFromDTO(m.EntryValue),
                 }).ToList() ?? new List<MetadataEntry>(),
                 Transform   = new TransformModel
                 {
@@ -139,5 +146,13 @@ namespace Campaign.Infrastructure
                 }
             };
         }
+
+        private static MetadataValue ValueFromDTO(MetadataValueDTO value) => value switch
+        {
+            NoteValueDTO note => new NoteValue { Text = note.Text },
+            TagValueDTO tag => new TagValue { Id = tag.Id, Name = tag.Name, HexColor = tag.HexColor },
+            SheetValueDTO _ => new SheetValue(),
+            _ => throw new ArgumentException($"Unknown MetadataValue type: {value.GetType().Name}")
+        };
     }
 }

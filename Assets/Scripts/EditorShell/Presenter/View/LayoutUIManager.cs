@@ -67,6 +67,10 @@ namespace EditorShell.Presenter.View
                 _ => sidePanels.IsSettingsPresent ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
             toolbarManager.AddViewMenuEntry("Outliner", _ => sidePanels.ToggleOutliner(),
                 _ => sidePanels.IsOutlinerPresent ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
+
+            var metadataPopup = GetComponentInChildren<MetadataPopupController>() ?? this.AddComponent<MetadataPopupController>();
+            metadataPopup.Init(root);
+            toolbarManager.OnLinkToObjectRequested = () => metadataPopup.Open();
         }
     }
 }

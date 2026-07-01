@@ -6,6 +6,7 @@ using SceneEditor.Domain;
 using SceneEditor.Presenter.View;
 using SceneEditor.Presenter.ViewModels;
 using System;
+using System.Linq;
 using System.Collections.Specialized;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -88,6 +89,13 @@ namespace EditorShell.Presenter.View
         private Label         _labelNoSelection;
         private ObjectViewModel _selectedObject;
         private EventHandler    _onSelectedTransformChanged;
+        private EventHandler  _onMetadataChanged;
+        private VisualElement _notesList;
+        private Label         _labelNoNotes;
+        private VisualElement _tagsList;
+        private Label         _labelNoTags;
+        private VisualElement _sheetsList;
+        private Label         _labelNoSheets;
 
         // --- Selection ---
         public Action<ObjectViewModel> OnObjectSelected;
@@ -203,6 +211,12 @@ namespace EditorShell.Presenter.View
             ScaleX = root.Q<FloatField>("field-scale-x");
             ScaleY = root.Q<FloatField>("field-scale-y");
             ScaleZ = root.Q<FloatField>("field-scale-z");
+            _notesList = root.Q<VisualElement>("notes-list");
+            _labelNoNotes = root.Q<Label>("label-no-notes");
+            _tagsList      = root.Q<VisualElement>("tags-list");
+            _labelNoTags   = root.Q<Label>("label-no-tags");
+            _sheetsList    = root.Q<VisualElement>("sheets-list");
+            _labelNoSheets = root.Q<Label>("label-no-sheets");
         }
 
         // ── Scene click-to-select ─────────────────────────────────────────────
@@ -460,6 +474,9 @@ namespace EditorShell.Presenter.View
             if (_onSelectedTransformChanged != null && _selectedObject != null)
                 _selectedObject.Model.OnTransformChanged -= _onSelectedTransformChanged;
 
+            if (_onMetadataChanged != null && _selectedObject != null)
+                _selectedObject.Model.OnMetadataChanged -= _onMetadataChanged;
+
             _selectedObject = obj;
 
             if (obj == null)
@@ -475,6 +492,10 @@ namespace EditorShell.Presenter.View
             _onSelectedTransformChanged = (_, __) => RefreshTransformFields();
             obj.Model.OnTransformChanged += _onSelectedTransformChanged;
             RefreshTransformFields();
+
+            _onMetadataChanged = (_, __) => RefreshMetadata();
+            obj.Model.OnMetadataChanged += _onMetadataChanged;
+            RefreshMetadata();
         }
 
         private void RefreshTransformFields()
@@ -495,6 +516,63 @@ namespace EditorShell.Presenter.View
             ScaleY.SetValueWithoutNotify(t.Scale.y);
             ScaleZ.SetValueWithoutNotify(t.Scale.z);
         }
+
+        private void RefreshMetadata()
+        {
+            if (_notesList == null || _tagsList == null || _sheetsList == null) return;
+
+            _notesList.Clear();
+            _tagsList.Clear();
+            _sheetsList.Clear();
+
+            var entries = _selectedObject?.Model?.Metadata;
+
+            var notes  = entries?.Where(e => e.EntryValue is NoteValue).ToList();
+            var tags   = entries?.Where(e => e.EntryValue is TagValue).ToList();
+            var sheets = entries?.Where(e => e.EntryValue is SheetValue).ToList();
+
+            _labelNoNotes.style.display  = notes  is { Count: > 0 } ? DisplayStyle.None : DisplayStyle.Flex;
+            _labelNoTags.style.display   = tags   is { Count: > 0 } ? DisplayStyle.None : DisplayStyle.Flex;
+            _labelNoSheets.style.display = sheets is { Count: > 0 } ? DisplayStyle.None : DisplayStyle.Flex;
+
+            if (notes != null)
+            {
+                foreach (var entry in notes)
+                {
+                    var label = new Label(FormatMetadataEntry(entry));
+                    label.AddToClassList("settings-caption");
+                    _notesList.Add(label);
+                }
+            }
+
+            if (tags != null)
+            {
+                foreach (var entry in tags)
+                {
+                    var label = new Label(FormatMetadataEntry(entry));
+                    label.AddToClassList("settings-caption");
+                    _tagsList.Add(label);
+                }
+            }
+
+            if (sheets != null)
+            {
+                foreach (var entry in sheets)
+                {
+                    var label = new Label(FormatMetadataEntry(entry));
+                    label.AddToClassList("settings-caption");
+                    _sheetsList.Add(label);
+                }
+            }
+        }
+
+        private static string FormatMetadataEntry(MetadataEntry entry) => entry.EntryValue switch
+        {
+            NoteValue  note => note.Text,
+            TagValue   tag  => $"{tag.Name} - {tag.HexColor}",
+            SheetValue _    => "(not yet implemented)",
+            _               => $"Unknown ({entry.EntryType})"
+        };
 
         private void ApplyTransformFromFields()
         {
