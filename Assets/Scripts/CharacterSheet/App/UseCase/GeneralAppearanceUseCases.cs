@@ -28,9 +28,9 @@ namespace CharacterSheet.App.UseCase
             _imageImporter = imageImporter;
         }
 
-        public void Execute(IAppearanceTarget target)
+        public void Execute(IAppearanceTarget target, string parentContainer)
         {
-            var newImagePath = _imageImporter.ImportImageFromDisk();
+            var newImagePath = _imageImporter.ImportImageFromDisk(parentContainer);
             
             if (string.IsNullOrEmpty(newImagePath)) return;
             target.BackgroundImagePath = newImagePath;

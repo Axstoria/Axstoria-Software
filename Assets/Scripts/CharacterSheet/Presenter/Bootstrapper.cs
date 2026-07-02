@@ -33,8 +33,8 @@ namespace CharacterSheet.Presenter
 
             IFileDialogService dialog     = new FileDialogService();
             IStatDefinitionRepository statRepo = new StatDefinitionRepository();
-            ISaveRepository jsonRepo = new JsonFileSaveRepository("CharacterSheet");
-            var imageService = new ImageService(dialog);
+            ISaveRepository jsonRepo = new SheetFolderRepository("Workspace");
+            var imageService = new ImageService(dialog, "Workspace/Sheets");
             
             container.Register<IImageLoaderService>(imageService);
             container.Register<IImageImportService>(imageService);
@@ -42,6 +42,9 @@ namespace CharacterSheet.Presenter
             container.Register<ISaveRepository>(jsonRepo);
             
             // ── Use cases ─────────────────────────────────────────────────────
+            container.Register<ImportUseCase>(new ImportUseCase(dialog));
+            container.Register<ExportUseCases>(new ExportUseCases(dialog));
+            
             container.Register<UpdatePointGaugeWidgetUseCase>(new UpdatePointGaugeWidgetUseCase());
             container.Register<UpdateTextWidgetUseCase>(new UpdateTextWidgetUseCase());
             container.Register<UpdateWidgetLayoutUseCase>(new UpdateWidgetLayoutUseCase());
@@ -64,7 +67,9 @@ namespace CharacterSheet.Presenter
             
             var vm = new CharacterSheetEditorViewModel(sheetFactory, 
                 container.Resolve<LoadUseCases>(),
-                container.Resolve<SaveUseCases>());
+                container.Resolve<SaveUseCases>(),
+                container.Resolve<ImportUseCase>(),
+                container.Resolve<ExportUseCases>());
             
             Context.GetApplicationContext()
                 .GetContainer()

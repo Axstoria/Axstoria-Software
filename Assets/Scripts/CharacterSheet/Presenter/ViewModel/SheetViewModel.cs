@@ -104,7 +104,7 @@ namespace CharacterSheet.Presenter.ViewModel
             _sheet.OnPathChanged += LoadSprite;
             SelectBackgroundCommand = new SimpleCommand<object>(_ =>
             {
-                _updateBackground.Execute(_sheet);
+                _updateBackground.Execute(_sheet, Id);
             });
 
             sheet.OnWidgetAdded += _onWidgetAdded;
@@ -127,7 +127,7 @@ namespace CharacterSheet.Presenter.ViewModel
                 UnityEngine.Object.Destroy(_backgroundSprite);
             }
 
-            BackgroundSprite = _imageLoader.LoadSprite(path);
+            BackgroundSprite = _imageLoader.LoadSprite(path, Id);
         }
 
         private void HandleAppearanceChanged()

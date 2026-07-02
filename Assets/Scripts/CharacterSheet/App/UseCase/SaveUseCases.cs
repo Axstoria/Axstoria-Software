@@ -2,6 +2,7 @@ using CharacterSheet.Domain;
 using Newtonsoft.Json;
 using Shared.Domain;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace CharacterSheet.App.UseCase
 {
@@ -23,6 +24,7 @@ namespace CharacterSheet.App.UseCase
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             };
             string json = JsonConvert.SerializeObject(sheet, settings);
+  
             _saveRepository.Save(sheet.Id, json);
         }
     }
@@ -36,23 +38,22 @@ namespace CharacterSheet.App.UseCase
             _saveRepository = saveRepository;
         }
 
-        public Sheet Execute(string fileName)
+        public Sheet Execute(string sheetId)
         {
-            if (string.IsNullOrEmpty(fileName) || !_saveRepository.Exists(fileName)) {
+            if (string.IsNullOrEmpty(sheetId) || !_saveRepository.Exists(sheetId)) {
                 return null;
             }
 
             try {
-                string json = _saveRepository.Load(fileName);
+                string json = _saveRepository.Load(sheetId);
 
-                var settings = new JsonSerializerSettings
-                {
+                var settings = new JsonSerializerSettings {
                     TypeNameHandling = TypeNameHandling.Auto
                 };
 
                 return JsonConvert.DeserializeObject<Sheet>(json, settings);
             }
-            catch (System.Exception ex) {
+            catch (System.Exception) {
                 return null;
             }
         }

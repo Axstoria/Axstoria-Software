@@ -6,6 +6,7 @@ using Loxodon.Framework.Contexts;
 using Loxodon.Framework.Views;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace CharacterSheet.Presenter.View
@@ -13,14 +14,42 @@ namespace CharacterSheet.Presenter.View
     public class CharacterSheetEditorView : UIView
     {
         [SerializeField] private Transform widgetContainer;
-        [SerializeField] private Button saveButton;
+        [SerializeField] private GameObject sheetPrefab;
+
+        [Tooltip("Button")] [SerializeField] private Button saveButton;
         [SerializeField] private Button addPointGaugeWidgetButton;
         [SerializeField] private Button addTextWidgetButton;
         [SerializeField] private Button addCounterWidgetButton;
-        [SerializeField] private GameObject sheetPrefab;
+        [SerializeField] private Button importButton;
+        [SerializeField] private Button exportButton;
+
         private GameInputs _inputs;
 
         private CharacterSheetEditorViewModel _vm;
+        private SheetView _currentSheetView;
+        private SheetViewModel _currentSheetViewModel;
+
+        public SheetViewModel CurrentSheet
+        {
+            get => _currentSheetViewModel;
+            set
+            {
+                if (_currentSheetViewModel == value) return;
+                _currentSheetViewModel = value;
+
+                if (_currentSheetView != null) {
+                    Destroy(_currentSheetView.gameObject);
+                    _currentSheetView = null;
+                }
+
+                if (value != null) {
+                    var go = Instantiate(sheetPrefab, widgetContainer);
+                    _currentSheetView = go.GetComponent<SheetView>();
+                    _currentSheetView.SetDataContext(value);
+                    _currentSheetView.Initialize(value);
+                }
+            }
+        }
 
         protected override void Awake()
         {
@@ -28,14 +57,6 @@ namespace CharacterSheet.Presenter.View
 
             _vm = Context.GetApplicationContext().GetContainer().Resolve<CharacterSheetEditorViewModel>();
             this.SetDataContext(_vm);
-
-            var sheetViewModel = _vm.CurrentSheet;
-            if (sheetViewModel != null) {
-                var go = Instantiate(sheetPrefab, widgetContainer);
-                var view = go.GetComponent<SheetView>();
-                view.SetDataContext(sheetViewModel);
-                view.Initialize(sheetViewModel);
-            }
 
             CreateBindings();
 
@@ -60,6 +81,10 @@ namespace CharacterSheet.Presenter.View
         {
             var bindingSet = this.CreateBindingSet<CharacterSheetEditorView, CharacterSheetEditorViewModel>();
 
+            bindingSet.Bind(this)
+                .For(v => v.CurrentSheet)
+                .To(vm => vm.CurrentSheet);
+
             bindingSet.Bind(addPointGaugeWidgetButton)
                 .For(v => v.onClick)
                 .To(x => x.AddWidgetCommand)
@@ -69,7 +94,7 @@ namespace CharacterSheet.Presenter.View
                 .For(v => v.onClick)
                 .To(x => x.AddWidgetCommand)
                 .CommandParameter(WidgetType.Text);
-            
+
             bindingSet.Bind(addCounterWidgetButton)
                 .For(v => v.onClick)
                 .To(x => x.AddWidgetCommand)
@@ -78,6 +103,14 @@ namespace CharacterSheet.Presenter.View
             bindingSet.Bind(saveButton)
                 .For(v => v.onClick)
                 .To(x => x.SaveSheetCommand);
+
+            bindingSet.Bind(importButton)
+                .For(v => v.onClick)
+                .To(x => x.ImportCommand);
+
+            bindingSet.Bind(exportButton)
+                .For(v => v.onClick)
+                .To(x => x.ExportCommand);
 
             bindingSet.Build();
         }

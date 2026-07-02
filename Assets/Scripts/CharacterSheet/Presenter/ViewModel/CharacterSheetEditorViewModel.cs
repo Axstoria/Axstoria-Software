@@ -30,21 +30,30 @@ namespace CharacterSheet.Presenter.ViewModel
 
         // ── Use Case ──────────────────────────────────────────────────────────
         private readonly LoadUseCases _loadSheet;
-
         private readonly SaveUseCases _saveSheet;
+        
+        private readonly ImportUseCase _import;
+        private readonly ExportUseCases _export;
 
         // ── Command ───────────────────────────────────────────────────────────
         public ICommand UndoCommand { get; }
         public ICommand RedoCommand { get; }
-        public ICommand SaveCommand { get; }
         public ICommand<WidgetType> AddWidgetCommand { get; }
         public ICommand RemoveWidgetCommand { get; }
         public ICommand SaveSheetCommand { get; }
+        public ICommand ImportCommand { get; }
+        public ICommand ExportCommand { get; }
 
-        public CharacterSheetEditorViewModel(SheetViewModelFactory factory, LoadUseCases load, SaveUseCases save)
+        public CharacterSheetEditorViewModel(SheetViewModelFactory factory, 
+            LoadUseCases load, 
+            SaveUseCases save,
+            ImportUseCase import,
+            ExportUseCases export)
         {
             _loadSheet = load;
             _saveSheet = save;
+            _import = import;
+            _export = export;
             _sheetFactory = factory;
 
             string lastSheetId = PlayerPrefs.GetString("LastOpenedSheetId", string.Empty);
@@ -65,6 +74,14 @@ namespace CharacterSheet.Presenter.ViewModel
             });
 
             SaveSheetCommand = new SimpleCommand<object>(_ => { SaveCurrentSheet(); });
+            ImportCommand = new SimpleCommand<object>(_ =>
+            {
+                var sheetId = _import.Execute();
+                if (string.IsNullOrEmpty(sheetId)) return;
+                var sheet = _loadSheet.Execute(sheetId);
+                LoadSheet(_sheetFactory.Create(sheet));
+            });
+            ExportCommand = new SimpleCommand<object>(_ => { _export.Execute(_currentSheet.Id); });
         }
 
         private void SaveCurrentSheet()
@@ -72,15 +89,15 @@ namespace CharacterSheet.Presenter.ViewModel
             if (CurrentSheet == null) return;
 
             _saveSheet.Execute(CurrentSheet.RuntimeSheet);
-
-            PlayerPrefs.SetString("LastOpenedSheetId", CurrentSheet.Id);
-            PlayerPrefs.Save();
         }
 
         private void LoadSheet(SheetViewModel sheet)
         {
             CurrentSheet?.Dispose();
             CurrentSheet = sheet;
+            
+            PlayerPrefs.SetString("LastOpenedSheetId", CurrentSheet.Id);
+            PlayerPrefs.Save();
 
             CurrentSheet.OnWidgetSelected += vm =>
             {
