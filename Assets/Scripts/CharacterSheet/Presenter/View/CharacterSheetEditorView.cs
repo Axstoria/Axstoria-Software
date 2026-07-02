@@ -18,6 +18,7 @@ namespace CharacterSheet.Presenter.View
 
         [Tooltip("Button")] [SerializeField] private Button saveButton;
         [SerializeField] private Button addPointGaugeWidgetButton;
+        [SerializeField] private Button addBarWidgetButton;
         [SerializeField] private Button addTextWidgetButton;
         [SerializeField] private Button addCounterWidgetButton;
         [SerializeField] private Button importButton;
@@ -89,6 +90,11 @@ namespace CharacterSheet.Presenter.View
                 .For(v => v.onClick)
                 .To(x => x.AddWidgetCommand)
                 .CommandParameter(WidgetType.PointGauge);
+            
+            bindingSet.Bind(addBarWidgetButton)
+                .For(v => v.onClick)
+                .To(x => x.AddWidgetCommand)
+                .CommandParameter(WidgetType.Bar);
 
             bindingSet.Bind(addTextWidgetButton)
                 .For(v => v.onClick)

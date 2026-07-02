@@ -6,6 +6,7 @@ using CharacterSheet.Presenter.ViewModel;
 using CharacterSheet.Presenter.ViewModel.Widgets;
 using Loxodon.Framework.Binding;
 using Loxodon.Framework.Views;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -31,6 +32,7 @@ namespace CharacterSheet.Presenter.View
         [Tooltip("Widgets Prefab")]
         [SerializeField] private Transform widgetContainer;
         [SerializeField] private GameObject pointGaugeWidgetPrefab;
+        [SerializeField] private GameObject barWidgetPrefab;
         [SerializeField] private GameObject textWidgetPrefab;
         [SerializeField] private GameObject counterWidgetPrefab;
 
@@ -106,6 +108,7 @@ namespace CharacterSheet.Presenter.View
             var widgetPrefab = vm switch
             {
                 PointGaugeViewModel => pointGaugeWidgetPrefab,
+                BarWidgetViewModel => barWidgetPrefab,
                 TextWidgetViewModel => textWidgetPrefab,
                 CounterWidgetViewModel => counterWidgetPrefab,
                 _ => null
