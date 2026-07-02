@@ -104,13 +104,17 @@ namespace CharacterSheet.Presenter.View
                 .For(v => v.onClick)
                 .To(x => x.SaveSheetCommand);
 
-            bindingSet.Bind(importButton)
-                .For(v => v.onClick)
-                .To(x => x.ImportCommand);
+            if (importButton != null) {
+                bindingSet.Bind(importButton)
+                    .For(v => v.onClick)
+                    .To(x => x.ImportCommand);
+            }
 
-            bindingSet.Bind(exportButton)
-                .For(v => v.onClick)
-                .To(x => x.ExportCommand);
+            if (exportButton != null) {
+                bindingSet.Bind(exportButton)
+                    .For(v => v.onClick)
+                    .To(x => x.ExportCommand);
+            }
 
             bindingSet.Build();
         }
