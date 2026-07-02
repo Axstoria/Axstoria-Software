@@ -100,9 +100,11 @@ namespace CharacterSheet.Presenter.View
                 .To(x => x.AddWidgetCommand)
                 .CommandParameter(WidgetType.Counter);
 
-            bindingSet.Bind(saveButton)
-                .For(v => v.onClick)
-                .To(x => x.SaveSheetCommand);
+            if (saveButton != null) {
+                bindingSet.Bind(saveButton)
+                    .For(v => v.onClick)
+                    .To(x => x.SaveSheetCommand);
+            }
 
             if (importButton != null) {
                 bindingSet.Bind(importButton)

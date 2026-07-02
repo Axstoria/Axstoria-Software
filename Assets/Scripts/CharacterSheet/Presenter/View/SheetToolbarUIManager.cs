@@ -15,6 +15,8 @@ namespace CharacterSheet.Presenter.View
         [SerializeField] private Button windowButton;
         [SerializeField] private Button toolsButton;
         [SerializeField] private Button helpButton;
+        [SerializeField] private SheetPanelsController panelsController;
+        [SerializeField] private Sprite checkmarkSprite;
 
         private const float MenuWidth       = 160f;
         private const float ItemHeight      = 20f;
@@ -56,8 +58,15 @@ namespace CharacterSheet.Presenter.View
                 ("Redo", () => Execute(_vm?.RedoCommand))
             });
 
-            Bind(windowButton, Array.Empty<(string, Action)>());
-            Bind(toolsButton,  Array.Empty<(string, Action)>());
+            Bind(windowButton, new (string, Action, Func<bool>)[]
+            {
+                ("Elements", () => { if (panelsController != null) panelsController.ToggleLeft(); },
+                             () => panelsController != null && panelsController.IsLeftPresent),
+                ("Details",  () => { if (panelsController != null) panelsController.ToggleRight(); },
+                             () => panelsController != null && panelsController.IsRightPresent)
+            });
+
+            Bind(toolsButton, Array.Empty<(string, Action)>());
 
             Bind(helpButton, new (string, Action)[]
             {
@@ -73,11 +82,19 @@ namespace CharacterSheet.Presenter.View
 
         private void Bind(Button button, (string Label, Action Callback)[] items)
         {
+            var withStatus = new (string, Action, Func<bool>)[items.Length];
+            for (int i = 0; i < items.Length; i++)
+                withStatus[i] = (items[i].Label, items[i].Callback, null);
+            Bind(button, withStatus);
+        }
+
+        private void Bind(Button button, (string Label, Action Callback, Func<bool> Status)[] items)
+        {
             if (button == null) return;
             button.onClick.AddListener(() => ToggleMenu(button, items));
         }
 
-        private void ToggleMenu(Button owner, (string Label, Action Callback)[] items)
+        private void ToggleMenu(Button owner, (string Label, Action Callback, Func<bool> Status)[] items)
         {
             bool wasOpen = _openMenuOwner == owner;
             CloseMenu();
@@ -85,7 +102,7 @@ namespace CharacterSheet.Presenter.View
             OpenMenu(owner, items);
         }
 
-        private void OpenMenu(Button owner, (string Label, Action Callback)[] items)
+        private void OpenMenu(Button owner, (string Label, Action Callback, Func<bool> Status)[] items)
         {
             _openMenuOwner = owner;
             _blocker = CreateBlocker();
@@ -125,7 +142,7 @@ namespace CharacterSheet.Presenter.View
             return go;
         }
 
-        private GameObject CreateMenuPanel(Button owner, (string Label, Action Callback)[] items)
+        private GameObject CreateMenuPanel(Button owner, (string Label, Action Callback, Func<bool> Status)[] items)
         {
             var go = new GameObject("ToolbarMenu", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
             var rt = (RectTransform)go.transform;
@@ -149,12 +166,12 @@ namespace CharacterSheet.Presenter.View
             bgGo.GetComponent<Image>().color = MenuBackgroundColor;
 
             for (int i = 0; i < items.Length; i++)
-                CreateMenuItem(rt, i, items[i].Label, items[i].Callback);
+                CreateMenuItem(rt, i, items[i].Label, items[i].Callback, items[i].Status);
 
             return go;
         }
 
-        private void CreateMenuItem(RectTransform parent, int index, string label, Action callback)
+        private void CreateMenuItem(RectTransform parent, int index, string label, Action callback, Func<bool> status)
         {
             var go = new GameObject(label, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
             var rt = (RectTransform)go.transform;
@@ -194,6 +211,23 @@ namespace CharacterSheet.Presenter.View
             text.color     = callback != null ? TextColor : DisabledTextColor;
             text.alignment = TextAlignmentOptions.MidlineLeft;
             text.text      = label;
+
+            if (status != null && status() && checkmarkSprite != null)
+            {
+                var checkGo = new GameObject("Check", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+                var checkRt = (RectTransform)checkGo.transform;
+                checkRt.SetParent(rt, false);
+                checkRt.anchorMin        = new Vector2(0f, 0.5f);
+                checkRt.anchorMax        = new Vector2(0f, 0.5f);
+                checkRt.pivot            = new Vector2(0f, 0.5f);
+                checkRt.anchoredPosition = new Vector2(5f, 0f);
+                checkRt.sizeDelta        = new Vector2(12f, 12f);
+
+                var checkImage = checkGo.GetComponent<Image>();
+                checkImage.sprite        = checkmarkSprite;
+                checkImage.color         = TextColor;
+                checkImage.raycastTarget = false;
+            }
 
             if (callback != null)
             {
