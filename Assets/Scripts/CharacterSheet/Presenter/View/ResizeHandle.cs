@@ -23,35 +23,76 @@ namespace CharacterSheet.Presenter.View
 
         private Canvas _canvas;
         private WidgetView _view;
+        private RectTransform _bounds;
+        private readonly Vector3[] _boundsCorners = new Vector3[4];
+
+        private Vector2 _startPointerLocal;
+        private Vector2 _startSize;
+        private Vector2 _startPos;
 
         private void Awake()
         {
             _canvas = GetComponentInParent<Canvas>();
             _view = GetComponentInParent<WidgetView>();
+
+            var sheet = GetComponentInParent<SheetView>();
+            _bounds = sheet != null ? sheet.WidgetArea : null;
         }
 
         public void OnBeginDrag(PointerEventData eventData)
         {
             eventData.Use();
+
+            var parent = targetRectTransform != null ? targetRectTransform.parent as RectTransform : null;
+            if (parent == null) return;
+
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                parent, eventData.position, eventData.pressEventCamera, out _startPointerLocal);
+            _startSize = targetRectTransform.sizeDelta;
+            _startPos = targetRectTransform.anchoredPosition;
         }
 
         public void OnDrag(PointerEventData eventData)
         {
             if (_canvas == null || targetRectTransform == null) return;
 
-            Vector2 mouseDelta = eventData.delta / _canvas.scaleFactor;
+            var parent = targetRectTransform.parent as RectTransform;
+            if (parent == null) return;
 
-            Vector2 sizeDelta = targetRectTransform.sizeDelta;
-            Vector2 currentPos = targetRectTransform.anchoredPosition;
+            if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                    parent, eventData.position, eventData.pressEventCamera, out Vector2 pointerLocal))
+                return;
 
-            float deltaWidth = mouseDelta.x * direction.x;
-            float deltaHeight = mouseDelta.y * direction.y;
+            Vector2 totalDelta = pointerLocal - _startPointerLocal;
 
-            float newWidth = Mathf.Max(minWidth, sizeDelta.x + deltaWidth);
-            float newHeight = Mathf.Max(minHeight, sizeDelta.y + deltaHeight);
+            float deltaWidth = totalDelta.x * direction.x;
+            float deltaHeight = totalDelta.y * direction.y;
 
-            float actualDeltaWidth = newWidth - sizeDelta.x;
-            float actualDeltaHeight = newHeight - sizeDelta.y;
+            Rect parentRect = parent.rect;
+            Rect limits = parentRect;
+            if (_bounds != null) {
+                _bounds.GetWorldCorners(_boundsCorners);
+                Vector2 bMin = parent.InverseTransformPoint(_boundsCorners[0]);
+                Vector2 bMax = parent.InverseTransformPoint(_boundsCorners[2]);
+                limits = Rect.MinMaxRect(bMin.x, bMin.y, bMax.x, bMax.y);
+            }
+
+            Vector2 anchor = new Vector2(
+                parentRect.xMin + parentRect.width  * (targetRectTransform.anchorMin.x + targetRectTransform.anchorMax.x) * 0.5f,
+                parentRect.yMin + parentRect.height * (targetRectTransform.anchorMin.y + targetRectTransform.anchorMax.y) * 0.5f);
+            Vector2 min = anchor + _startPos - Vector2.Scale(targetRectTransform.pivot, _startSize);
+            Vector2 max = min + _startSize;
+
+            if (direction.x > 0)      deltaWidth  = Mathf.Min(deltaWidth,  limits.xMax - max.x);
+            else if (direction.x < 0) deltaWidth  = Mathf.Min(deltaWidth,  min.x - limits.xMin);
+            if (direction.y > 0)      deltaHeight = Mathf.Min(deltaHeight, limits.yMax - max.y);
+            else if (direction.y < 0) deltaHeight = Mathf.Min(deltaHeight, min.y - limits.yMin);
+
+            float newWidth = Mathf.Max(minWidth, _startSize.x + deltaWidth);
+            float newHeight = Mathf.Max(minHeight, _startSize.y + deltaHeight);
+
+            float actualDeltaWidth = newWidth - _startSize.x;
+            float actualDeltaHeight = newHeight - _startSize.y;
 
             targetRectTransform.sizeDelta = new Vector2(newWidth, newHeight);
 
@@ -59,8 +100,8 @@ namespace CharacterSheet.Presenter.View
             float posYOffset = (direction.y > 0) ? actualDeltaHeight : 0;
 
             targetRectTransform.anchoredPosition = new Vector2(
-                currentPos.x + posXOffset,
-                currentPos.y + posYOffset
+                _startPos.x + posXOffset,
+                _startPos.y + posYOffset
             );
         }
 

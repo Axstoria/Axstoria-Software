@@ -45,7 +45,6 @@ namespace CharacterSheet.Presenter.View
 
             Bind(fileButton, new (string, Action)[]
             {
-                ("Save",              () => Execute(_vm?.SaveSheetCommand)),
                 ("Import Sheet",      () => Execute(_vm?.ImportCommand)),
                 ("Export Sheet",      () => Execute(_vm?.ExportCommand)),
                 ("Import Background", () => Execute(_vm?.CurrentSheet?.SelectBackgroundCommand))

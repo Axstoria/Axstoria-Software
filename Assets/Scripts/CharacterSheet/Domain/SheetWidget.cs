@@ -46,7 +46,7 @@ namespace CharacterSheet.Domain
             }
         }
 
-        private float _borderThickness = 4F;
+        private float _borderThickness = 2F;
 
         public float BorderThickness
         {

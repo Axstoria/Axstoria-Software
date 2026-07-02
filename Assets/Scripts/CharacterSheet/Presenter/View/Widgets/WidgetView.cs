@@ -9,12 +9,14 @@ using UnityEngine.UI;
 
 namespace CharacterSheet.Presenter.View.Widgets
 {
-    public abstract class WidgetView : UIView, IPointerClickHandler
+    public abstract class WidgetView : UIView, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
     {
         [SerializeField] private Image background;
         [SerializeField] private Image border;
         [SerializeField] private RectTransform backgroundOffset;
         [SerializeField] private GameObject selectionBorder;
+        [SerializeField] private GameObject hoverBorder;
+        [SerializeField] private GameObject handles;
 
         [SerializeField] private Transform content;
         [SerializeField] private GameObject statContainerPrefab;
@@ -88,6 +90,9 @@ namespace CharacterSheet.Presenter.View.Widgets
 
             bindingSet.Bind(selectionBorder).For(v => v.activeSelf).To(vm => vm.IsSelected);
 
+            if (handles != null)
+                bindingSet.Bind(handles).For(v => v.activeSelf).To(vm => vm.IsSelected);
+
             bindingSet.Build();
 
             _vm.Items.CollectionChanged += OnStatCollectionChanged;
@@ -147,7 +152,20 @@ namespace CharacterSheet.Presenter.View.Widgets
         {
             if (eventData.button == PointerEventData.InputButton.Left) {
                 _vm.Select();
+                if (hoverBorder != null) hoverBorder.SetActive(false);
             }
+        }
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            if (hoverBorder != null && _vm != null && !_vm.IsSelected)
+                hoverBorder.SetActive(true);
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            if (hoverBorder != null)
+                hoverBorder.SetActive(false);
         }
     }
 }

@@ -37,6 +37,10 @@ namespace CharacterSheet.Presenter.View
         private SheetViewModel _vm;
         private readonly Dictionary<string, WidgetView> _widgets = new Dictionary<string, WidgetView>();
 
+        public RectTransform WidgetArea => background != null ? background.rectTransform : null;
+
+        private readonly Vector3[] _areaCorners = new Vector3[4];
+
         public float BorderThickness
         {
             get
@@ -94,11 +98,39 @@ namespace CharacterSheet.Presenter.View
         private void OnWidgetsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
-                foreach (WidgetViewModel vm in e.NewItems)
+                foreach (WidgetViewModel vm in e.NewItems) {
                     SpawnWidgetView(vm);
+                    CenterWidget(vm);
+                }
             if (e.OldItems != null)
                 foreach (WidgetViewModel vm in e.OldItems)
                     DestroyWidgetViews(vm.Id);
+        }
+
+        private void CenterWidget(WidgetViewModel vm)
+        {
+            var area = WidgetArea;
+            var container = widgetContainer as RectTransform;
+            if (area == null || container == null) return;
+            if (!_widgets.TryGetValue(vm.Id, out WidgetView view)) return;
+
+            var rt = (RectTransform)view.transform;
+            area.GetWorldCorners(_areaCorners);
+            Vector2 areaMin = container.InverseTransformPoint(_areaCorners[0]);
+            Vector2 areaMax = container.InverseTransformPoint(_areaCorners[2]);
+
+            Rect containerRect = container.rect;
+            Vector2 anchor = new Vector2(
+                containerRect.xMin + containerRect.width  * (rt.anchorMin.x + rt.anchorMax.x) * 0.5f,
+                containerRect.yMin + containerRect.height * (rt.anchorMin.y + rt.anchorMax.y) * 0.5f);
+
+            Vector2 size = vm.Layout.size;
+            Vector2 minPos = (areaMin + areaMax) * 0.5f - size * 0.5f;
+            Vector2 anchoredPos = minPos + Vector2.Scale(rt.pivot, size) - anchor;
+
+            var centered = new Rect(anchoredPos, size);
+            if (vm.UpdateLayoutCommand.CanExecute(centered))
+                vm.UpdateLayoutCommand.Execute(centered);
         }
 
         private void SpawnWidgetView(WidgetViewModel vm)
