@@ -149,6 +149,7 @@ GameObject:
   - component: {fileID: 3640655128887042446}
   - component: {fileID: 8129106000241493325}
   - component: {fileID: 3200118630775709065}
+  - component: {fileID: 5360000003}
   m_Layer: 0
   m_Name: SheetView
   m_TagString: Untagged
@@ -216,6 +217,7 @@ MonoBehaviour:
   importImage: {fileID: 8458200020520275232}
   widgetContainer: {fileID: 8620503938146341756}
   pointGaugeWidgetPrefab: {fileID: 878651292198826942, guid: 32778071e8e34e8d0bea26f6e5fb1eb2, type: 3}
+  barWidgetPrefab: {fileID: 878651292198826942, guid: 1b217a4c9743da923b8a6e7547c3b587, type: 3}
   textWidgetPrefab: {fileID: 878651292198826942, guid: 074ba326f9b049db7a8a461f7ed9900a, type: 3}
   counterWidgetPrefab: {fileID: 878651292198826942, guid: 04741d5c9bf2c6ad981516127c824908, type: 3}
 --- !u!114 &3200118630775709065
@@ -603,3 +605,15 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &5360000003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 427290070764095152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71045c0ab1514ecaaaed9054b725d69e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterSheet.Presenter.View.SheetPixelSnap

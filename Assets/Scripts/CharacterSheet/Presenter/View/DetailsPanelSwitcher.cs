@@ -13,6 +13,7 @@ namespace CharacterSheet.Presenter.View
         [SerializeField] private GameObject textBlock;
         [SerializeField] private GameObject counterBlock;
         [SerializeField] private GameObject pointGaugeBlock;
+        [SerializeField] private GameObject barBlock;
 
         private CharacterSheetEditorViewModel _vm;
 
@@ -40,6 +41,7 @@ namespace CharacterSheet.Presenter.View
             if (textBlock != null) textBlock.SetActive(widget is TextWidgetViewModel);
             if (counterBlock != null) counterBlock.SetActive(widget is CounterWidgetViewModel);
             if (pointGaugeBlock != null) pointGaugeBlock.SetActive(widget is PointGaugeViewModel);
+            if (barBlock != null) barBlock.SetActive(widget is BarWidgetViewModel);
         }
 
         private void OnDestroy()

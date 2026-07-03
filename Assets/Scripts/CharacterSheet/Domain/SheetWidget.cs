@@ -97,7 +97,7 @@ namespace CharacterSheet.Domain
             }
         }
         
-        private string _title = "Title";
+        private string _title = "";
 
         public string Title
         {

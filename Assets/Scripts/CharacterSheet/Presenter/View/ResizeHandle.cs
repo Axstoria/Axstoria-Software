@@ -88,8 +88,8 @@ namespace CharacterSheet.Presenter.View
             if (direction.y > 0)      deltaHeight = Mathf.Min(deltaHeight, limits.yMax - max.y);
             else if (direction.y < 0) deltaHeight = Mathf.Min(deltaHeight, min.y - limits.yMin);
 
-            float newWidth = Mathf.Max(minWidth, _startSize.x + deltaWidth);
-            float newHeight = Mathf.Max(minHeight, _startSize.y + deltaHeight);
+            float newWidth = Mathf.Floor(Mathf.Max(minWidth, _startSize.x + deltaWidth));
+            float newHeight = Mathf.Floor(Mathf.Max(minHeight, _startSize.y + deltaHeight));
 
             float actualDeltaWidth = newWidth - _startSize.x;
             float actualDeltaHeight = newHeight - _startSize.y;
@@ -103,6 +103,7 @@ namespace CharacterSheet.Presenter.View
                 _startPos.x + posXOffset,
                 _startPos.y + posYOffset
             );
+            PixelSnap.SnapRect(targetRectTransform);
         }
 
         public void OnEndDrag(PointerEventData eventData)

@@ -2,33 +2,38 @@ using System.Collections.Specialized;
 using System.Linq;
 using CharacterSheet.App.UseCase;
 using CharacterSheet.Domain.Widgets;
-using Loxodon.Framework.Observables;
 using UnityEngine;
 
 namespace CharacterSheet.Presenter.ViewModel.Widgets
 {
-    public class CounterWidgetViewModel : WidgetViewModel
+    public class BarWidgetViewModel : WidgetViewModel
     {
-        private readonly CounterWidget _counter;
+        private readonly BarWidget _bar;
 
-        public CounterWidgetViewModel(CounterWidget widget, 
+        public BarWidgetViewModel(BarWidget widget,
             BindStatToWidgetUseCase bindStatToWidgetUseCase,
-            UpdateAppearanceUseCase appearance, 
-            UpdateBackgroundUseCase background,
+            UpdateAppearanceUseCase appearance,
+            UpdateBackgroundUseCase  background,
             UpdateWidgetLayoutUseCase updateLayout, 
             UpdateWidgetTitleUseCase updateTitle,
-            GetStatUseCase getStat) : base(widget, bindStatToWidgetUseCase, appearance, background, updateLayout, updateTitle, getStat)
+            GetStatUseCase getStat) 
+            : base(widget, bindStatToWidgetUseCase, appearance, background, updateLayout, updateTitle, getStat)
         {
-            _counter = widget;
+            _bar = widget;
             BoundStats.CollectionChanged += OnBoundStatsChanged;
         }
 
+        protected override void HandleContentChanged()
+        {
+            
+        }
+        
         private void OnBoundStatsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action) {
                 case NotifyCollectionChangedAction.Add:
                     foreach (BoundStatViewModel newStat in e.NewItems) {
-                        Items.Add(new CounterItemViewModel(newStat));
+                        Items.Add(new ProgressionBarViewModel(newStat));
                     }
 
                     break;
@@ -48,26 +53,21 @@ namespace CharacterSheet.Presenter.ViewModel.Widgets
                     break;
             }
         }
-
-        protected override void HandleContentChanged()
-        {
-            throw new System.NotImplementedException();
-        }
         
-        public class CounterItemViewModel : WidgetItemViewModel
+        public class ProgressionBarViewModel : WidgetItemViewModel
         {
-            
-            public string FormattedText 
+            public float Fill { get; private set; }
+            public ProgressionBarViewModel(BoundStatViewModel boundStat) : base(boundStat)
             {
-                get => BaseStat.MaxValue > 0
-                    ? $"<b>{BaseStat.DisplayName}</b> : <color=#555555>{BaseStat.CurrentValue} / {BaseStat.MaxValue}</color>"
-                    : $"<b>{BaseStat.DisplayName}</b> : <color=#555555>{BaseStat.CurrentValue}</color>";
+                UpdateFillAmount();
+                BaseStat.PropertyChanged += (s, e) => UpdateFillAmount();
             }
-
-            public Color TextColor => BaseStat.Color; 
-
-            public CounterItemViewModel(BoundStatViewModel boundStat) : base(boundStat)
+            
+            private void UpdateFillAmount()
             {
+                float calculatedFill = (float)BaseStat.CurrentValue / (float)BaseStat.MaxValue;
+                Fill = Mathf.Clamp01(calculatedFill);
+                RaisePropertyChanged(nameof(Fill));
             }
         }
     }

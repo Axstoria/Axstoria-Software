@@ -10,6 +10,9 @@ namespace CharacterSheet.Presenter.View.Widgets.PointGaugeWidget
 {
     public class PointsContainerView : IStatContainerView
     {
+        private static readonly Color FilledColor = new Color32(50, 50, 50, 255);
+        private static readonly Color EmptyColor = new Color32(225, 225, 225, 255);
+
         [SerializeField] private GameObject iconPrefab;
         [SerializeField] private Sprite fullIconSprite;
         [SerializeField] private Sprite emptyIconSprite;
@@ -42,10 +45,10 @@ namespace CharacterSheet.Presenter.View.Widgets.PointGaugeWidget
                 
                 if (state == 1) {
                     _icons[i].sprite = fullIconSprite;
-                    _icons[i].color = Color.white;
+                    _icons[i].color = FilledColor;
                 } else {
-                    _icons[i].sprite = emptyIconSprite; 
-                    _icons[i].color = new Color(1, 1, 1, 0.5f);
+                    _icons[i].sprite = fullIconSprite;
+                    _icons[i].color = EmptyColor;
                 }
             }
         }

@@ -11,7 +11,6 @@ namespace CharacterSheet.Domain.Widgets
     public class BarWidget :  SheetWidget
     {
         //public Direction dir = Direction.Horizontal;
-        public bool ShowValue { get; set; } = true;
         public int Segments { get; set; }
         public bool StackBars { get; set; } = true;
     }

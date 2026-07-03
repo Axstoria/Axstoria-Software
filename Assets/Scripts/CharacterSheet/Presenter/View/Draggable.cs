@@ -49,6 +49,7 @@ namespace CharacterSheet.Presenter.View
 
             Vector2 desired = _startPos + (pointerLocal - _startPointerLocal);
             _rectTransform.anchoredPosition = ClampToParent(desired);
+            PixelSnap.SnapRect(_rectTransform);
         }
 
         private Vector2 ClampToParent(Vector2 anchoredPos)

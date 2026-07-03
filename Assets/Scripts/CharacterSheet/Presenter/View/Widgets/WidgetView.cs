@@ -36,9 +36,11 @@ namespace CharacterSheet.Presenter.View.Widgets
             set
             {
                 if (backgroundOffset == null) return;
-                int t = Mathf.RoundToInt(value);
-                backgroundOffset.offsetMin = new Vector2(t, t);
-                backgroundOffset.offsetMax = new Vector2(-t, -t);
+                Vector3 scale = backgroundOffset.lossyScale;
+                float tx = PixelSnap.SnapLength(Mathf.RoundToInt(value), scale.x);
+                float ty = PixelSnap.SnapLength(Mathf.RoundToInt(value), scale.y);
+                backgroundOffset.offsetMin = new Vector2(tx, ty);
+                backgroundOffset.offsetMax = new Vector2(-tx, -ty);
             }
         }
 
@@ -50,6 +52,7 @@ namespace CharacterSheet.Presenter.View.Widgets
                 if (RectTransform == null) return;
                 RectTransform.anchoredPosition = value.position;
                 RectTransform.sizeDelta = value.size;
+                PixelSnap.SnapRect(RectTransform);
             }
         }
 

@@ -70,7 +70,7 @@ namespace CharacterSheet.Presenter.ViewModel
             {
                 if (_selectedWidget == null) return;
                 _currentSheet?.RemoveWidgetCommand.Execute(_selectedWidget.Id);
-                _selectedWidget = null;
+                SelectedWidget = null;
             });
 
             SaveSheetCommand = new SimpleCommand<object>(_ => { SaveCurrentSheet(); });
