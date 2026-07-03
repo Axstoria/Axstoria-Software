@@ -1,9 +1,11 @@
 using System;
+using App.Domain;
 using CharacterSheet.Presenter.ViewModel;
 using Loxodon.Framework.Commands;
 using Loxodon.Framework.Contexts;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace CharacterSheet.Presenter.View
@@ -23,6 +25,8 @@ namespace CharacterSheet.Presenter.View
         private const float MenuPadding     = 4f;
         private const float MenuBorderWidth = 1f;
         private const float ItemTextIndent  = 22f;
+        private const float SeparatorHeight = 7f;
+        private const string Separator      = "-";
 
         private static readonly Color MenuBackgroundColor = new Color32(220, 220, 220, 255);
         private static readonly Color MenuBorderColor     = new Color32(190, 190, 190, 255);
@@ -47,6 +51,9 @@ namespace CharacterSheet.Presenter.View
 
             Bind(fileButton, new (string, Action)[]
             {
+                ("Switch to Map Editor", () => NavigateTo(SceneNames.BuildMenu)),
+                ("Back to Menu",      () => NavigateTo(SceneNames.EditionMenu)),
+                (Separator,           null),
                 ("Import Sheet",      () => Execute(_vm?.ImportCommand)),
                 ("Export Sheet",      () => Execute(_vm?.ExportCommand))
             });
@@ -77,6 +84,14 @@ namespace CharacterSheet.Presenter.View
         {
             if (command != null && command.CanExecute(null))
                 command.Execute(null);
+        }
+
+        private void NavigateTo(string sceneName)
+        {
+            Execute(_vm?.SaveSheetCommand);
+            var navigation = Context.GetApplicationContext().GetContainer().Resolve<INavigationService>();
+            if (navigation != null) navigation.LoadScene(sceneName);
+            else SceneManager.LoadScene(sceneName);
         }
 
         private void Bind(Button button, (string Label, Action Callback)[] items)
@@ -147,7 +162,6 @@ namespace CharacterSheet.Presenter.View
             var rt = (RectTransform)go.transform;
             rt.SetParent(_canvas.transform, false);
             rt.pivot     = new Vector2(0f, 1f);
-            rt.sizeDelta = new Vector2(MenuWidth, items.Length * ItemHeight + (MenuPadding + MenuBorderWidth) * 2f);
 
             var corners = new Vector3[4];
             ((RectTransform)owner.transform).GetWorldCorners(corners);
@@ -164,13 +178,42 @@ namespace CharacterSheet.Presenter.View
             bgRt.offsetMax = new Vector2(-MenuBorderWidth, -MenuBorderWidth);
             bgGo.GetComponent<Image>().color = MenuBackgroundColor;
 
-            for (int i = 0; i < items.Length; i++)
-                CreateMenuItem(rt, i, items[i].Label, items[i].Callback, items[i].Status);
+            float y = MenuBorderWidth + MenuPadding;
+            foreach (var item in items) {
+                if (item.Label == Separator) {
+                    CreateSeparator(rt, y);
+                    y += SeparatorHeight;
+                }
+                else {
+                    CreateMenuItem(rt, y, item.Label, item.Callback, item.Status);
+                    y += ItemHeight;
+                }
+            }
+            rt.sizeDelta = new Vector2(MenuWidth, y + MenuPadding + MenuBorderWidth);
 
             return go;
         }
 
-        private void CreateMenuItem(RectTransform parent, int index, string label, Action callback, Func<bool> status)
+        private void CreateSeparator(RectTransform parent, float yOffset)
+        {
+            var go = new GameObject("Separator", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            var rt = (RectTransform)go.transform;
+            rt.SetParent(parent, false);
+            rt.anchorMin = new Vector2(0f, 1f);
+            rt.anchorMax = new Vector2(1f, 1f);
+            rt.pivot     = new Vector2(0.5f, 1f);
+            rt.offsetMin = new Vector2(MenuBorderWidth + 6f, 0f);
+            rt.offsetMax = new Vector2(-MenuBorderWidth - 6f, 0f);
+            rt.sizeDelta = new Vector2(rt.sizeDelta.x, 1f);
+            rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, -yOffset - (SeparatorHeight - 1f) * 0.5f);
+
+            var image = go.GetComponent<Image>();
+            image.color = MenuBorderColor;
+            image.raycastTarget = false;
+            PixelSnap.SnapRect(rt);
+        }
+
+        private void CreateMenuItem(RectTransform parent, float yOffset, string label, Action callback, Func<bool> status)
         {
             var go = new GameObject(label, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
             var rt = (RectTransform)go.transform;
@@ -181,7 +224,7 @@ namespace CharacterSheet.Presenter.View
             rt.offsetMin = new Vector2(MenuBorderWidth, 0f);
             rt.offsetMax = new Vector2(-MenuBorderWidth, 0f);
             rt.sizeDelta = new Vector2(rt.sizeDelta.x, ItemHeight);
-            rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, -MenuBorderWidth - MenuPadding - index * ItemHeight);
+            rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, -yOffset);
 
             var image = go.GetComponent<Image>();
             image.color = Color.white;
