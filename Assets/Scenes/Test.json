@@ -1,0 +1,38 @@
+{
+    "version": "0.1",
+    "savedAt": "2026-05-12T00:08:14.8009961Z",
+    "mapId": "2069a6a1-2692-44e2-b5c0-d4509b95f7fa",
+    "mapName": "Default Map",
+    "terrain": {
+        "width": 20,
+        "depth": 20,
+        "thickness": 3,
+        "height": 0.0,
+        "colorR": 0.6000000238418579,
+        "colorG": 0.4000000059604645,
+        "colorB": 0.20000000298023225,
+        "colorA": 1.0,
+        "cellSize": 1.0,
+        "surfaceY": 0.0
+    },
+    "objects": [
+        {
+            "id": "bad84524-67bb-4198-8678-2a841d6e8f92",
+            "displayName": "Test1",
+            "category": "Terrain",
+            "modelPath": "",
+            "isImported": false,
+            "importPath": "",
+            "posX": 1.5,
+            "posY": 0.0,
+            "posZ": 2.5,
+            "rotX": 0.0,
+            "rotY": 0.0,
+            "rotZ": 0.0,
+            "rotW": 1.0,
+            "scaleX": 1.0,
+            "scaleY": 1.0,
+            "scaleZ": 1.0
+        }
+    ]
+}

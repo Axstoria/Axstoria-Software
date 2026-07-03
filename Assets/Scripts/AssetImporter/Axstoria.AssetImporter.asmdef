@@ -1,0 +1,21 @@
+{
+    "name": "Axstoria.AssetImporter",
+    "rootNamespace": "AssetImporter",
+    "references": [
+        "Axstoria.Shared.Domain",
+        "Axstoria.Shared.App",
+        "Axstoria.SceneEditor.Domain",
+        "Axstoria.SceneEditor.App",
+        "Axstoria.MapEditor.Domain",
+        "glTFast"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

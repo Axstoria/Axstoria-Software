@@ -1,0 +1,17 @@
+{
+    "name": "Axstoria.Shared.Infrastructure",
+    "rootNamespace": "Shared.Infrastructure",
+    "references": [
+        "Axstoria.Shared.App",
+        "StandaloneFileBrowser"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

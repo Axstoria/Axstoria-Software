@@ -1,0 +1,20 @@
+{
+    "name": "Axstoria.Campaign",
+    "rootNamespace": "Campaign",
+    "references": [
+        "Axstoria.Shared.Domain",
+        "Axstoria.Shared.App",
+        "Axstoria.SceneEditor.Domain",
+        "Axstoria.Grid.Domain",
+        "Axstoria.MapEditor.Domain"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
