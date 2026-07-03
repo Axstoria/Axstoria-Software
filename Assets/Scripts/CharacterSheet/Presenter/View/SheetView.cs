@@ -41,25 +41,39 @@ namespace CharacterSheet.Presenter.View
 
         private readonly Vector3[] _areaCorners = new Vector3[4];
 
+        private float _borderThickness;
+
         public float BorderThickness
         {
-            get
-            {
-                if (borderLayoutGroup == null) return 0f;
-                return borderLayoutGroup.padding.left;
-            }
+            get => _borderThickness;
             set
             {
-                if (borderLayoutGroup == null) return;
-                int t = Mathf.RoundToInt(value);
-                borderLayoutGroup.padding.left = t;
-                borderLayoutGroup.padding.right = t;
-                borderLayoutGroup.padding.top = t;
-                borderLayoutGroup.padding.bottom = t;
-
-                borderLayoutGroup.SetLayoutHorizontal();
-                borderLayoutGroup.SetLayoutVertical();
+                _borderThickness = value;
+                ApplyBorderPadding();
             }
+        }
+
+        public bool HasBorder
+        {
+            get => border != null && border.enabled;
+            set
+            {
+                if (border != null) border.enabled = value;
+                ApplyBorderPadding();
+            }
+        }
+
+        private void ApplyBorderPadding()
+        {
+            if (borderLayoutGroup == null) return;
+            int t = HasBorder ? Mathf.RoundToInt(_borderThickness) : 0;
+            borderLayoutGroup.padding.left = t;
+            borderLayoutGroup.padding.right = t;
+            borderLayoutGroup.padding.top = t;
+            borderLayoutGroup.padding.bottom = t;
+
+            borderLayoutGroup.SetLayoutHorizontal();
+            borderLayoutGroup.SetLayoutVertical();
         }
 
         public void Initialize(SheetViewModel viewModel)
@@ -70,7 +84,7 @@ namespace CharacterSheet.Presenter.View
 
             bindingSet.Bind(background).For(v => v.color)
                 .To(vm => vm.BackgroundColor);
-            bindingSet.Bind(border).For(v => v.enabled)
+            bindingSet.Bind(this).For(v => v.HasBorder)
                 .To(vm => vm.HasBorder);
 
             bindingSet.Bind(border)
@@ -101,6 +115,7 @@ namespace CharacterSheet.Presenter.View
                 foreach (WidgetViewModel vm in e.NewItems) {
                     SpawnWidgetView(vm);
                     CenterWidget(vm);
+                    vm.Select();
                 }
             if (e.OldItems != null)
                 foreach (WidgetViewModel vm in e.OldItems)
@@ -165,9 +180,14 @@ namespace CharacterSheet.Presenter.View
             base.OnDestroy();
         }
 
-        public void OnPointerClick(PointerEventData eventData)
+        public void ClearSelection()
         {
             _vm?.ClearSelection();
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            ClearSelection();
         }
     }
 }

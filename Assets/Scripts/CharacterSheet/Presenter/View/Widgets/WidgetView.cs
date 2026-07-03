@@ -154,6 +154,10 @@ namespace CharacterSheet.Presenter.View.Widgets
                 _vm.Select();
                 if (hoverBorder != null) hoverBorder.SetActive(false);
             }
+            else if (eventData.button == PointerEventData.InputButton.Right) {
+                var sheetView = GetComponentInParent<SheetView>();
+                if (sheetView != null) sheetView.ClearSelection();
+            }
         }
 
         public void OnPointerEnter(PointerEventData eventData)

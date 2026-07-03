@@ -48,8 +48,7 @@ namespace CharacterSheet.Presenter.View
             Bind(fileButton, new (string, Action)[]
             {
                 ("Import Sheet",      () => Execute(_vm?.ImportCommand)),
-                ("Export Sheet",      () => Execute(_vm?.ExportCommand)),
-                ("Import Background", () => Execute(_vm?.CurrentSheet?.SelectBackgroundCommand))
+                ("Export Sheet",      () => Execute(_vm?.ExportCommand))
             });
 
             Bind(editButton, new (string, Action)[]
