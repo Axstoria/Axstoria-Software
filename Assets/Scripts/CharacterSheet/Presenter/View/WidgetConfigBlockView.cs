@@ -13,12 +13,8 @@ namespace CharacterSheet.Presenter.View
         [SerializeField] private TMP_InputField titleField;
         [SerializeField] private Toggle borderToggle;
         [SerializeField] private Slider thicknessSlider;
-        [SerializeField] private Slider borderColorR;
-        [SerializeField] private Slider borderColorG;
-        [SerializeField] private Slider borderColorB;
-        [SerializeField] private Slider backgroundColorR;
-        [SerializeField] private Slider backgroundColorG;
-        [SerializeField] private Slider backgroundColorB;
+        [SerializeField] private ColorSwatchField borderColorSwatch;
+        [SerializeField] private ColorSwatchField backgroundColorSwatch;
 
         private CharacterSheetEditorViewModel _vm;
         private WidgetViewModel _widget;
@@ -33,12 +29,8 @@ namespace CharacterSheet.Presenter.View
             titleField.onEndEdit.AddListener(v => _widget?.UpdateTitleCommand.Execute(v));
             borderToggle.onValueChanged.AddListener(v => SendAppearance(new AppearanceDTO { HasBorder = v }));
             thicknessSlider.onValueChanged.AddListener(v => SendAppearance(new AppearanceDTO { BorderThickness = v }));
-            borderColorR.onValueChanged.AddListener(_ => SendBorderColor());
-            borderColorG.onValueChanged.AddListener(_ => SendBorderColor());
-            borderColorB.onValueChanged.AddListener(_ => SendBorderColor());
-            backgroundColorR.onValueChanged.AddListener(_ => SendBackgroundColor());
-            backgroundColorG.onValueChanged.AddListener(_ => SendBackgroundColor());
-            backgroundColorB.onValueChanged.AddListener(_ => SendBackgroundColor());
+            borderColorSwatch.ValueChanged += SendBorderColor;
+            backgroundColorSwatch.ValueChanged += SendBackgroundColor;
 
             Bind(_vm.SelectedWidget);
         }
@@ -68,12 +60,8 @@ namespace CharacterSheet.Presenter.View
             titleField.SetTextWithoutNotify(_widget.Title);
             borderToggle.SetIsOnWithoutNotify(_widget.HasBorder);
             thicknessSlider.SetValueWithoutNotify(_widget.BorderThickness);
-            borderColorR.SetValueWithoutNotify(_widget.BorderColor.r);
-            borderColorG.SetValueWithoutNotify(_widget.BorderColor.g);
-            borderColorB.SetValueWithoutNotify(_widget.BorderColor.b);
-            backgroundColorR.SetValueWithoutNotify(_widget.BackgroundColor.r);
-            backgroundColorG.SetValueWithoutNotify(_widget.BackgroundColor.g);
-            backgroundColorB.SetValueWithoutNotify(_widget.BackgroundColor.b);
+            borderColorSwatch.SetColorWithoutNotify(_widget.BorderColor);
+            backgroundColorSwatch.SetColorWithoutNotify(_widget.BackgroundColor);
         }
 
         private void SendAppearance(AppearanceDTO dto)
@@ -81,18 +69,16 @@ namespace CharacterSheet.Presenter.View
             _widget?.UpdateAppearanceCommand.Execute(dto);
         }
 
-        private void SendBorderColor()
+        private void SendBorderColor(Color color)
         {
             if (_widget == null) return;
-            var color = new Color(borderColorR.value, borderColorG.value, borderColorB.value, _widget.BorderColor.a);
-            SendAppearance(new AppearanceDTO { BorderColor = color });
+            SendAppearance(new AppearanceDTO { BorderColor = new Color(color.r, color.g, color.b, _widget.BorderColor.a) });
         }
 
-        private void SendBackgroundColor()
+        private void SendBackgroundColor(Color color)
         {
             if (_widget == null) return;
-            var color = new Color(backgroundColorR.value, backgroundColorG.value, backgroundColorB.value, _widget.BackgroundColor.a);
-            SendAppearance(new AppearanceDTO { BackgroundColor = color });
+            SendAppearance(new AppearanceDTO { BackgroundColor = new Color(color.r, color.g, color.b, _widget.BackgroundColor.a) });
         }
 
         private void OnDestroy()

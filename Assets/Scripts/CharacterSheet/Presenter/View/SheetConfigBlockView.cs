@@ -13,12 +13,8 @@ namespace CharacterSheet.Presenter.View
     {
         [SerializeField] private Toggle borderToggle;
         [SerializeField] private Slider thicknessSlider;
-        [SerializeField] private Slider borderColorR;
-        [SerializeField] private Slider borderColorG;
-        [SerializeField] private Slider borderColorB;
-        [SerializeField] private Slider backgroundColorR;
-        [SerializeField] private Slider backgroundColorG;
-        [SerializeField] private Slider backgroundColorB;
+        [SerializeField] private ColorSwatchField borderColorSwatch;
+        [SerializeField] private ColorSwatchField backgroundColorSwatch;
         [SerializeField] private TMP_Text backgroundFileLabel;
         [SerializeField] private Button clearBackgroundButton;
         [SerializeField] private Button importBackgroundButton;
@@ -38,12 +34,8 @@ namespace CharacterSheet.Presenter.View
 
             borderToggle.onValueChanged.AddListener(v => SendAppearance(new AppearanceDTO { HasBorder = v }));
             thicknessSlider.onValueChanged.AddListener(v => SendAppearance(new AppearanceDTO { BorderThickness = v }));
-            borderColorR.onValueChanged.AddListener(_ => SendBorderColor());
-            borderColorG.onValueChanged.AddListener(_ => SendBorderColor());
-            borderColorB.onValueChanged.AddListener(_ => SendBorderColor());
-            backgroundColorR.onValueChanged.AddListener(_ => SendBackgroundColor());
-            backgroundColorG.onValueChanged.AddListener(_ => SendBackgroundColor());
-            backgroundColorB.onValueChanged.AddListener(_ => SendBackgroundColor());
+            borderColorSwatch.ValueChanged += SendBorderColor;
+            backgroundColorSwatch.ValueChanged += SendBackgroundColor;
             importBackgroundButton.onClick.AddListener(() => _sheet?.SelectBackgroundCommand.Execute(null));
             clearBackgroundButton.onClick.AddListener(ClearBackground);
 
@@ -74,12 +66,8 @@ namespace CharacterSheet.Presenter.View
             if (_sheet == null) return;
             borderToggle.SetIsOnWithoutNotify(_sheet.HasBorder);
             thicknessSlider.SetValueWithoutNotify(_sheet.BorderThickness);
-            borderColorR.SetValueWithoutNotify(_sheet.BorderColor.r);
-            borderColorG.SetValueWithoutNotify(_sheet.BorderColor.g);
-            borderColorB.SetValueWithoutNotify(_sheet.BorderColor.b);
-            backgroundColorR.SetValueWithoutNotify(_sheet.BackgroundColor.r);
-            backgroundColorG.SetValueWithoutNotify(_sheet.BackgroundColor.g);
-            backgroundColorB.SetValueWithoutNotify(_sheet.BackgroundColor.b);
+            borderColorSwatch.SetColorWithoutNotify(_sheet.BorderColor);
+            backgroundColorSwatch.SetColorWithoutNotify(_sheet.BackgroundColor);
 
             string path = _sheet.RuntimeSheet != null ? _sheet.RuntimeSheet.BackgroundImagePath : null;
             bool hasImage = !string.IsNullOrEmpty(path);
@@ -99,18 +87,16 @@ namespace CharacterSheet.Presenter.View
             _sheet?.UpdateAppearanceCommand.Execute(dto);
         }
 
-        private void SendBorderColor()
+        private void SendBorderColor(Color color)
         {
             if (_sheet == null) return;
-            var color = new Color(borderColorR.value, borderColorG.value, borderColorB.value, _sheet.BorderColor.a);
-            SendAppearance(new AppearanceDTO { BorderColor = color });
+            SendAppearance(new AppearanceDTO { BorderColor = new Color(color.r, color.g, color.b, _sheet.BorderColor.a) });
         }
 
-        private void SendBackgroundColor()
+        private void SendBackgroundColor(Color color)
         {
             if (_sheet == null) return;
-            var color = new Color(backgroundColorR.value, backgroundColorG.value, backgroundColorB.value, _sheet.BackgroundColor.a);
-            SendAppearance(new AppearanceDTO { BackgroundColor = color });
+            SendAppearance(new AppearanceDTO { BackgroundColor = new Color(color.r, color.g, color.b, _sheet.BackgroundColor.a) });
         }
 
         private void OnDestroy()
