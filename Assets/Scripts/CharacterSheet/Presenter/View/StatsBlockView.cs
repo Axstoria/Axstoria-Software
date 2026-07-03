@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using CharacterSheet.Presenter.ViewModel;
 using Loxodon.Framework.Contexts;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace CharacterSheet.Presenter.View
 {
@@ -16,7 +16,8 @@ namespace CharacterSheet.Presenter.View
 
         private CharacterSheetEditorViewModel _vm;
         private WidgetViewModel _widget;
-        private readonly List<GameObject> _rows = new List<GameObject>();
+        private readonly Dictionary<string, List<(string Id, string Name)>> _statsByWidget = new();
+        private readonly List<GameObject> _rows = new();
 
         private void Start()
         {
@@ -35,15 +36,34 @@ namespace CharacterSheet.Presenter.View
 
         private void Bind(WidgetViewModel widget)
         {
-            if (_widget != null) _widget.BoundStats.CollectionChanged -= OnStatsChanged;
             _widget = widget;
-            if (_widget != null) _widget.BoundStats.CollectionChanged += OnStatsChanged;
             Rebuild();
         }
 
-        private void OnStatsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        public bool TryAddStat(string statId, string displayName)
         {
+            if (_widget == null || string.IsNullOrEmpty(statId)) return false;
+            var stats = GetStats(_widget.Id);
+            if (stats.Exists(s => s.Id == statId)) return false;
+            stats.Add((statId, displayName));
             Rebuild();
+            return true;
+        }
+
+        private void RemoveStat(string statId)
+        {
+            if (_widget == null) return;
+            GetStats(_widget.Id).RemoveAll(s => s.Id == statId);
+            Rebuild();
+        }
+
+        private List<(string Id, string Name)> GetStats(string widgetId)
+        {
+            if (!_statsByWidget.TryGetValue(widgetId, out var stats)) {
+                stats = new List<(string, string)>();
+                _statsByWidget[widgetId] = stats;
+            }
+            return stats;
         }
 
         private void Rebuild()
@@ -53,21 +73,26 @@ namespace CharacterSheet.Presenter.View
 
             if (_widget == null) return;
 
-            foreach (var stat in _widget.BoundStats) {
+            var stats = GetStats(_widget.Id);
+            foreach (var stat in stats) {
                 var row = Instantiate(rowTemplate, container);
                 var label = row.transform.Find("StatName");
-                if (label != null) label.GetComponent<TMP_Text>().text = stat.DisplayName;
+                if (label != null) label.GetComponent<TMP_Text>().text = stat.Name;
+                var unbind = row.transform.Find("Btn_Unbind");
+                if (unbind != null) {
+                    string statId = stat.Id;
+                    unbind.GetComponent<Button>().onClick.AddListener(() => RemoveStat(statId));
+                }
                 row.SetActive(true);
                 _rows.Add(row);
             }
 
-            if (emptyLabel != null) emptyLabel.SetActive(_widget.BoundStats.Count == 0);
+            if (emptyLabel != null) emptyLabel.SetActive(stats.Count == 0);
         }
 
         private void OnDestroy()
         {
             if (_vm != null) _vm.PropertyChanged -= OnEditorPropertyChanged;
-            if (_widget != null) _widget.BoundStats.CollectionChanged -= OnStatsChanged;
         }
     }
 }
