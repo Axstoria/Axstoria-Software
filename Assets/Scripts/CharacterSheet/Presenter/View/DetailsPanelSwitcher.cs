@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using CharacterSheet.Presenter.ViewModel;
+using CharacterSheet.Presenter.ViewModel.Widgets;
 using Loxodon.Framework.Contexts;
 using UnityEngine;
 
@@ -9,6 +10,9 @@ namespace CharacterSheet.Presenter.View
     {
         [SerializeField] private GameObject[] sheetBlocks;
         [SerializeField] private GameObject[] widgetBlocks;
+        [SerializeField] private GameObject textBlock;
+        [SerializeField] private GameObject counterBlock;
+        [SerializeField] private GameObject pointGaugeBlock;
 
         private CharacterSheetEditorViewModel _vm;
 
@@ -29,9 +33,13 @@ namespace CharacterSheet.Presenter.View
 
         private void Apply()
         {
-            bool hasSelection = _vm.SelectedWidget != null;
+            var widget = _vm.SelectedWidget;
+            bool hasSelection = widget != null;
             foreach (var block in sheetBlocks) block.SetActive(!hasSelection);
             foreach (var block in widgetBlocks) block.SetActive(hasSelection);
+            if (textBlock != null) textBlock.SetActive(widget is TextWidgetViewModel);
+            if (counterBlock != null) counterBlock.SetActive(widget is CounterWidgetViewModel);
+            if (pointGaugeBlock != null) pointGaugeBlock.SetActive(widget is PointGaugeViewModel);
         }
 
         private void OnDestroy()
