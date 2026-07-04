@@ -20,6 +20,12 @@
       "dependencies": {},
       "hash": "1312a5f9ba9a8072bd697b762fac97610f37e123"
     },
+    "com.judahperez.hsvcolorpicker": {
+      "version": "file:com.judahperez.hsvcolorpicker",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.unity.ai.navigation": {
       "version": "2.0.9",
       "depth": 0,

@@ -99,7 +99,6 @@ namespace CharacterSheet.Presenter.View.Widgets
             bindingSet.Build();
 
             _vm.Items.CollectionChanged += OnStatCollectionChanged;
-            _vm.AddStatCommand.Execute("hp");
         }
 
         private void OnStatCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

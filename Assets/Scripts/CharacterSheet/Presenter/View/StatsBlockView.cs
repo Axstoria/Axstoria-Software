@@ -45,6 +45,7 @@ namespace CharacterSheet.Presenter.View
             if (_widget == null || string.IsNullOrEmpty(statId)) return false;
             var stats = GetStats(_widget.Id);
             if (stats.Exists(s => s.Id == statId)) return false;
+            _widget.AddStatCommand.Execute(statId);
             stats.Add((statId, displayName));
             Rebuild();
             return true;
@@ -53,6 +54,7 @@ namespace CharacterSheet.Presenter.View
         private void RemoveStat(string statId)
         {
             if (_widget == null) return;
+            _widget.RemoveStatCommand.Execute(statId);
             GetStats(_widget.Id).RemoveAll(s => s.Id == statId);
             Rebuild();
         }

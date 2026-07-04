@@ -31,6 +31,7 @@ namespace CharacterSheet.Presenter.ViewModel
         private readonly UpdateWidgetLayoutUseCase _updateLayout;
         private readonly UpdateWidgetTitleUseCase _updateTitle;
         private readonly BindStatToWidgetUseCase _bindStat;
+        private readonly UnbindStatUseCase _unbindStat;
         private readonly GetStatUseCase _getStat;
 
         // ── Command ───────────────────────────────────────────────────────────
@@ -38,7 +39,9 @@ namespace CharacterSheet.Presenter.ViewModel
         public ICommand<string> UpdateTitleCommand { get; }
         public ICommand<AppearanceDTO> UpdateAppearanceCommand { get; }
         public ICommand<string> AddStatCommand { get; }
+        public ICommand<string> RemoveStatCommand { get; }
         public event Action<WidgetViewModel> OnSelected;
+        public event Action OnWidgetChanged;
 
         public void Select() => OnSelected?.Invoke(this);
 
@@ -60,6 +63,7 @@ namespace CharacterSheet.Presenter.ViewModel
 
         protected WidgetViewModel(SheetWidget widget,
             BindStatToWidgetUseCase bindStatToWidgetUseCase,
+            UnbindStatUseCase unbindStatUseCase,
             UpdateAppearanceUseCase updateAppearance,
             UpdateBackgroundUseCase updateBackground,
             UpdateWidgetLayoutUseCase updateLayout,
@@ -73,6 +77,7 @@ namespace CharacterSheet.Presenter.ViewModel
             _updateLayout = updateLayout;
             _updateTitle = updateTitle;
             _bindStat = bindStatToWidgetUseCase;
+            _unbindStat =  unbindStatUseCase;
             _getStat = getStat;
 
             foreach (var binding in widget.Stats)
@@ -91,6 +96,7 @@ namespace CharacterSheet.Presenter.ViewModel
             UpdateTitleCommand = new SimpleCommand<string>(text => { _updateTitle.Execute(_widget, text); });
 
             AddStatCommand = new SimpleCommand<string>(id => {_bindStat.Execute(_widget, id); });
+            RemoveStatCommand = new SimpleCommand<string>(id => {_unbindStat.Execute(_widget, id); });
 
             _widget.OnStatAdded += HandleStatAdded;
             _widget.OnStatRemoved += HandleStatRemoved;
@@ -102,7 +108,11 @@ namespace CharacterSheet.Presenter.ViewModel
             BoundStats.Add(new BoundStatViewModel(stat, _getStat.Execute(stat.StatId)));
         }
 
-        private void HandleLayoutChanged() => RaisePropertyChanged(nameof(Layout));
+        private void HandleLayoutChanged()
+        {
+            RaisePropertyChanged(nameof(Layout));
+            OnWidgetChanged?.Invoke();
+        }
 
         private void HandleAppearanceChanged()
         {
@@ -111,13 +121,19 @@ namespace CharacterSheet.Presenter.ViewModel
             RaisePropertyChanged(nameof(BorderColor));
             RaisePropertyChanged(nameof(BackgroundColor));
             RaisePropertyChanged(nameof(BackgroundImagePath));
+            OnWidgetChanged?.Invoke();
         }
 
-        private void HandleTitleChanged() => RaisePropertyChanged(nameof(Title));
+        private void HandleTitleChanged()
+        {
+            RaisePropertyChanged(nameof(Title));
+            OnWidgetChanged?.Invoke();
+        }
 
         private void HandleStatAdded(WidgetStatBinding stat)
         {
             LoadStat(stat);
+            OnWidgetChanged?.Invoke();
         }
 
         private void HandleStatRemoved(WidgetStatBinding stat)
@@ -127,6 +143,7 @@ namespace CharacterSheet.Presenter.ViewModel
                 BoundStats.Remove(boundStat);
                 boundStat.Dispose();
             }
+            OnWidgetChanged?.Invoke();
         }
 
         protected abstract void HandleContentChanged();

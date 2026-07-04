@@ -93,9 +93,12 @@ namespace CharacterSheet.Presenter.ViewModel
 
         private void LoadSheet(SheetViewModel sheet)
         {
-            CurrentSheet?.Dispose();
+            if (CurrentSheet != null) {
+                CurrentSheet?.Dispose();
+                CurrentSheet.OnContentChanged -= SaveCurrentSheet;
+            }
             CurrentSheet = sheet;
-            
+            CurrentSheet.OnContentChanged += SaveCurrentSheet;
             PlayerPrefs.SetString("LastOpenedSheetId", CurrentSheet.Id);
             PlayerPrefs.Save();
 

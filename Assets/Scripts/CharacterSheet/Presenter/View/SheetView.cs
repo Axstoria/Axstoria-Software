@@ -6,7 +6,6 @@ using CharacterSheet.Presenter.ViewModel;
 using CharacterSheet.Presenter.ViewModel.Widgets;
 using Loxodon.Framework.Binding;
 using Loxodon.Framework.Views;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;

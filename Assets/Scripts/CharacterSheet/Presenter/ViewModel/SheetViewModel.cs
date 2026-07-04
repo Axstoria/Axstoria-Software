@@ -34,6 +34,7 @@ namespace CharacterSheet.Presenter.ViewModel
         
         private readonly Action<SheetWidget> _onWidgetAdded;
         private readonly Action<SheetWidget> _onWidgetRemoved;
+        public event Action OnContentChanged;
 
         public ObservableList<WidgetViewModel> Widgets { get; } = new();
 
@@ -73,6 +74,7 @@ namespace CharacterSheet.Presenter.ViewModel
             foreach (var widget in sheet.Widgets) {
                 var vm = widgetFactory.Create(widget);
                 vm.OnSelected += HandleWidgetSelected;
+                vm.OnWidgetChanged += HandleWidgetChanged;
                 Widgets.Add(vm);
             }
 
@@ -83,6 +85,7 @@ namespace CharacterSheet.Presenter.ViewModel
             {
                 var vm = widgetFactory.Create(widget);
                 vm.OnSelected += HandleWidgetSelected;
+                vm.OnWidgetChanged += HandleWidgetChanged;
                 Widgets.Add(vm);
             };
             _onWidgetRemoved = widget =>
@@ -90,6 +93,7 @@ namespace CharacterSheet.Presenter.ViewModel
                 var vm = Widgets.FirstOrDefault(w => w.Id == widget.Id);
                 if (vm != null) {
                     vm.OnSelected -= HandleWidgetSelected;
+                    vm.OnWidgetChanged  -= HandleWidgetChanged;
                     vm.Dispose();
                     Widgets.Remove(vm);
                 }
@@ -120,6 +124,11 @@ namespace CharacterSheet.Presenter.ViewModel
             OnWidgetSelected?.Invoke(widgetVM);
         }
 
+        private void HandleWidgetChanged()
+        {
+            OnContentChanged?.Invoke();
+        }
+
         private void LoadSprite(string path)
         {
             if (_backgroundSprite != null) {
@@ -145,15 +154,12 @@ namespace CharacterSheet.Presenter.ViewModel
 
         public void Dispose()
         {
-            /*_sheet.OnStatAdded     -= _onStatAdded;
-            _sheet.OnStatRemoved   -= _onStatRemoved;*/
             _sheet.OnWidgetAdded -= _onWidgetAdded;
             _sheet.OnWidgetRemoved -= _onWidgetRemoved;
 
             _sheet.OnPathChanged -= LoadSprite;
             _sheet.OnAppearanceChanged -= HandleAppearanceChanged;
-
-            /*foreach (var vm in Stats) vm.Dispose();*/
+            
             foreach (var vm in Widgets) vm.Dispose();
         }
     }

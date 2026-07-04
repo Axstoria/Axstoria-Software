@@ -12,12 +12,13 @@ namespace CharacterSheet.Presenter.ViewModel.Widgets
 
         public BarWidgetViewModel(BarWidget widget,
             BindStatToWidgetUseCase bindStatToWidgetUseCase,
+            UnbindStatUseCase unbindStatUseCase,
             UpdateAppearanceUseCase appearance,
             UpdateBackgroundUseCase  background,
             UpdateWidgetLayoutUseCase updateLayout, 
             UpdateWidgetTitleUseCase updateTitle,
             GetStatUseCase getStat) 
-            : base(widget, bindStatToWidgetUseCase, appearance, background, updateLayout, updateTitle, getStat)
+            : base(widget, bindStatToWidgetUseCase, unbindStatUseCase, appearance, background, updateLayout, updateTitle, getStat)
         {
             _bar = widget;
             BoundStats.CollectionChanged += OnBoundStatsChanged;
