@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using App.Domain;
 using Fab.UITKDropdown;
 using Loxodon.Framework.Contexts;
 using MapEditor.Domain;
 using MapEditor.Presenter.ViewModels;
 using SceneEditor.Domain;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 namespace EditorShell.Presenter.View
@@ -55,6 +57,9 @@ namespace EditorShell.Presenter.View
             dropdown = new Dropdown(root);
 
             fileMenu = new DropdownMenu();
+            fileMenu.AppendAction("Switch to Sheet Editor", OnSwitchToSheetEditorClicked);
+            fileMenu.AppendAction("Back to Menu",           OnBackToMenuClicked);
+            fileMenu.AppendSeparator();
             fileMenu.AppendAction("Save",                  OnSaveClicked);
             fileMenu.AppendAction("Import Map",            OnImportMapClicked);
             fileMenu.AppendAction("Import Asset",          OnImportAssetClicked);
@@ -103,6 +108,26 @@ namespace EditorShell.Presenter.View
                 else
                     viewMenu.AppendAction(entry.Name, entry.Callback);
             }
+        }
+
+        private void OnSwitchToSheetEditorClicked(DropdownMenuAction action)
+        {
+            NavigateTo(SceneNames.SheetEdition);
+        }
+
+        private void OnBackToMenuClicked(DropdownMenuAction action)
+        {
+            NavigateTo(SceneNames.EditionMenu);
+        }
+
+        private void NavigateTo(string sceneName)
+        {
+            var vm = Context.GetApplicationContext().GetContainer().Resolve<MapEditorViewModel>();
+            if (vm != null) vm.SaveMap.Execute(vm.Map.Model);
+
+            var navigation = Context.GetApplicationContext().GetContainer().Resolve<INavigationService>();
+            if (navigation != null) navigation.LoadScene(sceneName);
+            else SceneManager.LoadScene(sceneName);
         }
 
         private void OnImportAssetClicked(DropdownMenuAction action)

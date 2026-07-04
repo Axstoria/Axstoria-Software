@@ -52,15 +52,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GridLayoutGroup
   m_Padding:
-    m_Left: 0
-    m_Right: 0
+    m_Left: 10
+    m_Right: 10
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 4
+  m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 20, y: 20}
-  m_Spacing: {x: 8, y: 8}
+  m_CellSize: {x: 16, y: 16}
+  m_Spacing: {x: 5, y: 5}
   m_Constraint: 0
   m_ConstraintCount: 2
 --- !u!114 &8920973260319517943
@@ -108,5 +108,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CharacterSheet.Presenter.View.PointsContainerView
   iconPrefab: {fileID: 971860844769312412, guid: 69a399514ef95f32f8d7abdb9e70a6dd, type: 3}
-  fullIconSprite: {fileID: 21300000, guid: 74edb294bcf6b720883dc3c75e5848e9, type: 3}
+  fullIconSprite: {fileID: 21300000, guid: bac3dadc09a74f95a99974eac1357739, type: 3}
   emptyIconSprite: {fileID: 21300000, guid: d2b62d23a03f384598dc150f96b4108e, type: 3}

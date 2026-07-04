@@ -2,7 +2,7 @@ namespace CharacterSheet.Domain.Widgets
 {
     public class TextWidget : SheetWidget
     {
-        private string _textTemplate = "enter text...";
+        private string _textTemplate = "";
         public string TextTemplate
         {
             get => _textTemplate;

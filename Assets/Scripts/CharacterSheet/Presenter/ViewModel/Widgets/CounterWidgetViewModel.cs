@@ -59,9 +59,9 @@ namespace CharacterSheet.Presenter.ViewModel.Widgets
             
             public string FormattedText 
             {
-                get => BaseStat.MaxValue > 0 
-                    ? $"{BaseStat.DisplayName} : {BaseStat.CurrentValue} / {BaseStat.MaxValue}" 
-                    : $"{BaseStat.DisplayName} : {BaseStat.CurrentValue}";
+                get => BaseStat.MaxValue > 0
+                    ? $"<b>{BaseStat.DisplayName}</b> : <color=#555555>{BaseStat.CurrentValue} / {BaseStat.MaxValue}</color>"
+                    : $"<b>{BaseStat.DisplayName}</b> : <color=#555555>{BaseStat.CurrentValue}</color>";
             }
 
             public Color TextColor => BaseStat.Color; 

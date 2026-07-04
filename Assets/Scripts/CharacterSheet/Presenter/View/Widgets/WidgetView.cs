@@ -9,12 +9,14 @@ using UnityEngine.UI;
 
 namespace CharacterSheet.Presenter.View.Widgets
 {
-    public abstract class WidgetView : UIView, IPointerClickHandler
+    public abstract class WidgetView : UIView, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
     {
         [SerializeField] private Image background;
         [SerializeField] private Image border;
         [SerializeField] private RectTransform backgroundOffset;
         [SerializeField] private GameObject selectionBorder;
+        [SerializeField] private GameObject hoverBorder;
+        [SerializeField] private GameObject handles;
 
         [SerializeField] private Transform content;
         [SerializeField] private GameObject statContainerPrefab;
@@ -34,9 +36,11 @@ namespace CharacterSheet.Presenter.View.Widgets
             set
             {
                 if (backgroundOffset == null) return;
-                int t = Mathf.RoundToInt(value);
-                backgroundOffset.offsetMin = new Vector2(t, t);
-                backgroundOffset.offsetMax = new Vector2(-t, -t);
+                Vector3 scale = backgroundOffset.lossyScale;
+                float tx = PixelSnap.SnapLength(Mathf.RoundToInt(value), scale.x);
+                float ty = PixelSnap.SnapLength(Mathf.RoundToInt(value), scale.y);
+                backgroundOffset.offsetMin = new Vector2(tx, ty);
+                backgroundOffset.offsetMax = new Vector2(-tx, -ty);
             }
         }
 
@@ -48,6 +52,7 @@ namespace CharacterSheet.Presenter.View.Widgets
                 if (RectTransform == null) return;
                 RectTransform.anchoredPosition = value.position;
                 RectTransform.sizeDelta = value.size;
+                PixelSnap.SnapRect(RectTransform);
             }
         }
 
@@ -87,6 +92,9 @@ namespace CharacterSheet.Presenter.View.Widgets
                 .To(vm => vm.UpdateTitleCommand);
 
             bindingSet.Bind(selectionBorder).For(v => v.activeSelf).To(vm => vm.IsSelected);
+
+            if (handles != null)
+                bindingSet.Bind(handles).For(v => v.activeSelf).To(vm => vm.IsSelected);
 
             bindingSet.Build();
 
@@ -147,7 +155,24 @@ namespace CharacterSheet.Presenter.View.Widgets
         {
             if (eventData.button == PointerEventData.InputButton.Left) {
                 _vm.Select();
+                if (hoverBorder != null) hoverBorder.SetActive(false);
             }
+            else if (eventData.button == PointerEventData.InputButton.Right) {
+                var sheetView = GetComponentInParent<SheetView>();
+                if (sheetView != null) sheetView.ClearSelection();
+            }
+        }
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            if (hoverBorder != null && _vm != null && !_vm.IsSelected)
+                hoverBorder.SetActive(true);
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            if (hoverBorder != null)
+                hoverBorder.SetActive(false);
         }
     }
 }
