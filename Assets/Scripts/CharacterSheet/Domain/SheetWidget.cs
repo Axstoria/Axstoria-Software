@@ -16,6 +16,7 @@ namespace CharacterSheet.Domain
         [field: JsonIgnore] public event Action OnAppearanceChanged;
         [field: JsonIgnore] public event Action OnTitleChanged;
         [field: JsonIgnore] public event Action OnContentChanged;
+        [field: JsonIgnore] public event Action<string> OnPathChanged;
         
         
         private Rect _layout =  new Rect(0, 0, 250, 200);
@@ -93,7 +94,7 @@ namespace CharacterSheet.Domain
             {
                 if (_backgroundImagePath == value) return;
                 _backgroundImagePath = value;
-                OnAppearanceChanged?.Invoke();
+                OnPathChanged?.Invoke(_backgroundImagePath);
             }
         }
         

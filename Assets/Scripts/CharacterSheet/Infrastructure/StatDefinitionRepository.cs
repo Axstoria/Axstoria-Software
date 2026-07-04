@@ -10,8 +10,13 @@ namespace CharacterSheet.Infrastructure
         private static readonly List<Stat> _definitions = new()
         {
             new Stat("hp", "Points de vie", StatType.Int),
-            new Stat("attack", "Attaque" , StatType.Int),
-            new Stat("defense", "Défense", StatType.Int)
+            new Stat("force", "Force" , StatType.Int),
+            new Stat("agility", "Agilité", StatType.Int),
+            new Stat("intelligence", "Intelligence", StatType.Int),
+            new Stat("social", "Social", StatType.Int),
+            new Stat("intel", "Perception", StatType.Int),
+            new Stat("wisdom", "Erudition", StatType.Int),
+            new Stat("constitution", "Constitution", StatType.Int),
         };
 
         public StatDefinitionRepository()

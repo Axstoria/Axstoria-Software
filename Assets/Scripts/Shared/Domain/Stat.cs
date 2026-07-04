@@ -10,7 +10,7 @@ namespace Shared.Domain
         public float AbsoluteMin { get; set; }
         public float AbsoluteMax { get; set; }
         
-        public Stat(string id, string name, StatType type, float min = 0, float max = 100) {
+        public Stat(string id, string name, StatType type, float min = 0, float max = 20) {
             Id = id;
             Name = name;
             Type = type;

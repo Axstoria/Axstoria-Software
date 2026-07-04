@@ -1,5 +1,6 @@
 using System.Collections.Specialized;
 using System.Linq;
+using AssetImporter.AssetImporter.App.UseCase;
 using CharacterSheet.App.UseCase;
 using CharacterSheet.Domain.Widgets;
 using Loxodon.Framework.Observables;
@@ -12,13 +13,15 @@ namespace CharacterSheet.Presenter.ViewModel.Widgets
         private readonly CounterWidget _counter;
 
         public CounterWidgetViewModel(CounterWidget widget, 
+           string containerId,
             BindStatToWidgetUseCase bindStatToWidgetUseCase,
-            UnbindStatUseCase  unbindStatUseCase,
-            UpdateAppearanceUseCase appearance, 
-            UpdateBackgroundUseCase background,
+            UnbindStatUseCase unbindStatUseCase,
+            UpdateAppearanceUseCase appearance,
+            UpdateBackgroundUseCase  background,
+            IImageLoaderService imageService,
             UpdateWidgetLayoutUseCase updateLayout, 
             UpdateWidgetTitleUseCase updateTitle,
-            GetStatUseCase getStat) : base(widget, bindStatToWidgetUseCase, unbindStatUseCase, appearance, background, updateLayout, updateTitle, getStat)
+            GetStatUseCase getStat) : base(widget, containerId, bindStatToWidgetUseCase, unbindStatUseCase, appearance, background, imageService, updateLayout, updateTitle, getStat)
         {
             _counter = widget;
             foreach (var stat in BoundStats)

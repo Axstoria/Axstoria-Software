@@ -72,7 +72,7 @@ namespace CharacterSheet.Presenter.ViewModel
             _removeWidget = removeWidget;
 
             foreach (var widget in sheet.Widgets) {
-                var vm = widgetFactory.Create(widget);
+                var vm = widgetFactory.Create(widget, Id);
                 vm.OnSelected += HandleWidgetSelected;
                 vm.OnWidgetChanged += HandleWidgetChanged;
                 Widgets.Add(vm);
@@ -83,7 +83,7 @@ namespace CharacterSheet.Presenter.ViewModel
 
             _onWidgetAdded = widget =>
             {
-                var vm = widgetFactory.Create(widget);
+                var vm = widgetFactory.Create(widget, Id);
                 vm.OnSelected += HandleWidgetSelected;
                 vm.OnWidgetChanged += HandleWidgetChanged;
                 Widgets.Add(vm);

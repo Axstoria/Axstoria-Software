@@ -12,7 +12,8 @@ namespace CharacterSheet.Presenter.View
         [SerializeField] private GameObject rowTemplate;
         [SerializeField] private TMP_InputField searchField;
 
-        private static readonly string[] KnownStatIds = { "hp", "attack", "defense" };
+        // TODO: get stats list directly from repository
+        private static readonly string[] KnownStatIds = { "hp", "force", "agility", "intelligence", "social", "intel", "wisdom", "constitution" };
 
         private readonly List<(GameObject Row, string Label)> _rows = new();
 

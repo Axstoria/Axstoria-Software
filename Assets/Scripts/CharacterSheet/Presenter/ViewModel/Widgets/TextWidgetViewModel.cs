@@ -1,3 +1,4 @@
+using AssetImporter.AssetImporter.App.UseCase;
 using CharacterSheet.App.UseCase;
 using CharacterSheet.Domain.Widgets;
 using Loxodon.Framework.Commands;
@@ -25,14 +26,16 @@ namespace CharacterSheet.Presenter.ViewModel.Widgets
         }
 
         public TextWidgetViewModel(TextWidget widget,
+            string containerId,
             BindStatToWidgetUseCase bindStatToWidgetUseCase,
             UnbindStatUseCase unbindStatUseCase,
             UpdateAppearanceUseCase appearance,
             UpdateBackgroundUseCase  background,
+            IImageLoaderService imageService,
             UpdateWidgetLayoutUseCase updateLayout,
             UpdateWidgetTitleUseCase updateTitle,
             GetStatUseCase getStat,
-            UpdateTextWidgetUseCase up) : base(widget, bindStatToWidgetUseCase, unbindStatUseCase, appearance, background, updateLayout, updateTitle, getStat)
+            UpdateTextWidgetUseCase up) : base(widget, containerId, bindStatToWidgetUseCase, unbindStatUseCase, appearance, background, imageService, updateLayout, updateTitle, getStat)
         {
             _gauge = widget;
             _updateText = up;

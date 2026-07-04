@@ -77,6 +77,10 @@ namespace CharacterSheet.Presenter.View.Widgets
             bindingSet.Bind(this)
                 .For(v => v.BorderThickness)
                 .To(vm => vm.BorderThickness);
+            
+            bindingSet.Bind(background)
+                .For(v => v.sprite)
+                .To(vm => vm.BackgroundSprite);
 
             bindingSet.Bind(this)
                 .For(v => v.WidgetLayout)

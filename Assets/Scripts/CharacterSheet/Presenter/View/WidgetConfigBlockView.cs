@@ -18,6 +18,7 @@ namespace CharacterSheet.Presenter.View
         [SerializeField] private ColorSwatchField backgroundColorSwatch;
         [SerializeField] private TMP_Text backgroundFileLabel;
         [SerializeField] private Button clearBackgroundButton;
+        [SerializeField] private Button importBackgroundButton;
 
         private static readonly Color FileNameColor = new Color32(240, 240, 240, 255);
         private static readonly Color NoFileColor = new Color32(140, 140, 140, 255);
@@ -37,6 +38,8 @@ namespace CharacterSheet.Presenter.View
             thicknessSlider.onValueChanged.AddListener(v => SendAppearance(new AppearanceDTO { BorderThickness = v }));
             borderColorSwatch.ValueChanged += SendBorderColor;
             backgroundColorSwatch.ValueChanged += SendBackgroundColor;
+            importBackgroundButton.onClick.AddListener(() => _widget?.SelectBackgroundCommand.Execute(null));
+            clearBackgroundButton.onClick.AddListener(ClearBackground);
 
             Bind(_vm.SelectedWidget);
         }
@@ -74,6 +77,12 @@ namespace CharacterSheet.Presenter.View
             backgroundFileLabel.text = hasImage ? Path.GetFileName(path) : "None";
             backgroundFileLabel.color = hasImage ? FileNameColor : NoFileColor;
             clearBackgroundButton.gameObject.SetActive(hasImage);
+        }
+        
+        private void ClearBackground()
+        {
+            if (_widget?.BackgroundImagePath == null) return;
+            _widget.BackgroundImagePath = null;
         }
 
         private void SendAppearance(AppearanceDTO dto)
