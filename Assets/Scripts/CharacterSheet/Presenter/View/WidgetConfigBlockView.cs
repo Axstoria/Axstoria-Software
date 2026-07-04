@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.IO;
 using CharacterSheet.App.DTO;
 using CharacterSheet.Presenter.ViewModel;
 using Loxodon.Framework.Contexts;
@@ -15,6 +16,11 @@ namespace CharacterSheet.Presenter.View
         [SerializeField] private Slider thicknessSlider;
         [SerializeField] private ColorSwatchField borderColorSwatch;
         [SerializeField] private ColorSwatchField backgroundColorSwatch;
+        [SerializeField] private TMP_Text backgroundFileLabel;
+        [SerializeField] private Button clearBackgroundButton;
+
+        private static readonly Color FileNameColor = new Color32(240, 240, 240, 255);
+        private static readonly Color NoFileColor = new Color32(140, 140, 140, 255);
 
         private CharacterSheetEditorViewModel _vm;
         private WidgetViewModel _widget;
@@ -62,6 +68,12 @@ namespace CharacterSheet.Presenter.View
             thicknessSlider.SetValueWithoutNotify(_widget.BorderThickness);
             borderColorSwatch.SetColorWithoutNotify(_widget.BorderColor);
             backgroundColorSwatch.SetColorWithoutNotify(_widget.BackgroundColor);
+
+            string path = _widget.BackgroundImagePath;
+            bool hasImage = !string.IsNullOrEmpty(path);
+            backgroundFileLabel.text = hasImage ? Path.GetFileName(path) : "None";
+            backgroundFileLabel.color = hasImage ? FileNameColor : NoFileColor;
+            clearBackgroundButton.gameObject.SetActive(hasImage);
         }
 
         private void SendAppearance(AppearanceDTO dto)
