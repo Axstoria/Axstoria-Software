@@ -21,6 +21,8 @@ namespace CharacterSheet.Presenter.ViewModel.Widgets
             : base(widget, bindStatToWidgetUseCase, unbindStatUseCase, appearance, background, updateLayout, updateTitle, getStat)
         {
             _bar = widget;
+            foreach (var stat in BoundStats)
+                Items.Add(new ProgressionBarViewModel(stat));
             BoundStats.CollectionChanged += OnBoundStatsChanged;
         }
 

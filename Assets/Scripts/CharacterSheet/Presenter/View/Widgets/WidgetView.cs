@@ -98,6 +98,9 @@ namespace CharacterSheet.Presenter.View.Widgets
 
             bindingSet.Build();
 
+            foreach (var stat in _vm.Items)
+                OnStatAdded(stat);
+
             _vm.Items.CollectionChanged += OnStatCollectionChanged;
         }
 

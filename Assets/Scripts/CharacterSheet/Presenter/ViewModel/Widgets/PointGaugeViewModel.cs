@@ -21,6 +21,8 @@ namespace CharacterSheet.Presenter.ViewModel.Widgets
             UpdatePointGaugeWidgetUseCase up) : base(widget, bindStatToWidgetUseCase, unbindStatUseCase, appearance, background, updateLayout, updateTitle, getStat)
         {
             _gauge = widget;
+            foreach (var stat in BoundStats)
+                Items.Add(new PointItemViewModel(stat));
             BoundStats.CollectionChanged += OnBoundStatsChanged;
         }
 

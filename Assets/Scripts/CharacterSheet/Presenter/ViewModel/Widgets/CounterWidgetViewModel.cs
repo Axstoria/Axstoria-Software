@@ -21,6 +21,8 @@ namespace CharacterSheet.Presenter.ViewModel.Widgets
             GetStatUseCase getStat) : base(widget, bindStatToWidgetUseCase, unbindStatUseCase, appearance, background, updateLayout, updateTitle, getStat)
         {
             _counter = widget;
+            foreach (var stat in BoundStats)
+                Items.Add(new CounterItemViewModel(stat));
             BoundStats.CollectionChanged += OnBoundStatsChanged;
         }
 
