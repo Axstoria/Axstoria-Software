@@ -19,7 +19,7 @@ namespace CharacterSheet.Domain
         [field: JsonIgnore] public event Action<string> OnPathChanged;
         
         
-        private Rect _layout =  new Rect(0, 0, 250, 200);
+        private Rect _layout =  new Rect(0, 0, 180, 120);
 
         public Rect Layout
         {
