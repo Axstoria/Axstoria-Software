@@ -83,6 +83,13 @@
                         </engine:VisualElement>
                         <engine:VisualElement name="tag-manager-list" class="tag-manager-list" />
                     </engine:Foldout>
+                    <engine:Foldout name="foldout-players" text="Players" enabled="true" value="false">
+                        <engine:VisualElement class="tag-manager-new-row">
+                            <engine:TextField name="new-player-name-field" placeholder-text="New player name..." class="tag-manager-name-field" style="flex-grow: 1;" />
+                            <engine:Button name="add-player-button" text="+ Add" class="settings-btn" />
+                        </engine:VisualElement>
+                        <engine:VisualElement name="player-list" class="player-list" />
+                    </engine:Foldout>
                 </engine:VisualElement>
             </engine:ScrollView>
         </engine:VisualElement>
@@ -173,6 +180,7 @@
                                 <engine:DropdownField name="tag-assign-dropdown" style="flex-grow: 1;" />
                                 <engine:Button name="btn-add-tag" text="Add" class="settings-btn" />
                             </engine:VisualElement>
+                            <engine:Toggle name="toggle-is-pawn" label="Is Pawn" style="margin-top: 6px;" />
                             <engine:Label text="SHEETS" class="settings-subhead" />
                             <engine:VisualElement name="sheets-list" />
                             <engine:Label name="label-no-sheets" text="No sheets." class="settings-caption" />

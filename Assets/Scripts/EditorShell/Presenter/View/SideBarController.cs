@@ -88,6 +88,7 @@ namespace EditorShell.Presenter.View
         public FloatField ScaleZ { get; private set; }
         private VisualElement _transformFields;
         private Label         _labelNoSelection;
+        private Toggle        _toggleIsPawn;
         private ObjectViewModel _selectedObject;
         private EventHandler    _onSelectedTransformChanged;
         private EventHandler  _onMetadataChanged;
@@ -210,6 +211,7 @@ namespace EditorShell.Presenter.View
         {
             _labelNoSelection = root.Q<Label>("label-no-selection");
             _transformFields  = root.Q<VisualElement>("transform-fields");
+            _toggleIsPawn     = root.Q<Toggle>("toggle-is-pawn");
             PosX   = root.Q<FloatField>("field-pos-x");
             PosY   = root.Q<FloatField>("field-pos-y");
             PosZ   = root.Q<FloatField>("field-pos-z");
@@ -269,7 +271,10 @@ namespace EditorShell.Presenter.View
                 {
                     foreach (ObjectViewModel obj in _vm.Map.Objects)
                     {
-                        if (obj.Model.Id == id) { SelectObject(obj); return; }
+                        if (obj.Model.Id != id) continue;
+                        if (_vm.Permissions.CanInteract(_vm.Session.CurrentPlayer, obj.Model))
+                            SelectObject(obj);
+                        return;
                     }
                     Debug.Log($"[SideBarController] Id '{id}' not found in _vm.Map.Objects.");
                 }
@@ -489,6 +494,22 @@ namespace EditorShell.Presenter.View
             _vm.Map.Tags.CollectionChanged += _onTagsChanged;
             _btnAddTag.clicked += OnAddTagClicked;
 
+            _toggleIsPawn.RegisterValueChangedCallback(e =>
+            {
+                if (_selectedObject != null) _selectedObject.IsPawn.Value = e.newValue;
+            });
+
+            _vm.Session.OnCurrentPlayerChanged += OnCurrentPlayerChanged;
+
+            SetSelectedObject(null);
+        }
+
+        private void OnCurrentPlayerChanged()
+        {
+            if (_selectedObject == null) return;
+            if (_vm.Permissions.CanInteract(_vm.Session.CurrentPlayer, _selectedObject.Model)) return;
+
+            if (_gizmo != null) _gizmo.Deselect();
             SetSelectedObject(null);
         }
 
@@ -534,6 +555,8 @@ namespace EditorShell.Presenter.View
 
             _labelNoSelection.style.display = DisplayStyle.None;
             _transformFields.style.display  = DisplayStyle.Flex;
+
+            _toggleIsPawn.SetValueWithoutNotify(obj.IsPawn.Value);
 
             _onSelectedTransformChanged = (_, __) => RefreshTransformFields();
             obj.Model.OnTransformChanged += _onSelectedTransformChanged;

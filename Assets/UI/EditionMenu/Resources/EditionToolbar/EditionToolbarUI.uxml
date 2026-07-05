@@ -6,5 +6,6 @@
         <ui:Button text="Window" name="view-button" class="toolbar__button" />
         <ui:Button text="Tools" name="tools-button" class="toolbar__button" />
         <ui:Button text="Help" name="help-button" class="toolbar__button" />
+        <ui:Label name="label-viewing-as" text="" style="flex-grow: 1; -unity-text-align: middle-right; margin-right: 10px; color: rgb(240, 190, 90); -unity-font-style: bold;" />
     </ui:VisualElement>
 </ui:UXML>

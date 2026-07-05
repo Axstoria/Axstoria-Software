@@ -13,7 +13,7 @@ namespace SceneEditor.App.UseCase
             _history = history;
         }
 
-        public void Execute(SceneObject obj, MetadataEntry entry)
+        public void Execute(IHasMetadata obj, MetadataEntry entry)
         {
             if (obj == null || entry == null) return;
             _history.Record(new RemoveObjectMetadataCommand(obj, entry));

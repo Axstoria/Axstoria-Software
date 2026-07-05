@@ -73,6 +73,7 @@ namespace MapEditor.Presenter.View
 
             if (Input.GetKeyDown(KeyCode.Delete))
             {
+                if (!_vm.Permissions.CanInteract(_vm.Session.CurrentPlayer, _domainObj)) return;
                 _vm.DeleteObject.Execute(_domainObj);
                 Deselect();
             }
@@ -83,6 +84,7 @@ namespace MapEditor.Presenter.View
         private void OnTransformCompleted()
         {
             if (_domainObj == null || _vm == null || _gizmo.mainTargetRoot == null) return;
+            if (!_vm.Permissions.CanInteract(_vm.Session.CurrentPlayer, _domainObj)) return;
 
             Transform t   = _gizmo.mainTargetRoot;
             Vector3   pos = t.position;

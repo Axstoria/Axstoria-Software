@@ -527,6 +527,40 @@
     border-radius: 3px;
 }
 
+.player-list {
+    flex-direction: column;
+}
+
+.player-card {
+    flex-direction: column;
+    background-color: rgb(58, 58, 58);
+    border-radius: 4px;
+    padding: 6px;
+    margin-bottom: 6px;
+}
+
+.player-header-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.player-name-field {
+    flex-grow: 1;
+    margin-right: 6px;
+}
+
+.player-pawn-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.player-pawn-dropdown {
+    flex-grow: 1;
+    margin-right: 6px;
+}
+
 .panel-collapse-btn,
 .panel-close-btn {
     width: 20px;

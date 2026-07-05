@@ -17,12 +17,15 @@ namespace MapEditor.Presenter.ViewModels
         public ObservableList<StructureViewModel> Structures { get; } = new();
         public ObservableList<ObjectViewModel>    Objects    { get; } = new();
         public ObservableList<TagViewModel>       Tags       { get; } = new();
+        public ObservableList<PlayerViewModel>    Players    { get; } = new();
 
         public TerrainLayoutViewModel Terrain { get; private set; }
 
         private readonly Action<SceneObject> _onObjectAdded;
         private readonly Action<SceneObject> _onObjectRemoved;
         private readonly EventHandler        _onMetadataChanged;
+        private readonly Action<Player>      _onPlayerAdded;
+        private readonly Action<Player>      _onPlayerRemoved;
 
         public MapViewModel(Map map)
         {
@@ -36,6 +39,9 @@ namespace MapEditor.Presenter.ViewModels
 
             foreach (var obj in _map.Objects)
                 Objects.Add(new ObjectViewModel(obj));
+
+            foreach (var player in _map.Players)
+                Players.Add(new PlayerViewModel(player));
 
             SyncTags();
 
@@ -53,6 +59,15 @@ namespace MapEditor.Presenter.ViewModels
 
             _onMetadataChanged = (_, __) => SyncTags();
             _map.OnMetadataChanged += _onMetadataChanged;
+
+            _onPlayerAdded   = player => Players.Add(new PlayerViewModel(player));
+            _onPlayerRemoved = player =>
+            {
+                for (int i = 0; i < Players.Count; i++)
+                    if (Players[i].Model == player) { Players.RemoveAt(i); return; }
+            };
+            _map.OnPlayerAdded   += _onPlayerAdded;
+            _map.OnPlayerRemoved += _onPlayerRemoved;
         }
 
         private void SyncTags()
@@ -79,6 +94,8 @@ namespace MapEditor.Presenter.ViewModels
             _map.OnObjectAdded      -= _onObjectAdded;
             _map.OnObjectRemoved    -= _onObjectRemoved;
             _map.OnMetadataChanged  -= _onMetadataChanged;
+            _map.OnPlayerAdded      -= _onPlayerAdded;
+            _map.OnPlayerRemoved    -= _onPlayerRemoved;
         }
     }
 }

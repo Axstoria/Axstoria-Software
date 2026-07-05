@@ -76,6 +76,8 @@ namespace EditorShell.Presenter.View
             toolbarManager.OnLinkToObjectRequested = () => metadataPopup.Open();
 
             this.AddComponent<TagsPanelController>().Init(root, colorPicker);
+
+            this.AddComponent<PlayersPanelController>().Init(root);
         }
     }
 }
