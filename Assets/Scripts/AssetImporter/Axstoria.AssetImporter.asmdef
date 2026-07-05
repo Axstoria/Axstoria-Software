@@ -6,8 +6,9 @@
         "Axstoria.Shared.App",
         "Axstoria.SceneEditor.Domain",
         "Axstoria.SceneEditor.App",
+        "glTFast",
         "Axstoria.MapEditor.Domain",
-        "glTFast"
+        "UnityEngine.UI.Tests"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

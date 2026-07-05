@@ -1694,6 +1694,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::App.Presenter.View.EditionMenuView
   preloadShaderButton: {fileID: 1467156840}
+  sheetEditorButton: {fileID: 1259868629}
 --- !u!225 &2086418308
 CanvasGroup:
   m_ObjectHideFlags: 0
