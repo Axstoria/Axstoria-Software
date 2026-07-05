@@ -18,14 +18,17 @@ namespace SceneEditor.Presenter.View
         private Button _addButton;
         private VisualElement _playerList;
 
+        private ColorPickerPopupController _colorPicker;
         private MapEditorViewModel _vm;
         private NotifyCollectionChangedEventHandler _onPlayersChanged;
         private NotifyCollectionChangedEventHandler _onObjectsChanged;
         private readonly Dictionary<Player, EventHandler> _metadataHandlers = new();
         private readonly Dictionary<ObjectViewModel, EventHandler> _pawnHandlers = new();
 
-        public void Init(VisualElement root)
+        public void Init(VisualElement root, ColorPickerPopupController colorPicker)
         {
+            _colorPicker = colorPicker;
+
             _newNameField = root.Q<TextField>("new-player-name-field");
             _addButton    = root.Q<Button>("add-player-button");
             _playerList   = root.Q<VisualElement>("player-list");
@@ -103,10 +106,19 @@ namespace SceneEditor.Presenter.View
         {
             var card = new VisualElement();
             card.AddToClassList("player-card");
-
-            // ── Name + delete ────────────────────────────────────────────────
+            
             var headerRow = new VisualElement();
             headerRow.AddToClassList("player-header-row");
+
+            var swatch = new VisualElement();
+            swatch.AddToClassList("tag-manager-swatch");
+            ApplySwatchColor(swatch, player.HexColor.Value);
+            swatch.RegisterCallback<ClickEvent>(_ =>
+                _colorPicker.Open(swatch, player.HexColor.Value, hex =>
+                {
+                    ApplySwatchColor(swatch, hex);
+                    player.HexColor.Value = hex;
+                }));
 
             var nameField = new TextField { value = player.Name.Value };
             nameField.AddToClassList("player-name-field");
@@ -120,6 +132,7 @@ namespace SceneEditor.Presenter.View
                 _vm.DeletePlayer.Execute(player.Model);
             });
 
+            headerRow.Add(swatch);
             headerRow.Add(nameField);
             headerRow.Add(deleteButton);
 
@@ -226,6 +239,12 @@ namespace SceneEditor.Presenter.View
                 chip.Add(remove);
                 tagChipList.Add(chip);
             }
+        }
+
+        private static void ApplySwatchColor(VisualElement swatch, string hex)
+        {
+            if (ColorUtility.TryParseHtmlString(hex, out Color c))
+                swatch.style.backgroundColor = c;
         }
     }
 }

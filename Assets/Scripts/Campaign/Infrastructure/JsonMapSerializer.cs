@@ -71,14 +71,13 @@ namespace Campaign.Infrastructure
             return map;
         }
 
-        // ── Player ↔ DTO ──────────────────────────────────────────────────────
-
         private static PlayerDTO PlayerToDTO(Player player) => new PlayerDTO
         {
             id           = player.Id,
             name         = player.Name,
             isGameMaster = player.IsGameMaster,
             pawnId       = player.PawnId,
+            hexColor     = player.HexColor,
             metadata = player.Metadata?.Select(m => new MetadataEntryDTO
             {
                 EntryType = m.EntryType,
@@ -92,14 +91,13 @@ namespace Campaign.Infrastructure
             Name         = dto.name,
             IsGameMaster = dto.isGameMaster,
             PawnId       = dto.pawnId,
+            HexColor     = string.IsNullOrEmpty(dto.hexColor) ? "#3399FF" : dto.hexColor,
             Metadata = dto.metadata?.Select(m => new MetadataEntry
             {
                 EntryType = m.EntryType,
                 EntryValue = ValueFromDTO(m.EntryValue),
             }).ToList() ?? new List<MetadataEntry>()
         };
-
-        // ── TerrainLayout ↔ DTO ───────────────────────────────────────────────
 
         private static TerrainDTO TerrainToDTO(TerrainLayout t)
         {
@@ -132,8 +130,6 @@ namespace Campaign.Infrastructure
                 Grid      = new DomainGrid { CellSize = dto.cellSize, SurfaceY = dto.surfaceY }
             };
         }
-
-        // ── SceneObject ↔ DTO ─────────────────────────────────────────────────
 
         private static SceneObjectDTO ObjectToDTO(SceneObject obj)
         {

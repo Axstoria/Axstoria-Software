@@ -54,6 +54,7 @@ namespace Campaign.Infrastructure
         public string name;
         public bool   isGameMaster;
         public string pawnId;
+        public string hexColor;
         public List<MetadataEntryDTO> metadata;
     }
 

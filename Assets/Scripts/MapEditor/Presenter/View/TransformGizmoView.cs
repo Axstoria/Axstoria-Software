@@ -6,17 +6,17 @@ using UnityEngine;
 
 namespace MapEditor.Presenter.View
 {
-    /// Adapts RuntimeGizmo's TransformGizmo to the domain architecture.
-    /// Must live on the same GameObject as TransformGizmo (the main camera).
     [RequireComponent(typeof(TransformGizmo))]
     public class TransformGizmoView : MonoBehaviour
     {
         private TransformGizmo     _gizmo;
         private MapEditorViewModel _vm;
         private SceneObject        _domainObj;
+        private GameObject         _domainGameObject;
 
         public bool SnapToGridEnabled    { get; set; }
         public bool SnapToTerrainEnabled { get; set; }
+        public bool IsSelectModeActive => _gizmo != null && _gizmo.manuallyHandleGizmo;
 
         public event System.Action<SceneObject> OnSelectionChanged;
 
@@ -24,6 +24,7 @@ namespace MapEditor.Presenter.View
         {
             _gizmo = GetComponent<TransformGizmo>();
             _gizmo.useExternalSelection  = true;
+            _gizmo.manuallyHandleGizmo   = true;
             _gizmo.onTransformCompleted += OnTransformCompleted;
 
             _vm = Context.GetApplicationContext().GetContainer().Resolve<MapEditorViewModel>();
@@ -47,20 +48,39 @@ namespace MapEditor.Presenter.View
 
         public void SetTransformType(TransformType type)
         {
-            if (_gizmo != null) _gizmo.transformType = type;
+            if (_gizmo == null) return;
+
+            _gizmo.manuallyHandleGizmo = false;
+            _gizmo.transformType = type;
+            if (_domainGameObject != null)
+            {
+                _gizmo.ClearTargets(addCommand: false);
+                _gizmo.AddTarget(_domainGameObject.transform, addCommand: false);
+            }
+        }
+
+        public void EnterSelectMode()
+        {
+            if (_gizmo == null) return;
+
+            _gizmo.manuallyHandleGizmo = true;
+            _gizmo.ClearTargets(addCommand: false);
         }
 
         public void Select(GameObject go, SceneObject domainObj)
         {
             _domainObj = domainObj;
+            _domainGameObject = go;
             _gizmo.ClearTargets(addCommand: false);
-            _gizmo.AddTarget(go.transform, addCommand: false);
+            if (!IsSelectModeActive)
+                _gizmo.AddTarget(go.transform, addCommand: false);
             OnSelectionChanged?.Invoke(domainObj);
         }
 
         public void Deselect()
         {
             _domainObj = null;
+            _domainGameObject = null;
             _gizmo.ClearTargets(addCommand: false);
             OnSelectionChanged?.Invoke(null);
         }

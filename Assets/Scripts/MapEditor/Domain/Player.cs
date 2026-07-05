@@ -10,6 +10,7 @@ namespace MapEditor.Domain
         public string Name         { get; set; }
         public bool   IsGameMaster { get; set; }
         public string PawnId       { get; set; }
+        public string HexColor     { get; set; } = "#3399FF";
 
         public List<MetadataEntry> Metadata { get; set; } = new();
         public event EventHandler OnMetadataChanged;

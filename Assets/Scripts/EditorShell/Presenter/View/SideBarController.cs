@@ -289,45 +289,27 @@ namespace EditorShell.Presenter.View
             }
 
             // Click on empty space → deselect
-            if (_gizmo != null) _gizmo.Deselect();
+            bool isAimingPawnMove = _gizmo != null && _gizmo.IsSelectModeActive
+                && _selectedObject != null && _selectedObject.Model.IsPawn;
+            if (_gizmo != null && !isAimingPawnMove) _gizmo.Deselect();
         }
 
         private void HandleRightClickDeselect()
         {
             if (_gizmo == null) return;
             if (!Input.GetMouseButtonDown(1)) return;
-            if (!IsPointerOverOutliner()) return;
+            bool overOutliner = IsPointerOverOutliner();
+            bool overOtherUI  = IsPointerOverUI() && !overOutliner;
+            if (overOtherUI) return;
 
             _gizmo.Deselect();
         }
 
         private bool IsPointerOverOutliner()
-        {
-            if (_uiPanel == null || _outlinerPane == null) return false;
-            var screen = Input.mousePosition;
-            var panelPos = RuntimePanelUtils.ScreenToPanel(
-                _uiPanel, new Vector2(screen.x, Screen.height - screen.y));
-
-            VisualElement picked = _uiPanel.Pick(panelPos);
-            while (picked != null)
-            {
-                if (picked == _outlinerPane) return true;
-                picked = picked.parent;
-            }
-            return false;
-        }
+            => UIPointerUtility.IsOverElement(_uiPanel, _outlinerPane, Input.mousePosition);
 
         private bool IsPointerOverUI()
-        {
-            if (_uiPanel == null) return false;
-            var screen = Input.mousePosition;
-            var panelPos = RuntimePanelUtils.ScreenToPanel(
-                _uiPanel, new Vector2(screen.x, Screen.height - screen.y));
-            var picked = _uiPanel.Pick(panelPos);
-            // The root VisualElement spans the entire screen; only treat a pick as
-            // "over UI" when an actual interactive child element is hit.
-            return picked != null && picked != _root;
-        }
+            => UIPointerUtility.IsOverUI(_uiPanel, _root, Input.mousePosition);
 
         // ── System connections ────────────────────────────────────────────────
 

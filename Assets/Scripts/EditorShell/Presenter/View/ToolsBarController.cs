@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -9,14 +10,19 @@ namespace EditorShell.Presenter.View
         private const string SelectedClass = "tool-btn--selected";
 
         private List<Button> _toolButtons;
+        private Button _btnSelect;
+
+        public Action OnSelectToolClicked;
 
         public void Init(VisualElement root)
         {
+            _btnSelect = root.Q<Button>("btn-select");
+
             _toolButtons = new List<Button>
             {
                 root.Q<Button>("btn-layers"),
                 root.Q<Button>("btn-move"),
-                root.Q<Button>("btn-select"),
+                _btnSelect,
                 root.Q<Button>("btn-fog"),
                 root.Q<Button>("btn-measure"),
                 root.Q<Button>("btn-visibility"),
@@ -26,6 +32,11 @@ namespace EditorShell.Presenter.View
             {
                 btn.clicked += () => SelectTool(btn);
             }
+
+            _btnSelect.clicked += () => OnSelectToolClicked?.Invoke();
+
+            // Select is the resting default
+            SelectTool(_btnSelect);
         }
 
         private void SelectTool(Button selected)

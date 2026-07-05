@@ -10,6 +10,7 @@ namespace MapEditor.Presenter.ViewModels
         public ObservableProperty<string> Name         { get; } = new ObservableProperty<string>("");
         public ObservableProperty<string> PawnId        { get; } = new ObservableProperty<string>("");
         public ObservableProperty<bool>   IsGameMaster { get; } = new ObservableProperty<bool>(false);
+        public ObservableProperty<string> HexColor     { get; } = new ObservableProperty<string>("#3399FF");
 
         public PlayerViewModel(Player player)
         {
@@ -18,9 +19,11 @@ namespace MapEditor.Presenter.ViewModels
             Name.Value         = player.Name;
             PawnId.Value       = player.PawnId;
             IsGameMaster.Value = player.IsGameMaster;
+            HexColor.Value     = player.HexColor;
 
-            Name.ValueChanged   += (_, __) => player.Name   = Name.Value;
-            PawnId.ValueChanged += (_, __) => player.PawnId = PawnId.Value;
+            Name.ValueChanged     += (_, __) => player.Name     = Name.Value;
+            PawnId.ValueChanged   += (_, __) => player.PawnId   = PawnId.Value;
+            HexColor.ValueChanged += (_, __) => player.HexColor = HexColor.Value;
         }
     }
 }

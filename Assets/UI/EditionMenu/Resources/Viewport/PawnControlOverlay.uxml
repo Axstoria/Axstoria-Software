@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="PawnControlOverlay.uss" />
+    <ui:VisualElement name="pawn-control-overlay" class="pawn-control-overlay" picking-mode="Position">
+        <ui:Button name="btn-rotate-left" text="↺" class="pawn-control-button" />
+        <ui:Button name="btn-rotate-right" text="↻" class="pawn-control-button" />
+    </ui:VisualElement>
+</ui:UXML>
