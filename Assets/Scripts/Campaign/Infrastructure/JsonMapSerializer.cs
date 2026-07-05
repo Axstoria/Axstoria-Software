@@ -36,7 +36,8 @@ namespace Campaign.Infrastructure
                 {
                     EntryType = m.EntryType,
                     EntryValue = ValueToDTO(m.EntryValue),
-                }).ToList() ?? new List<MetadataEntryDTO>()
+                }).ToList() ?? new List<MetadataEntryDTO>(),
+                players = map.Players?.Select(PlayerToDTO).ToList() ?? new List<PlayerDTO>()
             };
 
             foreach (var obj in map.Objects)
@@ -63,10 +64,40 @@ namespace Campaign.Infrastructure
                 foreach (var objDTO in dto.objects)
                     map.Objects.Add(ObjectFromDTO(objDTO));
 
+            if (dto.players != null)
+                foreach (var playerDTO in dto.players)
+                    map.Players.Add(PlayerFromDTO(playerDTO));
+
             return map;
         }
 
-        // ── TerrainLayout ↔ DTO ───────────────────────────────────────────────
+        private static PlayerDTO PlayerToDTO(Player player) => new PlayerDTO
+        {
+            id           = player.Id,
+            name         = player.Name,
+            isGameMaster = player.IsGameMaster,
+            pawnId       = player.PawnId,
+            hexColor     = player.HexColor,
+            metadata = player.Metadata?.Select(m => new MetadataEntryDTO
+            {
+                EntryType = m.EntryType,
+                EntryValue = ValueToDTO(m.EntryValue),
+            }).ToList() ?? new List<MetadataEntryDTO>()
+        };
+
+        private static Player PlayerFromDTO(PlayerDTO dto) => new Player
+        {
+            Id           = dto.id,
+            Name         = dto.name,
+            IsGameMaster = dto.isGameMaster,
+            PawnId       = dto.pawnId,
+            HexColor     = string.IsNullOrEmpty(dto.hexColor) ? "#3399FF" : dto.hexColor,
+            Metadata = dto.metadata?.Select(m => new MetadataEntry
+            {
+                EntryType = m.EntryType,
+                EntryValue = ValueFromDTO(m.EntryValue),
+            }).ToList() ?? new List<MetadataEntry>()
+        };
 
         private static TerrainDTO TerrainToDTO(TerrainLayout t)
         {
@@ -100,8 +131,6 @@ namespace Campaign.Infrastructure
             };
         }
 
-        // ── SceneObject ↔ DTO ─────────────────────────────────────────────────
-
         private static SceneObjectDTO ObjectToDTO(SceneObject obj)
         {
             var t = obj.Transform;
@@ -113,6 +142,7 @@ namespace Campaign.Infrastructure
                 modelPath   = obj.ModelPath,
                 isImported  = obj.IsImported,
                 importPath  = obj.ImportPath,
+                isPawn      = obj.IsPawn,
                 metadata = obj.Metadata?.Select(m => new MetadataEntryDTO
                 {
                     EntryType = m.EntryType,
@@ -143,6 +173,7 @@ namespace Campaign.Infrastructure
                 ModelPath   = dto.modelPath,
                 IsImported  = dto.isImported,
                 ImportPath  = dto.importPath,
+                IsPawn      = dto.isPawn,
                 Metadata    = dto.metadata?.Select(m => new MetadataEntry
                 {
                     EntryType = m.EntryType,

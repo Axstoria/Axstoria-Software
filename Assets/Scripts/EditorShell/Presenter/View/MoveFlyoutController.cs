@@ -33,6 +33,10 @@ namespace EditorShell.Presenter.View
             _wrapper.RegisterCallback<MouseLeaveEvent>(evt => ScheduleHideFlyout());
             _flyout.RegisterCallback<MouseEnterEvent>(evt => CancelHide());
 
+            // Clicking the main icon directly (not just hovering to reveal the
+            // flyout) should activate whichever tool is currently the active choice.
+            _mainButton.clicked += () => SelectFlyoutTool(_activeToolClass, TooltipFor(_activeToolClass));
+
             _btnMove.clicked += () => SelectFlyoutTool("tool-btn--move", "Move");
             _btnRotate.clicked += () => SelectFlyoutTool("tool-btn--rotate", "Rotate");
             _btnScale.clicked += () => SelectFlyoutTool("tool-btn--scale", "Scale");
@@ -72,6 +76,13 @@ namespace EditorShell.Presenter.View
                 _hideSchedule = null;
             }
         }
+
+        private static string TooltipFor(string toolClass) => toolClass switch
+        {
+            "tool-btn--rotate" => "Rotate",
+            "tool-btn--scale"  => "Scale",
+            _                  => "Move"
+        };
 
         private void SelectFlyoutTool(string toolClass, string tooltipText)
         {

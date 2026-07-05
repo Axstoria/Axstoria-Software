@@ -28,6 +28,11 @@ namespace MapEditor.Presenter.ViewModels
         public ObservableProperty<bool>   IsPlacementMode { get; } = new();
         public ObservableProperty<string> Status          { get; } = new();
         public ObservableProperty<bool>   IsBusy          { get; } = new();
+        public ObservableProperty<string> ViewingAsLabel  { get; } = new();
+
+        // ── Session & permissions ────────────────────────────────────────────
+        public ISessionContext    Session     { get; }
+        public IPermissionService Permissions { get; }
 
         // ── Use cases ─────────────────────────────────────────────────────────
         public PlaceObjectUseCase     PlaceObject     { get; }
@@ -38,6 +43,8 @@ namespace MapEditor.Presenter.ViewModels
         public CreateTagUseCase       CreateTag       { get; }
         public RenameTagUseCase       RenameTag       { get; }
         public DeleteTagUseCase       DeleteTag       { get; }
+        public CreatePlayerUseCase    CreatePlayer    { get; }
+        public DeletePlayerUseCase    DeletePlayer    { get; }
         public GenerateTerrainUseCase GenerateTerrain { get; }
         public SaveMapUseCase         SaveMap         { get; }
         public LoadMapUseCase         LoadMap         { get; }
@@ -47,6 +54,8 @@ namespace MapEditor.Presenter.ViewModels
             Map                   map,
             CameraState           cameraState,
             CommandHistory        history,
+            ISessionContext       session,
+            IPermissionService    permissions,
             PlaceObjectUseCase    placeObject,
             DeleteObjectUseCase   deleteObject,
             TransformObjectUseCase transformObject,
@@ -55,6 +64,8 @@ namespace MapEditor.Presenter.ViewModels
             CreateTagUseCase      createTag,
             RenameTagUseCase      renameTag,
             DeleteTagUseCase      deleteTag,
+            CreatePlayerUseCase   createPlayer,
+            DeletePlayerUseCase   deletePlayer,
             GenerateTerrainUseCase generateTerrain,
             SaveMapUseCase        saveMap,
             LoadMapUseCase        loadMap,
@@ -64,6 +75,8 @@ namespace MapEditor.Presenter.ViewModels
 
             Map             = new MapViewModel(map);
             Camera          = new CameraViewModel(cameraState);
+            Session         = session;
+            Permissions     = permissions;
             PlaceObject     = placeObject;
             DeleteObject    = deleteObject;
             TransformObject = transformObject;
@@ -72,6 +85,8 @@ namespace MapEditor.Presenter.ViewModels
             CreateTag       = createTag;
             RenameTag       = renameTag;
             DeleteTag       = deleteTag;
+            CreatePlayer    = createPlayer;
+            DeletePlayer    = deletePlayer;
             GenerateTerrain = generateTerrain;
             SaveMap         = saveMap;
             LoadMap         = loadMap;
@@ -79,6 +94,17 @@ namespace MapEditor.Presenter.ViewModels
 
             _history.OnHistoryChanged += SyncHistoryState;
             SyncHistoryState();
+
+            Session.OnCurrentPlayerChanged += SyncViewingAsLabel;
+            SyncViewingAsLabel();
+        }
+
+        private void SyncViewingAsLabel()
+        {
+            var player = Session.CurrentPlayer;
+            ViewingAsLabel.Value = player == null || player.IsGameMaster
+                ? ""
+                : $"Viewing as: {player.Name}";
         }
 
         public void Undo() => _history.Undo();
@@ -87,6 +113,7 @@ namespace MapEditor.Presenter.ViewModels
         public void Dispose()
         {
             _history.OnHistoryChanged -= SyncHistoryState;
+            Session.OnCurrentPlayerChanged -= SyncViewingAsLabel;
             Map.Dispose();
         }
 

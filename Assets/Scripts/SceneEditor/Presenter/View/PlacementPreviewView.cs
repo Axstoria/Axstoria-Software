@@ -13,6 +13,9 @@ namespace SceneEditor.Presenter.View
         [SerializeField] private Material validMaterial;
         [SerializeField] private Material invalidMaterial;
 
+        public Material ValidMaterial   => validMaterial;
+        public Material InvalidMaterial => invalidMaterial;
+
         private MapEditorViewModel _vm;
         private GameObject         _previewInstance;
         private SceneObject        _pendingObject;

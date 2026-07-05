@@ -44,6 +44,18 @@ namespace Campaign.Infrastructure
         public TerrainDTO             terrain;
         public List<SceneObjectDTO>   objects;
         public List<MetadataEntryDTO> metadata;
+        public List<PlayerDTO>        players;
+    }
+
+    [Serializable]
+    public class PlayerDTO
+    {
+        public string id;
+        public string name;
+        public bool   isGameMaster;
+        public string pawnId;
+        public string hexColor;
+        public List<MetadataEntryDTO> metadata;
     }
 
     [Serializable]
@@ -67,6 +79,7 @@ namespace Campaign.Infrastructure
         public string modelPath;
         public bool   isImported;
         public string importPath;
+        public bool   isPawn;
         public List<MetadataEntryDTO> metadata;
 
         public float posX, posY, posZ;

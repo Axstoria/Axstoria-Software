@@ -7,13 +7,13 @@ namespace SceneEditor.App.Command
 {
     public class RemoveObjectMetadataCommand : ICommand
     {
-        public string Label => $"Remove metadata from {_obj.DisplayName}";
+        public string Label => "Remove metadata";
 
-        private readonly SceneObject _obj;
+        private readonly IHasMetadata _obj;
         private readonly MetadataEntry _entry;
         private int _index = -1;
 
-        public RemoveObjectMetadataCommand(SceneObject obj, MetadataEntry entry)
+        public RemoveObjectMetadataCommand(IHasMetadata obj, MetadataEntry entry)
         {
             _obj = obj;
             _entry = entry;

@@ -6,13 +6,13 @@ namespace SceneEditor.App.Command
 {
     public class SetObjectMetadataCommand : ICommand
     {
-        public string Label => $"Add metadata to {_obj.DisplayName}";
-        private readonly SceneObject _obj;
+        public string Label => "Add metadata";
+        private readonly IHasMetadata _obj;
         private readonly string _type;
         private readonly MetadataValue _value;
         private MetadataEntry _entry;
 
-        public SetObjectMetadataCommand(SceneObject obj, string metadataType, MetadataValue metadataValue)
+        public SetObjectMetadataCommand(IHasMetadata obj, string metadataType, MetadataValue metadataValue)
         {
             _obj = obj;
             _type = metadataType;

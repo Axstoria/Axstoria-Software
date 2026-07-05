@@ -12,6 +12,7 @@ namespace SceneEditor.Presenter.ViewModels
         public ObservableProperty<string> DisplayName    { get; } = new();
         public ObservableProperty<string> Category       { get; } = new();
         public ObservableProperty<bool>   IsImported     { get; } = new();
+        public ObservableProperty<bool>   IsPawn         { get; } = new();
 
         public ObjectViewModel(SceneObject sceneObject) : base(sceneObject)
         {
@@ -21,10 +22,12 @@ namespace SceneEditor.Presenter.ViewModels
             DisplayName.Value    = _object.DisplayName;
             Category.Value       = _object.Category;
             IsImported.Value     = _object.IsImported;
+            IsPawn.Value          = _object.IsPawn;
 
             IsInteractable.ValueChanged += (_, __) => _object.IsInteractable = IsInteractable.Value;
             DisplayName.ValueChanged    += (_, __) => _object.DisplayName    = DisplayName.Value;
             Category.ValueChanged       += (_, __) => _object.Category       = Category.Value;
+            IsPawn.ValueChanged         += (_, __) => _object.IsPawn         = IsPawn.Value;
         }
     }
 }

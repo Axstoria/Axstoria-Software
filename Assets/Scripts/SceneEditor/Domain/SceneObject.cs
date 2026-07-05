@@ -28,13 +28,21 @@ namespace SceneEditor.Domain
         public MetadataValue EntryValue { get; set; }
     }
 
-    public class SceneObject : SceneModel
+    public interface IHasMetadata
+    {
+        List<MetadataEntry> Metadata { get; set; }
+        event EventHandler OnMetadataChanged;
+        void NotifyMetadataChanged();
+    }
+
+    public class SceneObject : SceneModel, IHasMetadata
     {
         public bool   IsInteractable { get; set; }
         public string DisplayName    { get; set; }
         public string Category       { get; set; }
         public bool   IsImported     { get; set; }
         public string ImportPath     { get; set; }
+        public bool   IsPawn         { get; set; }
         public List<MetadataEntry> Metadata { get; set; }
         public event EventHandler OnMetadataChanged;
         public void NotifyMetadataChanged() => OnMetadataChanged?.Invoke(this, EventArgs.Empty);

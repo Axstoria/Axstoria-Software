@@ -70,15 +70,21 @@ namespace MapEditor.Presenter.View
             IMapSerializer     serializer = new JsonMapSerializer();
             IFileDialogService dialog     = new FileDialogService();
 
+            // ── Session & permissions ────────────────────────────────────────
+            ISessionContext    session     = new LocalSessionContext(map);
+            IPermissionService permissions = new PermissionService();
+
             // ── Use cases ─────────────────────────────────────────────────────
-            var placeObject     = new PlaceObjectUseCase(map, grid, history);
-            var deleteObject    = new DeleteObjectUseCase(map, grid, history);
-            var transformObject = new TransformObjectUseCase(history);
+            var placeObject     = new PlaceObjectUseCase(map, grid, history, session);
+            var deleteObject    = new DeleteObjectUseCase(map, grid, history, session, permissions);
+            var transformObject = new TransformObjectUseCase(history, session, permissions);
             var setObjectMetadata = new SetObjectMetadataUseCase(history);
             var removeObjectMetadata = new RemoveObjectMetadataUseCase(history);
             var createTag       = new CreateTagUseCase(history, map);
             var renameTag       = new RenameTagUseCase(history, map);
             var deleteTag       = new DeleteTagUseCase(history, map);
+            var createPlayer    = new CreatePlayerUseCase(history, map);
+            var deletePlayer    = new DeletePlayerUseCase(history, map, session);
             var generateTerrain = new GenerateTerrainUseCase(history, grid, map);
             var saveMap         = new SaveMapUseCase(serializer, dialog);
             var loadMap         = new LoadMapUseCase(serializer, dialog);
@@ -86,9 +92,9 @@ namespace MapEditor.Presenter.View
 
             // ── ViewModel ─────────────────────────────────────────────────────
             _vm = new MapEditorViewModel(
-                map, cameraState, history,
+                map, cameraState, history, session, permissions,
                 placeObject, deleteObject, transformObject, setObjectMetadata, removeObjectMetadata,
-                createTag, renameTag, deleteTag, generateTerrain,
+                createTag, renameTag, deleteTag, createPlayer, deletePlayer, generateTerrain,
                 saveMap, loadMap, importAsset);
 
             _vm.Register();
