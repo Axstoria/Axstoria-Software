@@ -8,11 +8,13 @@ namespace App.Presenter.ViewModel
     {
         private readonly INavigationService _navigation;
         public ICommand GoToPreload { get; }
+        public ICommand GoToSheetEditor { get; }
 
         public EditionMenuViewModel(INavigationService navigation)
         {
             _navigation = navigation;
             GoToPreload = new SimpleCommand(() => _navigation.LoadScene(SceneNames.BuildMenu));
+            GoToSheetEditor = new SimpleCommand(() => _navigation.LoadScene(SceneNames.SheetEdition));
         }
     }
 }
