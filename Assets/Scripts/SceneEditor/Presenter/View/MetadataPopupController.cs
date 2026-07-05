@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using Loxodon.Framework.Contexts;
 using MapEditor.Presenter.ViewModels;
 using SceneEditor.Domain;
@@ -34,7 +35,9 @@ namespace SceneEditor.Presenter.View
         private Label _labelNoNotes;
 
         private List<ObjectViewModel> _placedObjects = new();
+        private List<TagViewModel> _tags = new();
         private NotifyCollectionChangedEventHandler _onObjectsChanged;
+        private NotifyCollectionChangedEventHandler _onTagsChanged;
         private MapEditorViewModel _vm;
 
         private static readonly List<string> Categories = new() { "Notes", "Tags", "Sheets" };
@@ -83,7 +86,11 @@ namespace SceneEditor.Presenter.View
             _onObjectsChanged = OnPlacedObjectsChanged;
             _vm.Map.Objects.CollectionChanged += _onObjectsChanged;
 
+            _onTagsChanged = (_, __) => RefreshTagDropdown();
+            _vm.Map.Tags.CollectionChanged += _onTagsChanged;
+
             RefreshObjectDropdowns();
+            RefreshTagDropdown();
 
             _categoryDropdown.index = 0;
             ShowPanel(Categories[0]);
@@ -125,6 +132,13 @@ namespace SceneEditor.Presenter.View
         private static string BaseNameOf(ObjectViewModel obj)
             => string.IsNullOrEmpty(obj.DisplayName.Value) ? "(unnamed)" : obj.DisplayName.Value;
 
+        private void RefreshTagDropdown()
+        {
+            _tags = new List<TagViewModel>(_vm.Map.Tags);
+            _tagDropdown.choices = _tags.Select(t => t.Name.Value).ToList();
+            _tagDropdown.index = _tags.Count > 0 ? 0 : -1;
+        }
+
         private void OnPlacedObjectsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             int prevNotes = _objectDropdownNotes.index;
@@ -142,6 +156,11 @@ namespace SceneEditor.Presenter.View
             {
                 _vm.Map.Objects.CollectionChanged -= _onObjectsChanged;
                 _onObjectsChanged = null;
+            }
+            if (_vm != null && _onTagsChanged != null)
+            {
+                _vm.Map.Tags.CollectionChanged -= _onTagsChanged;
+                _onTagsChanged = null;
             }
             _noteField.value = "";
             _overlay.style.display = DisplayStyle.None;
@@ -164,9 +183,16 @@ namespace SceneEditor.Presenter.View
                     vm.SetObjectMetadata.Execute(noteTarget, "note", new NoteValue { Text = _noteField.value });
                     break;
                 case "Tags":
+                    if (_objectDropdownTags.index < 0 || _tagDropdown.index < 0)
+                        return;
                     SceneObject tagTarget = _placedObjects[_objectDropdownTags.index].Model;
-                    // TODO: Implement tags addition to metadata
-                    // vm.SetObjectMetadata.Execute(tagTarget, "tag", new TagValue { Id = _tagDropdown.value });
+                    TagValue selectedTag = _tags[_tagDropdown.index].Model;
+                    if (tagTarget == null || selectedTag == null)
+                        return;
+                    bool alreadyAssigned = tagTarget.Metadata?.Any(e =>
+                        e.EntryValue is TagValue tv && tv.Id == selectedTag.Id) == true;
+                    if (!alreadyAssigned)
+                        vm.SetObjectMetadata.Execute(tagTarget, "tag", new TagValue { Id = selectedTag.Id });
                     break;
                 case "Sheets":
                     // TODO: to be implemented when sheets are done

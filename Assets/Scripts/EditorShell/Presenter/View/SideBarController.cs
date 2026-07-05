@@ -6,6 +6,7 @@ using SceneEditor.Domain;
 using SceneEditor.Presenter.View;
 using SceneEditor.Presenter.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Collections.Specialized;
 using UnityEngine;
@@ -94,11 +95,17 @@ namespace EditorShell.Presenter.View
         private Label         _labelNoNotes;
         private VisualElement _tagsList;
         private Label         _labelNoTags;
+        private DropdownField _tagAssignDropdown;
+        private Button        _btnAddTag;
+        private List<TagViewModel> _tagChoices = new();
+        private NotifyCollectionChangedEventHandler _onTagsChanged;
         private VisualElement _sheetsList;
         private Label         _labelNoSheets;
 
         // --- Selection ---
         public Action<ObjectViewModel> OnObjectSelected;
+
+        private VisualElement _root;
 
         private IPanel _uiPanel;
         private MapEditorViewModel _vm;
@@ -107,6 +114,7 @@ namespace EditorShell.Presenter.View
 
         public void Init(VisualElement root)
         {
+            _root         = root;
             _uiPanel      = root.panel;
             _outlinerPane = root.Q<VisualElement>("outliner-pane");
 
@@ -215,8 +223,28 @@ namespace EditorShell.Presenter.View
             _labelNoNotes = root.Q<Label>("label-no-notes");
             _tagsList      = root.Q<VisualElement>("tags-list");
             _labelNoTags   = root.Q<Label>("label-no-tags");
+            _tagAssignDropdown = root.Q<DropdownField>("tag-assign-dropdown");
+            _btnAddTag     = root.Q<Button>("btn-add-tag");
             _sheetsList    = root.Q<VisualElement>("sheets-list");
             _labelNoSheets = root.Q<Label>("label-no-sheets");
+        }
+
+        private void RefreshTagChoices()
+        {
+            _tagChoices = new List<TagViewModel>(_vm.Map.Tags);
+            _tagAssignDropdown.choices = _tagChoices.Select(t => t.Name.Value).ToList();
+            _tagAssignDropdown.index = _tagChoices.Count > 0 ? 0 : -1;
+        }
+
+        private void OnAddTagClicked()
+        {
+            if (_selectedObject == null || _tagAssignDropdown.index < 0) return;
+            TagValue selectedTag = _tagChoices[_tagAssignDropdown.index].Model;
+
+            bool alreadyAssigned = _selectedObject.Model.Metadata?.Any(e =>
+                e.EntryValue is TagValue tv && tv.Id == selectedTag.Id) == true;
+            if (!alreadyAssigned)
+                _vm.SetObjectMetadata.Execute(_selectedObject.Model, "tag", new TagValue { Id = selectedTag.Id });
         }
 
         // ── Scene click-to-select ─────────────────────────────────────────────
@@ -236,13 +264,23 @@ namespace EditorShell.Presenter.View
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))
             {
+                Debug.Log($"[SideBarController] Raycast hit '{hit.collider.gameObject.name}'.");
                 if (_spawner.TryGetId(hit.collider.gameObject, out string id))
                 {
                     foreach (ObjectViewModel obj in _vm.Map.Objects)
                     {
                         if (obj.Model.Id == id) { SelectObject(obj); return; }
                     }
+                    Debug.Log($"[SideBarController] Id '{id}' not found in _vm.Map.Objects.");
                 }
+                else
+                {
+                    Debug.Log($"[SideBarController] '{hit.collider.gameObject.name}' is not a registered spawned object.");
+                }
+            }
+            else
+            {
+                Debug.Log("[SideBarController] Raycast hit nothing.");
             }
 
             // Click on empty space → deselect
@@ -280,7 +318,10 @@ namespace EditorShell.Presenter.View
             var screen = Input.mousePosition;
             var panelPos = RuntimePanelUtils.ScreenToPanel(
                 _uiPanel, new Vector2(screen.x, Screen.height - screen.y));
-            return _uiPanel.Pick(panelPos) != null;
+            var picked = _uiPanel.Pick(panelPos);
+            // The root VisualElement spans the entire screen; only treat a pick as
+            // "over UI" when an actual interactive child element is hit.
+            return picked != null && picked != _root;
         }
 
         // ── System connections ────────────────────────────────────────────────
@@ -443,6 +484,11 @@ namespace EditorShell.Presenter.View
             _vm.Map.Objects.CollectionChanged += OnSelectedObjectRemoved;
             if (_gizmo != null) _gizmo.OnSelectionChanged += OnGizmoSelectionChanged;
 
+            RefreshTagChoices();
+            _onTagsChanged = (_, __) => RefreshTagChoices();
+            _vm.Map.Tags.CollectionChanged += _onTagsChanged;
+            _btnAddTag.clicked += OnAddTagClicked;
+
             SetSelectedObject(null);
         }
 
@@ -549,9 +595,33 @@ namespace EditorShell.Presenter.View
             {
                 foreach (var entry in tags)
                 {
-                    var label = new Label(FormatMetadataEntry(entry));
-                    label.AddToClassList("settings-caption");
-                    _tagsList.Add(label);
+                    var tagValue = (TagValue)entry.EntryValue;
+                    var tagDef = _vm.Map.Tags.FirstOrDefault(t => t.Model.Id == tagValue.Id);
+
+                    var chip = new VisualElement();
+                    chip.AddToClassList("tag-chip");
+
+                    var swatch = new VisualElement();
+                    swatch.AddToClassList("tag-swatch");
+                    string hex = tagDef?.HexColor.Value ?? "#808080";
+                    if (ColorUtility.TryParseHtmlString(hex, out Color c))
+                        swatch.style.backgroundColor = c;
+
+                    var label = new Label(tagDef?.Name.Value ?? "(unknown tag)");
+                    label.AddToClassList("tag-chip-name");
+
+                    var remove = new Button { text = "×" };
+                    remove.AddToClassList("tag-chip-remove");
+                    remove.RegisterCallback<ClickEvent>(evt =>
+                    {
+                        evt.StopPropagation();
+                        _vm.RemoveObjectMetadata.Execute(_selectedObject.Model, entry);
+                    });
+
+                    chip.Add(swatch);
+                    chip.Add(label);
+                    chip.Add(remove);
+                    _tagsList.Add(chip);
                 }
             }
 
@@ -569,7 +639,6 @@ namespace EditorShell.Presenter.View
         private static string FormatMetadataEntry(MetadataEntry entry) => entry.EntryValue switch
         {
             NoteValue  note => note.Text,
-            TagValue   tag  => $"{tag.Name} - {tag.HexColor}",
             SheetValue _    => "(not yet implemented)",
             _               => $"Unknown ({entry.EntryType})"
         };

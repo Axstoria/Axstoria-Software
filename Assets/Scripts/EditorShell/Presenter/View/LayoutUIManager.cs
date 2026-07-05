@@ -68,9 +68,14 @@ namespace EditorShell.Presenter.View
             toolbarManager.AddViewMenuEntry("Outliner", _ => sidePanels.ToggleOutliner(),
                 _ => sidePanels.IsOutlinerPresent ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
 
+            var colorPicker = GetComponentInChildren<ColorPickerPopupController>() ?? this.AddComponent<ColorPickerPopupController>();
+            colorPicker.Init(root);
+
             var metadataPopup = GetComponentInChildren<MetadataPopupController>() ?? this.AddComponent<MetadataPopupController>();
             metadataPopup.Init(root);
             toolbarManager.OnLinkToObjectRequested = () => metadataPopup.Open();
+
+            this.AddComponent<TagsPanelController>().Init(root, colorPicker);
         }
     }
 }

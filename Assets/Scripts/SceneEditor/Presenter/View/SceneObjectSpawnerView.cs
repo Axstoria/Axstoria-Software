@@ -95,7 +95,24 @@ namespace SceneEditor.Presenter.View
             SceneObjectView view = instance.GetComponent<SceneObjectView>() ?? instance.AddComponent<SceneObjectView>();
             view.Init(domain);
 
+            EnsureColliders(instance);
+
             _spawned[domain.Id] = instance;
+        }
+
+        // Imported/browser prefabs often ship without colliders, which makes the
+        // click-to-select raycast pass straight through them and hit whatever is
+        // behind (e.g. the terrain). Add a MeshCollider to any renderer that lacks one.
+        private static void EnsureColliders(GameObject instance)
+        {
+            foreach (MeshFilter meshFilter in instance.GetComponentsInChildren<MeshFilter>())
+            {
+                if (meshFilter.sharedMesh == null) continue;
+                if (meshFilter.GetComponent<Collider>() != null) continue;
+
+                MeshCollider collider = meshFilter.gameObject.AddComponent<MeshCollider>();
+                collider.sharedMesh = meshFilter.sharedMesh;
+            }
         }
 
         public bool TryGetGameObject(string id, out GameObject go)

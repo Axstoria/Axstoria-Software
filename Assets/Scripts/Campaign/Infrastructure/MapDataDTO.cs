@@ -41,8 +41,9 @@ namespace Campaign.Infrastructure
         public string mapId;
         public string mapName;
 
-        public TerrainDTO           terrain;
-        public List<SceneObjectDTO> objects;
+        public TerrainDTO             terrain;
+        public List<SceneObjectDTO>   objects;
+        public List<MetadataEntryDTO> metadata;
     }
 
     [Serializable]
@@ -66,7 +67,7 @@ namespace Campaign.Infrastructure
         public string modelPath;
         public bool   isImported;
         public string importPath;
-        public List<MetadataEntryDTO> metadata { get; set; }
+        public List<MetadataEntryDTO> metadata;
 
         public float posX, posY, posZ;
         public float rotX, rotY, rotZ, rotW;

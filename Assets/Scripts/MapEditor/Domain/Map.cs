@@ -9,13 +9,15 @@ namespace MapEditor.Domain
         public string Id   { get; set; }
         public string Name { get; set; }
 
-        public List<Token>       Tokens        { get; set; } = new();
-        public List<Structure>   Structures    { get; set; } = new();
-        public List<SceneObject> Objects       { get; set; } = new();
-        public TerrainLayout     TerrainLayout { get; set; }
+        public List<Token>         Tokens        { get; set; } = new();
+        public List<Structure>     Structures    { get; set; } = new();
+        public List<SceneObject>   Objects       { get; set; } = new();
+        public List<MetadataEntry> Metadata      { get; set; } = new();
+        public TerrainLayout       TerrainLayout { get; set; }
 
         public event Action<SceneObject> OnObjectAdded;
         public event Action<SceneObject> OnObjectRemoved;
+        public event EventHandler        OnMetadataChanged;
 
         public void AddObject(SceneObject obj)
         {
@@ -28,5 +30,7 @@ namespace MapEditor.Domain
             Objects.Remove(obj);
             OnObjectRemoved?.Invoke(obj);
         }
+
+        public void NotifyMetadataChanged() => OnMetadataChanged?.Invoke(this, EventArgs.Empty);
     }
 }

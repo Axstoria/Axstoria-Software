@@ -31,7 +31,12 @@ namespace Campaign.Infrastructure
                 mapName = map.Name,
                 savedAt = DateTime.UtcNow.ToString("o"),
                 terrain = TerrainToDTO(map.TerrainLayout),
-                objects = new List<SceneObjectDTO>()
+                objects = new List<SceneObjectDTO>(),
+                metadata = map.Metadata?.Select(m => new MetadataEntryDTO
+                {
+                    EntryType = m.EntryType,
+                    EntryValue = ValueToDTO(m.EntryValue),
+                }).ToList() ?? new List<MetadataEntryDTO>()
             };
 
             foreach (var obj in map.Objects)
@@ -46,7 +51,12 @@ namespace Campaign.Infrastructure
             {
                 Id            = dto.mapId,
                 Name          = dto.mapName,
-                TerrainLayout = TerrainFromDTO(dto.terrain)
+                TerrainLayout = TerrainFromDTO(dto.terrain),
+                Metadata      = dto.metadata?.Select(m => new MetadataEntry
+                {
+                    EntryType = m.EntryType,
+                    EntryValue = ValueFromDTO(m.EntryValue),
+                }).ToList() ?? new List<MetadataEntry>()
             };
 
             if (dto.objects != null)

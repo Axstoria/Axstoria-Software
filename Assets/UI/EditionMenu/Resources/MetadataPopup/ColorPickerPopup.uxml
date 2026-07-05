@@ -1,0 +1,10 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="ColorPickerPopup.uss" />
+    <ui:VisualElement name="color-picker-popup" class="color-picker-popup">
+        <ui:VisualElement class="color-picker-preview-row">
+            <ui:VisualElement name="color-preview" class="color-preview" />
+            <ui:TextField name="color-hex-field" class="color-hex-field" />
+        </ui:VisualElement>
+        <ui:VisualElement name="color-swatch-grid" class="color-swatch-grid" />
+    </ui:VisualElement>
+</ui:UXML>

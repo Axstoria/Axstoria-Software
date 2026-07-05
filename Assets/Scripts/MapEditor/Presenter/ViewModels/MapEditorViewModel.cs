@@ -34,6 +34,10 @@ namespace MapEditor.Presenter.ViewModels
         public DeleteObjectUseCase    DeleteObject    { get; }
         public TransformObjectUseCase TransformObject { get; }
         public SetObjectMetadataUseCase SetObjectMetadata { get; }
+        public RemoveObjectMetadataUseCase RemoveObjectMetadata { get; }
+        public CreateTagUseCase       CreateTag       { get; }
+        public RenameTagUseCase       RenameTag       { get; }
+        public DeleteTagUseCase       DeleteTag       { get; }
         public GenerateTerrainUseCase GenerateTerrain { get; }
         public SaveMapUseCase         SaveMap         { get; }
         public LoadMapUseCase         LoadMap         { get; }
@@ -47,6 +51,10 @@ namespace MapEditor.Presenter.ViewModels
             DeleteObjectUseCase   deleteObject,
             TransformObjectUseCase transformObject,
             SetObjectMetadataUseCase setObjectMetadata,
+            RemoveObjectMetadataUseCase removeObjectMetadata,
+            CreateTagUseCase      createTag,
+            RenameTagUseCase      renameTag,
+            DeleteTagUseCase      deleteTag,
             GenerateTerrainUseCase generateTerrain,
             SaveMapUseCase        saveMap,
             LoadMapUseCase        loadMap,
@@ -60,6 +68,10 @@ namespace MapEditor.Presenter.ViewModels
             DeleteObject    = deleteObject;
             TransformObject = transformObject;
             SetObjectMetadata = setObjectMetadata;
+            RemoveObjectMetadata = removeObjectMetadata;
+            CreateTag       = createTag;
+            RenameTag       = renameTag;
+            DeleteTag       = deleteTag;
             GenerateTerrain = generateTerrain;
             SaveMap         = saveMap;
             LoadMap         = loadMap;

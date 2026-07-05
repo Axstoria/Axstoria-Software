@@ -75,6 +75,10 @@ namespace MapEditor.Presenter.View
             var deleteObject    = new DeleteObjectUseCase(map, grid, history);
             var transformObject = new TransformObjectUseCase(history);
             var setObjectMetadata = new SetObjectMetadataUseCase(history);
+            var removeObjectMetadata = new RemoveObjectMetadataUseCase(history);
+            var createTag       = new CreateTagUseCase(history, map);
+            var renameTag       = new RenameTagUseCase(history, map);
+            var deleteTag       = new DeleteTagUseCase(history, map);
             var generateTerrain = new GenerateTerrainUseCase(history, grid, map);
             var saveMap         = new SaveMapUseCase(serializer, dialog);
             var loadMap         = new LoadMapUseCase(serializer, dialog);
@@ -83,7 +87,8 @@ namespace MapEditor.Presenter.View
             // ── ViewModel ─────────────────────────────────────────────────────
             _vm = new MapEditorViewModel(
                 map, cameraState, history,
-                placeObject, deleteObject, transformObject, setObjectMetadata, generateTerrain,
+                placeObject, deleteObject, transformObject, setObjectMetadata, removeObjectMetadata,
+                createTag, renameTag, deleteTag, generateTerrain,
                 saveMap, loadMap, importAsset);
 
             _vm.Register();

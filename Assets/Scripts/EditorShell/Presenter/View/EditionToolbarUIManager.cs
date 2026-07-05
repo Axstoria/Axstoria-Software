@@ -160,6 +160,9 @@ namespace EditorShell.Presenter.View
             foreach (SceneObject obj in loaded.Objects)
                 active.AddObject(obj);
 
+            active.Metadata = loaded.Metadata;
+            active.NotifyMetadataChanged();
+
             if (vm.Grid != null)
                 vm.Grid.RebuildOccupancy(active.Objects);
         }
