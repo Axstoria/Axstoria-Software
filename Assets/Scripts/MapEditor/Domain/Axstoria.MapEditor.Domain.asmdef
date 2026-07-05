@@ -1,0 +1,17 @@
+{
+    "name": "Axstoria.MapEditor.Domain",
+    "rootNamespace": "MapEditor.Domain",
+    "references": [
+        "Axstoria.SceneEditor.Domain",
+        "Axstoria.Grid.Domain"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}

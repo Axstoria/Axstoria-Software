@@ -12,6 +12,7 @@ TagManager:
   - Water
   - UI
   - Ground
+  - Terrain
   - 
   - 
   - 
@@ -34,8 +35,7 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
+  - GizmoHandles
   - 
   m_SortingLayers:
   - name: Default
