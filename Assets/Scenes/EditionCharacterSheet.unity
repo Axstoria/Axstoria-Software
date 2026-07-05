@@ -10684,7 +10684,7 @@ MonoBehaviour:
   backgroundColorSwatch: {fileID: 5520000053}
   backgroundFileLabel: {fileID: 5530000016}
   clearBackgroundButton: {fileID: 5530000021}
-  importBackgroundButton: {fileID: 0}
+  importBackgroundButton: {fileID: 5530000034}
 --- !u!1 &5470000006
 GameObject:
   m_ObjectHideFlags: 0
