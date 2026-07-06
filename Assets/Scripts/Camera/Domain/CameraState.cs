@@ -15,7 +15,7 @@ namespace Camera.Domain
         public float MaxZoomDistance = 80f;
 
         // Pan
-        public float PanSensitivity = 0.04f;
+        public float PanSensitivity = 0.01f;
         public float PanSmoothing   = 16f;
     }
 

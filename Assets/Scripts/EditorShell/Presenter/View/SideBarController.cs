@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Collections.Specialized;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UIElements;
 
 namespace EditorShell.Presenter.View
@@ -17,17 +18,9 @@ namespace EditorShell.Presenter.View
     public class SideBarController : MonoBehaviour
     {
         [SerializeField] private Light     _directionalLight;
-        [SerializeField] private Material  _gridMaterial;
 
         private TransformGizmoView     _gizmo;
         private SceneObjectSpawnerView _spawner;
-
-        // Shader property IDs — rename to match your grid shader's property names if needed
-        private static readonly int _propGridThickness = Shader.PropertyToID("_GridThickness");
-        private static readonly int _propBgColor       = Shader.PropertyToID("_BackgroundColor");
-        private static readonly int _propGridColor     = Shader.PropertyToID("_GridColor");
-        private static readonly int _propGridOpacity   = Shader.PropertyToID("_GridOpacity");
-        private static readonly int _propTransSides    = Shader.PropertyToID("_TransparentSides");
 
         // --- Camera ---
         public Slider     OrbitSensitivity { get; private set; }
@@ -43,38 +36,21 @@ namespace EditorShell.Presenter.View
 
         // --- Directional Light ---
         public Slider     LightIntensity   { get; private set; }
-        public Slider     LightColorR      { get; private set; }
-        public Slider     LightColorG      { get; private set; }
-        public Slider     LightColorB      { get; private set; }
+        public VisualElement LightColorSwatch { get; private set; }
         public Slider     LightPitch       { get; private set; }
         public Slider     LightYaw         { get; private set; }
         public Slider     LightShadows     { get; private set; }
         public Slider     AmbientIntensity { get; private set; }
-        public Slider     AmbientColorR    { get; private set; }
-        public Slider     AmbientColorG    { get; private set; }
-        public Slider     AmbientColorB    { get; private set; }
+        public VisualElement AmbientColorSwatch { get; private set; }
 
         // --- Terrain & Grid ---
-        public Button       BtnSaveMap       { get; private set; }
-        public Button       BtnLoadMap       { get; private set; }
-        public Slider       TerrainColorR    { get; private set; }
-        public Slider       TerrainColorG    { get; private set; }
-        public Slider       TerrainColorB    { get; private set; }
+        public VisualElement TerrainColorSwatch { get; private set; }
         public IntegerField TerrainWidth     { get; private set; }
         public IntegerField TerrainDepth     { get; private set; }
         public IntegerField TerrainThickness { get; private set; }
         public Button       BtnRegenerateMap { get; private set; }
         public Slider       GridCellSizeX    { get; private set; }
         public Slider       GridCellSizeY    { get; private set; }
-        public Slider       GridThickness    { get; private set; }
-        public Slider       GridBgR          { get; private set; }
-        public Slider       GridBgG          { get; private set; }
-        public Slider       GridBgB          { get; private set; }
-        public Slider       GridColorR       { get; private set; }
-        public Slider       GridColorG       { get; private set; }
-        public Slider       GridColorB       { get; private set; }
-        public Slider       GridOpacity      { get; private set; }
-        public Toggle       TransparentSides { get; private set; }
 
         // --- Selected Object Transform ---
         public FloatField PosX   { get; private set; }
@@ -112,6 +88,8 @@ namespace EditorShell.Presenter.View
         private MapEditorViewModel _vm;
 
         private VisualElement _outlinerPane;
+        private ColorPickerOverlay _colorPickerOverlay;
+        private Color _ambientColor;
 
         public void Init(VisualElement root)
         {
@@ -126,6 +104,9 @@ namespace EditorShell.Presenter.View
                 Debug.LogWarning("[SideBarController] TransformGizmoView not found. Add it to Main Camera.");
             if (_spawner == null)
                 Debug.LogWarning("[SideBarController] SceneObjectSpawnerView not found in scene.");
+
+            // Shared by every color swatch in the panel (terrain, light, ambient, ...).
+            _colorPickerOverlay = gameObject.AddComponent<ColorPickerOverlay>();
 
             BindCameraElements(root);
             BindLightElements(root);
@@ -170,41 +151,25 @@ namespace EditorShell.Presenter.View
 
         private void BindLightElements(VisualElement root)
         {
-            LightIntensity   = root.Q<Slider>("slider-light-intensity");
-            LightColorR      = root.Q<Slider>("slider-light-color-r");
-            LightColorG      = root.Q<Slider>("slider-light-color-g");
-            LightColorB      = root.Q<Slider>("slider-light-color-b");
-            LightPitch       = root.Q<Slider>("slider-light-pitch");
-            LightYaw         = root.Q<Slider>("slider-light-yaw");
-            LightShadows     = root.Q<Slider>("slider-light-shadows");
-            AmbientIntensity = root.Q<Slider>("slider-ambient-intensity");
-            AmbientColorR    = root.Q<Slider>("slider-ambient-color-r");
-            AmbientColorG    = root.Q<Slider>("slider-ambient-color-g");
-            AmbientColorB    = root.Q<Slider>("slider-ambient-color-b");
+            LightIntensity     = root.Q<Slider>("slider-light-intensity");
+            LightColorSwatch   = root.Q<VisualElement>("light-color-swatch");
+            LightPitch         = root.Q<Slider>("slider-light-pitch");
+            LightYaw           = root.Q<Slider>("slider-light-yaw");
+            LightShadows       = root.Q<Slider>("slider-light-shadows");
+            AmbientIntensity   = root.Q<Slider>("slider-ambient-intensity");
+            AmbientColorSwatch = root.Q<VisualElement>("ambient-color-swatch");
         }
 
         private void BindTerrainGridElements(VisualElement root)
         {
-            BtnSaveMap       = root.Q<Button>("btn-save-map");
-            BtnLoadMap       = root.Q<Button>("btn-load-map");
-            TerrainColorR    = root.Q<Slider>("slider-terrain-color-r");
-            TerrainColorG    = root.Q<Slider>("slider-terrain-color-g");
-            TerrainColorB    = root.Q<Slider>("slider-terrain-color-b");
+            TerrainColorSwatch = root.Q<VisualElement>("terrain-color-swatch");
+
             TerrainWidth     = root.Q<IntegerField>("field-terrain-width");
             TerrainDepth     = root.Q<IntegerField>("field-terrain-depth");
             TerrainThickness = root.Q<IntegerField>("field-terrain-thickness");
             BtnRegenerateMap = root.Q<Button>("btn-regenerate-map");
             GridCellSizeX    = root.Q<Slider>("slider-grid-cell-size-x");
             GridCellSizeY    = root.Q<Slider>("slider-grid-cell-size-y");
-            GridThickness    = root.Q<Slider>("slider-grid-thickness");
-            GridBgR          = root.Q<Slider>("slider-grid-bg-r");
-            GridBgG          = root.Q<Slider>("slider-grid-bg-g");
-            GridBgB          = root.Q<Slider>("slider-grid-bg-b");
-            GridColorR       = root.Q<Slider>("slider-grid-color-r");
-            GridColorG       = root.Q<Slider>("slider-grid-color-g");
-            GridColorB       = root.Q<Slider>("slider-grid-color-b");
-            GridOpacity      = root.Q<Slider>("slider-grid-opacity");
-            TransparentSides = root.Q<Toggle>("toggle-transparent-sides");
         }
 
         private void BindSelectedTransformElements(VisualElement root)
@@ -355,32 +320,45 @@ namespace EditorShell.Presenter.View
         {
             if (_directionalLight == null) return;
 
+            // RenderSettings.ambientLight (flat color) is only used in Flat mode — the scene
+            // otherwise defaults to Skybox mode, which silently ignores the Ambient Color sliders.
+            RenderSettings.ambientMode = AmbientMode.Flat;
+
             // initialize sliders from scene state
             LightIntensity.SetValueWithoutNotify(_directionalLight.intensity);
-            LightColorR.SetValueWithoutNotify(_directionalLight.color.r);
-            LightColorG.SetValueWithoutNotify(_directionalLight.color.g);
-            LightColorB.SetValueWithoutNotify(_directionalLight.color.b);
+            RefreshLightSwatch(_directionalLight.color);
             Vector3 euler = _directionalLight.transform.eulerAngles;
             LightPitch.SetValueWithoutNotify(euler.x);
             LightYaw.SetValueWithoutNotify(euler.y);
             LightShadows.SetValueWithoutNotify(_directionalLight.shadowStrength);
             AmbientIntensity.SetValueWithoutNotify(RenderSettings.ambientIntensity);
-            AmbientColorR.SetValueWithoutNotify(RenderSettings.ambientLight.r);
-            AmbientColorG.SetValueWithoutNotify(RenderSettings.ambientLight.g);
-            AmbientColorB.SetValueWithoutNotify(RenderSettings.ambientLight.b);
+            _ambientColor = RenderSettings.ambientLight;
+            RefreshAmbientSwatch(_ambientColor);
 
             // slider → scene
             LightIntensity.RegisterValueChangedCallback(e => _directionalLight.intensity      = e.newValue);
-            LightColorR.RegisterValueChangedCallback(_    => ApplyLightColor());
-            LightColorG.RegisterValueChangedCallback(_    => ApplyLightColor());
-            LightColorB.RegisterValueChangedCallback(_    => ApplyLightColor());
+            LightColorSwatch.RegisterCallback<ClickEvent>(_ =>
+            {
+                _colorPickerOverlay.Open(_directionalLight.color, LightColorSwatch, color =>
+                {
+                    _directionalLight.color = color;
+                    RefreshLightSwatch(color);
+                });
+            });
             LightPitch.RegisterValueChangedCallback(_     => ApplyLightRotation());
             LightYaw.RegisterValueChangedCallback(_       => ApplyLightRotation());
             LightShadows.RegisterValueChangedCallback(e   => _directionalLight.shadowStrength = e.newValue);
-            AmbientIntensity.RegisterValueChangedCallback(e => RenderSettings.ambientIntensity = e.newValue);
-            AmbientColorR.RegisterValueChangedCallback(_ => ApplyAmbientColor());
-            AmbientColorG.RegisterValueChangedCallback(_ => ApplyAmbientColor());
-            AmbientColorB.RegisterValueChangedCallback(_ => ApplyAmbientColor());
+            // Flat ambient mode ignores RenderSettings.ambientIntensity, so intensity is folded into the color instead.
+            AmbientIntensity.RegisterValueChangedCallback(_ => ApplyAmbientColor());
+            AmbientColorSwatch.RegisterCallback<ClickEvent>(_ =>
+            {
+                _colorPickerOverlay.Open(_ambientColor, AmbientColorSwatch, color =>
+                {
+                    _ambientColor = color;
+                    RefreshAmbientSwatch(color);
+                    ApplyAmbientColor();
+                });
+            });
         }
 
         private void ConnectTerrainGrid()
@@ -392,33 +370,42 @@ namespace EditorShell.Presenter.View
                 TerrainWidth.SetValueWithoutNotify(terrain.Width.Value);
                 TerrainDepth.SetValueWithoutNotify(terrain.Depth.Value);
                 TerrainThickness.SetValueWithoutNotify(terrain.Thickness.Value);
-                if (terrain.Model.Color != null && terrain.Model.Color.Length >= 3)
-                {
-                    TerrainColorR.SetValueWithoutNotify(terrain.Model.Color[0]);
-                    TerrainColorG.SetValueWithoutNotify(terrain.Model.Color[1]);
-                    TerrainColorB.SetValueWithoutNotify(terrain.Model.Color[2]);
-                }
+                RefreshTerrainSwatch(terrain.Color.Value);
 
-                // fields → VM
-                TerrainWidth.RegisterValueChangedCallback(e     => terrain.Width.Value     = e.newValue);
-                TerrainDepth.RegisterValueChangedCallback(e     => terrain.Depth.Value     = e.newValue);
-                TerrainThickness.RegisterValueChangedCallback(e => terrain.Thickness.Value = e.newValue);
+                // Width/Depth/Thickness only stage into the fields — the map itself isn't rebuilt
+                // until "Regenerate Map" is clicked. Clamp here so typed values can't exceed the limits.
+                TerrainWidth.RegisterValueChangedCallback(_     => ClampIntegerField(TerrainWidth, 1, 100));
+                TerrainDepth.RegisterValueChangedCallback(_     => ClampIntegerField(TerrainDepth, 1, 100));
+                TerrainThickness.RegisterValueChangedCallback(_ => ClampIntegerField(TerrainThickness, 1, 10));
+
+                // Opens the real HSVPicker popup; live-updates the terrain mesh as soon as a color is picked
+                TerrainColorSwatch.RegisterCallback<ClickEvent>(_ =>
+                {
+                    _colorPickerOverlay.Open(terrain.Color.Value, TerrainColorSwatch,
+                        color => terrain.Color.Value = color);
+                });
 
                 // VM → fields
                 terrain.Width.ValueChanged     += (_, __) => TerrainWidth.SetValueWithoutNotify(terrain.Width.Value);
                 terrain.Depth.ValueChanged     += (_, __) => TerrainDepth.SetValueWithoutNotify(terrain.Depth.Value);
                 terrain.Thickness.ValueChanged += (_, __) => TerrainThickness.SetValueWithoutNotify(terrain.Thickness.Value);
+                terrain.Color.ValueChanged     += (_, __) => RefreshTerrainSwatch(terrain.Color.Value);
 
                 // Regenerate: passes all current values including color through the use case (supports undo/redo)
                 BtnRegenerateMap.clicked += () =>
                 {
-                    var color = new float[] { TerrainColorR.value, TerrainColorG.value, TerrainColorB.value, 1f };
+                    Color c = terrain.Color.Value;
+                    var color = new float[] { c.r, c.g, c.b, 1f };
                     _vm.GenerateTerrain.Execute(terrain.Model, TerrainWidth.value, TerrainDepth.value, TerrainThickness.value, terrain.Model.Height, color);
+
+                    // GenerateTerrainCommand writes straight to the domain model, bypassing the
+                    // ViewModel's ObservableProperty setters — resync so TerrainBuilderView's
+                    // ValueChanged-driven rebuild actually fires.
+                    terrain.Width.Value     = terrain.Model.Width;
+                    terrain.Depth.Value     = terrain.Model.Depth;
+                    terrain.Thickness.Value = terrain.Model.Thickness;
                 };
             }
-
-            BtnSaveMap.clicked += () => _vm.SaveMap.Execute(_vm.Map.Model);
-            BtnLoadMap.clicked += () => _vm.LoadMap.Execute();
 
             // Grid cell size
             if (_vm.Grid != null)
@@ -427,32 +414,6 @@ namespace EditorShell.Presenter.View
                 GridCellSizeY.SetValueWithoutNotify(_vm.Grid.CellSize);
                 GridCellSizeX.RegisterValueChangedCallback(e => _vm.Grid.CellSize = e.newValue);
                 GridCellSizeY.RegisterValueChangedCallback(e => _vm.Grid.CellSize = e.newValue);
-            }
-
-            // Grid shader properties
-            if (_gridMaterial != null)
-            {
-                GridThickness.SetValueWithoutNotify(_gridMaterial.GetFloat(_propGridThickness));
-                Color bg   = _gridMaterial.GetColor(_propBgColor);
-                Color grid = _gridMaterial.GetColor(_propGridColor);
-                GridBgR.SetValueWithoutNotify(bg.r);
-                GridBgG.SetValueWithoutNotify(bg.g);
-                GridBgB.SetValueWithoutNotify(bg.b);
-                GridColorR.SetValueWithoutNotify(grid.r);
-                GridColorG.SetValueWithoutNotify(grid.g);
-                GridColorB.SetValueWithoutNotify(grid.b);
-                GridOpacity.SetValueWithoutNotify(_gridMaterial.GetFloat(_propGridOpacity));
-                TransparentSides.SetValueWithoutNotify(_gridMaterial.GetFloat(_propTransSides) > 0.5f);
-
-                GridThickness.RegisterValueChangedCallback(e => _gridMaterial.SetFloat(_propGridThickness, e.newValue));
-                GridBgR.RegisterValueChangedCallback(_ => _gridMaterial.SetColor(_propBgColor,  new Color(GridBgR.value, GridBgG.value, GridBgB.value)));
-                GridBgG.RegisterValueChangedCallback(_ => _gridMaterial.SetColor(_propBgColor,  new Color(GridBgR.value, GridBgG.value, GridBgB.value)));
-                GridBgB.RegisterValueChangedCallback(_ => _gridMaterial.SetColor(_propBgColor,  new Color(GridBgR.value, GridBgG.value, GridBgB.value)));
-                GridColorR.RegisterValueChangedCallback(_ => _gridMaterial.SetColor(_propGridColor, new Color(GridColorR.value, GridColorG.value, GridColorB.value)));
-                GridColorG.RegisterValueChangedCallback(_ => _gridMaterial.SetColor(_propGridColor, new Color(GridColorR.value, GridColorG.value, GridColorB.value)));
-                GridColorB.RegisterValueChangedCallback(_ => _gridMaterial.SetColor(_propGridColor, new Color(GridColorR.value, GridColorG.value, GridColorB.value)));
-                GridOpacity.RegisterValueChangedCallback(e    => _gridMaterial.SetFloat(_propGridOpacity, e.newValue));
-                TransparentSides.RegisterValueChangedCallback(e => _gridMaterial.SetFloat(_propTransSides, e.newValue ? 1f : 0f));
             }
         }
 
@@ -699,13 +660,27 @@ namespace EditorShell.Presenter.View
 
         // ── Light helpers ─────────────────────────────────────────────────────
 
-        private void ApplyLightColor()
-            => _directionalLight.color = new Color(LightColorR.value, LightColorG.value, LightColorB.value);
-
         private void ApplyLightRotation()
             => _directionalLight.transform.eulerAngles = new Vector3(LightPitch.value, LightYaw.value, 0f);
 
         private void ApplyAmbientColor()
-            => RenderSettings.ambientLight = new Color(AmbientColorR.value, AmbientColorG.value, AmbientColorB.value);
+            => RenderSettings.ambientLight = _ambientColor * AmbientIntensity.value;
+
+        private void RefreshLightSwatch(Color color)
+            => LightColorSwatch.style.backgroundColor = color;
+
+        private void RefreshAmbientSwatch(Color color)
+            => AmbientColorSwatch.style.backgroundColor = color;
+
+        // ── Terrain helpers ───────────────────────────────────────────────────
+
+        private void RefreshTerrainSwatch(Color color)
+            => TerrainColorSwatch.style.backgroundColor = color;
+
+        private static void ClampIntegerField(IntegerField field, int min, int max)
+        {
+            int clamped = Mathf.Clamp(field.value, min, max);
+            if (clamped != field.value) field.SetValueWithoutNotify(clamped);
+        }
     }
 }

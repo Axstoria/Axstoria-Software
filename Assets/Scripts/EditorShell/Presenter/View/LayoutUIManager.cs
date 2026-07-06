@@ -56,7 +56,8 @@ namespace EditorShell.Presenter.View
             bottomPanel.Init(root);
             GetComponentInChildren<PrefabBrowserView>()?.Init(root);
             this.AddComponent<TooltipController>().Init(root);
-            this.AddComponent<SideBarController>().Init(root);
+            var sideBar = GetComponentInChildren<SideBarController>() ?? this.AddComponent<SideBarController>();
+            sideBar.Init(root);
 
             VisualElement outlinerPane = root.Q<VisualElement>("outliner-pane");
             if (outlinerPane != null)

@@ -21,22 +21,43 @@ namespace CharacterSheet.Presenter.View
 
         public void Open(Color current, RectTransform anchor, Action<Color> onChanged)
         {
-            Close();
-            _onChanged = onChanged;
-
-            _blocker = CreateBlocker();
-
-            _picker = Instantiate(pickerPrefab, _canvas.transform);
-            var rt = (RectTransform)_picker.transform;
+            RectTransform rt = SpawnPicker(current, onChanged);
             rt.pivot = new Vector2(1f, 1f);
 
             var corners = new Vector3[4];
             anchor.GetWorldCorners(corners);
             rt.position = corners[0];
             ClampToCanvas(rt);
+        }
 
+        // For anchors that aren't uGUI RectTransforms (e.g. a UI Toolkit VisualElement's screen-space bounds).
+        public void Open(Color current, Vector2 screenPosition, Action<Color> onChanged)
+        {
+            RectTransform rt = SpawnPicker(current, onChanged);
+            rt.pivot = new Vector2(0f, 1f);
+
+            UnityEngine.Camera cam = _canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : _canvas.worldCamera;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                (RectTransform)_canvas.transform, screenPosition, cam, out Vector2 localPoint);
+            rt.localPosition = localPoint;
+            ClampToCanvas(rt);
+        }
+
+        // Lets code that instantiates this popup at runtime (without an Inspector-wired prefab) supply one.
+        public void SetPickerPrefab(ColorPicker prefab) => pickerPrefab = prefab;
+
+        private RectTransform SpawnPicker(Color current, Action<Color> onChanged)
+        {
+            Close();
+            _onChanged = onChanged;
+
+            _blocker = CreateBlocker();
+
+            _picker = Instantiate(pickerPrefab, _canvas.transform);
             _picker.CurrentColor = current;
             _picker.onValueChanged.AddListener(HandleValueChanged);
+
+            return (RectTransform)_picker.transform;
         }
 
         public void Close()
