@@ -56,7 +56,18 @@ namespace EditorShell.Presenter.View
             bottomPanel.Init(root);
             GetComponentInChildren<PrefabBrowserView>()?.Init(root);
             this.AddComponent<TooltipController>().Init(root);
-            this.AddComponent<SideBarController>().Init(root);
+            var sideBar = GetComponentInChildren<SideBarController>() ?? this.AddComponent<SideBarController>();
+            sideBar.Init(root);
+            var skyboxSelector = GetComponentInChildren<SkyboxSelectorController>();
+            skyboxSelector?.Init(root);
+
+            // Light + skybox have no reactive ViewModel path (see OnImportMapClicked) — reapply
+            // the loaded values onto the live scene and refresh their UI here.
+            toolbarManager.OnMapImported += map =>
+            {
+                sideBar.ApplyLightSettings(map.LightSettings);
+                skyboxSelector?.SelectByName(map.SkyboxName);
+            };
 
             VisualElement outlinerPane = root.Q<VisualElement>("outliner-pane");
             if (outlinerPane != null)

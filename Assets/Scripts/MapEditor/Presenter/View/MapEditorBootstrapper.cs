@@ -66,6 +66,10 @@ namespace MapEditor.Presenter.View
                 InitialDistance = 20f
             };
 
+            // Share the same CameraSettings instance so live slider edits are
+            // automatically reflected on the Map for saving, with no extra sync code.
+            map.CameraSettings = cameraState.Settings;
+
             // ── Infrastructure ────────────────────────────────────────────────
             IMapSerializer     serializer = new JsonMapSerializer();
             IFileDialogService dialog     = new FileDialogService();

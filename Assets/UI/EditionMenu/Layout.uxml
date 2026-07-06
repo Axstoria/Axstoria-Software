@@ -16,40 +16,21 @@
             <engine:ScrollView name="settings-scroll" vertical-scroller-visibility="Auto" horizontal-scroller-visibility="Hidden" class="settings-pane__scroll themed-scroll">
                 <engine:VisualElement name="settings-content" class="settings-pane__content">
                     <engine:Foldout name="foldout-terraingrid" text="TerrainGrid" enabled="true" value="false">
-                        <engine:VisualElement style="flex-direction: row; margin-bottom: 4px;">
-                            <engine:Button name="btn-save-map" text="Save Map" class="settings-btn" style="flex-grow: 1;" />
-                            <engine:Button name="btn-load-map" text="Load Map" class="settings-btn" style="flex-grow: 1;" />
-                        </engine:VisualElement>
                         <engine:Label text="TERRAIN" class="settings-subhead" />
                         <engine:Label text="Terrain Color" class="settings-caption" />
-                        <engine:Slider name="slider-terrain-color-r" label="R" value="0.8" low-value="0" high-value="1" />
-                        <engine:Slider name="slider-terrain-color-g" label="G" value="0.6" low-value="0" high-value="1" />
-                        <engine:Slider name="slider-terrain-color-b" label="B" value="0.2" low-value="0" high-value="1" />
+                        <engine:VisualElement name="terrain-color-swatch" class="hsv-swatch" />
                         <engine:IntegerField name="field-terrain-width" label="Width" value="70" />
                         <engine:IntegerField name="field-terrain-depth" label="Depth" value="70" />
                         <engine:IntegerField name="field-terrain-thickness" label="Thickness" value="2" />
                         <engine:Button name="btn-regenerate-map" text="Regenerate Map" class="settings-btn" style="margin-top: 6px;" />
-                        <engine:Label text="GRID SHADER" class="settings-subhead" />
+                        <engine:Label text="GRID" class="settings-subhead" />
                         <engine:Slider name="slider-grid-cell-size-x" label="Cell Size X" value="1" low-value="0.1" high-value="10" />
                         <engine:Slider name="slider-grid-cell-size-y" label="Cell Size Y" value="1" low-value="0.1" high-value="10" />
-                        <engine:Slider name="slider-grid-thickness" label="Grid Thickness" value="0.05" low-value="0" high-value="1" />
-                        <engine:Label text="Background" class="settings-caption" />
-                        <engine:Slider name="slider-grid-bg-r" label="R" value="0.8" low-value="0" high-value="1" />
-                        <engine:Slider name="slider-grid-bg-g" label="G" value="0.6" low-value="0" high-value="1" />
-                        <engine:Slider name="slider-grid-bg-b" label="B" value="0.2" low-value="0" high-value="1" />
-                        <engine:Label text="Grid Color" class="settings-caption" />
-                        <engine:Slider name="slider-grid-color-r" label="R" value="1" low-value="0" high-value="1" />
-                        <engine:Slider name="slider-grid-color-g" label="G" value="1" low-value="0" high-value="1" />
-                        <engine:Slider name="slider-grid-color-b" label="B" value="1" low-value="0" high-value="1" />
-                        <engine:Slider name="slider-grid-opacity" label="Grid Opacity" value="0.34" low-value="0" high-value="1" />
-                        <engine:Toggle name="toggle-transparent-sides" label="Transparent Sides" value="false" />
                     </engine:Foldout>
                     <engine:Foldout name="foldout-light" text="Directional Light" enabled="true" value="false">
                         <engine:Slider name="slider-light-intensity" label="Intensity" value="1.22" low-value="0" high-value="5" />
                         <engine:Label text="COLOR" class="settings-subhead" />
-                        <engine:Slider name="slider-light-color-r" label="R" value="1" low-value="0" high-value="1" />
-                        <engine:Slider name="slider-light-color-g" label="G" value="0.96" low-value="0" high-value="1" />
-                        <engine:Slider name="slider-light-color-b" label="B" value="0.84" low-value="0" high-value="1" />
+                        <engine:VisualElement name="light-color-swatch" class="hsv-swatch" />
                         <engine:Label text="DIRECTION" class="settings-subhead" />
                         <engine:Slider name="slider-light-pitch" label="Pitch (X)" value="80" low-value="-180" high-value="180" />
                         <engine:Slider name="slider-light-yaw" label="Yaw (Y)" value="330" low-value="0" high-value="360" />
@@ -57,14 +38,15 @@
                         <engine:Label text="AMBIENT" class="settings-subhead" />
                         <engine:Slider name="slider-ambient-intensity" label="Intensity" value="1" low-value="0" high-value="5" />
                         <engine:Label text="Ambient Color" class="settings-caption" />
-                        <engine:Slider name="slider-ambient-color-r" label="R" value="0.5" low-value="0" high-value="1" />
-                        <engine:Slider name="slider-ambient-color-g" label="G" value="0.5" low-value="0" high-value="1" />
-                        <engine:Slider name="slider-ambient-color-b" label="B" value="0.5" low-value="0" high-value="1" />
+                        <engine:VisualElement name="ambient-color-swatch" class="hsv-swatch" />
+                    </engine:Foldout>
+                    <engine:Foldout name="foldout-skybox" text="Skybox" enabled="true" value="false">
+                        <engine:VisualElement name="skybox-grid" class="skybox-grid" />
                     </engine:Foldout>
                     <engine:Foldout name="foldout-camera" text="Camera" enabled="true" value="false">
-                        <engine:Slider name="slider-orbit-sensitivity" label="Orbit Sensitivity" value="0.4" low-value="0" high-value="2" />
-                        <engine:Slider name="slider-zoom-speed" label="Zoom Speed" value="0.45" low-value="0" high-value="2" />
-                        <engine:Slider name="slider-pan-sensitivity" label="Pan Sensitivity" value="5" low-value="0" high-value="20" />
+                        <engine:Slider name="slider-orbit-sensitivity" label="Orbit Sensitivity" value="0.4" low-value="0.05" high-value="2" />
+                        <engine:Slider name="slider-zoom-speed" label="Zoom Speed" value="0.45" low-value="0.05" high-value="2" />
+                        <engine:Slider name="slider-pan-sensitivity" label="Pan Sensitivity" value="0.01" low-value="0.002" high-value="0.1" />
                         <engine:Slider name="slider-orbit-smoothing" label="Orbit Smoothing" value="10" low-value="0" high-value="20" />
                         <engine:Slider name="slider-zoom-smoothing" label="Zoom Smoothing" value="10" low-value="0" high-value="20" />
                         <engine:Label text="LIMITS" class="settings-subhead" />

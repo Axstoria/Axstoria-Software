@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Campaign.App.Port;
+using Camera.Domain;
 using MapEditor.Domain;
 using SceneEditor.Domain;
 using UnityEngine;
@@ -32,12 +33,11 @@ namespace Campaign.Infrastructure
                 savedAt = DateTime.UtcNow.ToString("o"),
                 terrain = TerrainToDTO(map.TerrainLayout),
                 objects = new List<SceneObjectDTO>(),
-                metadata = map.Metadata?.Select(m => new MetadataEntryDTO
-                {
-                    EntryType = m.EntryType,
-                    EntryValue = ValueToDTO(m.EntryValue),
-                }).ToList() ?? new List<MetadataEntryDTO>(),
-                players = map.Players?.Select(PlayerToDTO).ToList() ?? new List<PlayerDTO>()
+                metadata = map.Metadata?.Select(EntryToDTO).ToList() ?? new List<MetadataEntryDTO>(),
+                players = map.Players?.Select(PlayerToDTO).ToList() ?? new List<PlayerDTO>(),
+                light = LightToDTO(map.LightSettings),
+                skyboxName = map.SkyboxName,
+                cameraSettings = CameraSettingsToDTO(map.CameraSettings)
             };
 
             foreach (var obj in map.Objects)
@@ -53,11 +53,10 @@ namespace Campaign.Infrastructure
                 Id            = dto.mapId,
                 Name          = dto.mapName,
                 TerrainLayout = TerrainFromDTO(dto.terrain),
-                Metadata      = dto.metadata?.Select(m => new MetadataEntry
-                {
-                    EntryType = m.EntryType,
-                    EntryValue = ValueFromDTO(m.EntryValue),
-                }).ToList() ?? new List<MetadataEntry>()
+                Metadata      = dto.metadata?.Select(EntryFromDTO).ToList() ?? new List<MetadataEntry>(),
+                LightSettings = LightFromDTO(dto.light),
+                SkyboxName    = dto.skyboxName,
+                CameraSettings = CameraSettingsFromDTO(dto.cameraSettings)
             };
 
             if (dto.objects != null)
@@ -78,11 +77,7 @@ namespace Campaign.Infrastructure
             isGameMaster = player.IsGameMaster,
             pawnId       = player.PawnId,
             hexColor     = player.HexColor,
-            metadata = player.Metadata?.Select(m => new MetadataEntryDTO
-            {
-                EntryType = m.EntryType,
-                EntryValue = ValueToDTO(m.EntryValue),
-            }).ToList() ?? new List<MetadataEntryDTO>()
+            metadata = player.Metadata?.Select(EntryToDTO).ToList() ?? new List<MetadataEntryDTO>()
         };
 
         private static Player PlayerFromDTO(PlayerDTO dto) => new Player
@@ -92,11 +87,7 @@ namespace Campaign.Infrastructure
             IsGameMaster = dto.isGameMaster,
             PawnId       = dto.pawnId,
             HexColor     = string.IsNullOrEmpty(dto.hexColor) ? "#3399FF" : dto.hexColor,
-            Metadata = dto.metadata?.Select(m => new MetadataEntry
-            {
-                EntryType = m.EntryType,
-                EntryValue = ValueFromDTO(m.EntryValue),
-            }).ToList() ?? new List<MetadataEntry>()
+            Metadata = dto.metadata?.Select(EntryFromDTO).ToList() ?? new List<MetadataEntry>()
         };
 
         private static TerrainDTO TerrainToDTO(TerrainLayout t)
@@ -131,6 +122,80 @@ namespace Campaign.Infrastructure
             };
         }
 
+        private static LightDTO LightToDTO(LightSettings s)
+        {
+            if (s == null) return new LightDTO();
+            return new LightDTO
+            {
+                intensity        = s.Intensity,
+                colorR           = s.ColorR,
+                colorG           = s.ColorG,
+                colorB           = s.ColorB,
+                pitch            = s.Pitch,
+                yaw              = s.Yaw,
+                shadowStrength   = s.ShadowStrength,
+                ambientIntensity = s.AmbientIntensity,
+                ambientColorR    = s.AmbientColorR,
+                ambientColorG    = s.AmbientColorG,
+                ambientColorB    = s.AmbientColorB
+            };
+        }
+
+        private static LightSettings LightFromDTO(LightDTO dto)
+        {
+            if (dto == null) return new LightSettings();
+            return new LightSettings
+            {
+                Intensity        = dto.intensity,
+                ColorR           = dto.colorR,
+                ColorG           = dto.colorG,
+                ColorB           = dto.colorB,
+                Pitch            = dto.pitch,
+                Yaw              = dto.yaw,
+                ShadowStrength   = dto.shadowStrength,
+                AmbientIntensity = dto.ambientIntensity,
+                AmbientColorR    = dto.ambientColorR,
+                AmbientColorG    = dto.ambientColorG,
+                AmbientColorB    = dto.ambientColorB
+            };
+        }
+
+        private static CameraSettingsDTO CameraSettingsToDTO(CameraSettings s)
+        {
+            if (s == null) return new CameraSettingsDTO();
+            return new CameraSettingsDTO
+            {
+                orbitSensitivity = s.OrbitSensitivity,
+                minPitch         = s.MinPitch,
+                maxPitch         = s.MaxPitch,
+                orbitSmoothing   = s.OrbitSmoothing,
+                zoomSpeed        = s.ZoomSpeed,
+                zoomSmoothing    = s.ZoomSmoothing,
+                minZoomDistance  = s.MinZoomDistance,
+                maxZoomDistance  = s.MaxZoomDistance,
+                panSensitivity   = s.PanSensitivity,
+                panSmoothing     = s.PanSmoothing
+            };
+        }
+
+        private static CameraSettings CameraSettingsFromDTO(CameraSettingsDTO dto)
+        {
+            if (dto == null) return new CameraSettings();
+            return new CameraSettings
+            {
+                OrbitSensitivity = dto.orbitSensitivity,
+                MinPitch         = dto.minPitch,
+                MaxPitch         = dto.maxPitch,
+                OrbitSmoothing   = dto.orbitSmoothing,
+                ZoomSpeed        = dto.zoomSpeed,
+                ZoomSmoothing    = dto.zoomSmoothing,
+                MinZoomDistance  = dto.minZoomDistance,
+                MaxZoomDistance  = dto.maxZoomDistance,
+                PanSensitivity   = dto.panSensitivity,
+                PanSmoothing     = dto.panSmoothing
+            };
+        }
+
         private static SceneObjectDTO ObjectToDTO(SceneObject obj)
         {
             var t = obj.Transform;
@@ -143,11 +208,7 @@ namespace Campaign.Infrastructure
                 isImported  = obj.IsImported,
                 importPath  = obj.ImportPath,
                 isPawn      = obj.IsPawn,
-                metadata = obj.Metadata?.Select(m => new MetadataEntryDTO
-                {
-                    EntryType = m.EntryType,
-                    EntryValue = ValueToDTO(m.EntryValue),
-                }).ToList() ?? new List<MetadataEntryDTO>(),
+                metadata = obj.Metadata?.Select(EntryToDTO).ToList() ?? new List<MetadataEntryDTO>(),
                 posX   = t?.Position.x ?? 0, posY   = t?.Position.y ?? 0, posZ   = t?.Position.z ?? 0,
                 rotX   = t?.Rotation.x ?? 0, rotY   = t?.Rotation.y ?? 0,
                 rotZ   = t?.Rotation.z ?? 0, rotW   = t?.Rotation.w ?? 1,
@@ -155,13 +216,25 @@ namespace Campaign.Infrastructure
             };
         }
 
-        private static MetadataValueDTO ValueToDTO(MetadataValue value) => value switch
+        private static MetadataEntryDTO EntryToDTO(MetadataEntry entry)
         {
-            NoteValue note => new NoteValueDTO { Text = note.Text },
-            TagValue tag => new TagValueDTO { Id = tag.Id, Name = tag.Name, HexColor = tag.HexColor },
-            SheetValue _ => new SheetValueDTO(),
-            _ => throw new ArgumentException($"Unknown MetadataValue type: {value.GetType().Name}")
-        };
+            var dto = new MetadataEntryDTO { entryType = entry.EntryType };
+            switch (entry.EntryValue)
+            {
+                case NoteValue note:
+                    dto.noteText = note.Text;
+                    break;
+                case TagValue tag:
+                    dto.tagId       = tag.Id;
+                    dto.tagName     = tag.Name;
+                    dto.tagHexColor = tag.HexColor;
+                    break;
+                case SheetValue:
+                    // TODO: populate when sheets are implemented
+                    break;
+            }
+            return dto;
+        }
 
         private static SceneObject ObjectFromDTO(SceneObjectDTO dto)
         {
@@ -174,11 +247,7 @@ namespace Campaign.Infrastructure
                 IsImported  = dto.isImported,
                 ImportPath  = dto.importPath,
                 IsPawn      = dto.isPawn,
-                Metadata    = dto.metadata?.Select(m => new MetadataEntry
-                {
-                    EntryType = m.EntryType,
-                    EntryValue = ValueFromDTO(m.EntryValue),
-                }).ToList() ?? new List<MetadataEntry>(),
+                Metadata    = dto.metadata?.Select(EntryFromDTO).ToList() ?? new List<MetadataEntry>(),
                 Transform   = new TransformModel
                 {
                     Position = new Vector3(dto.posX,  dto.posY,  dto.posZ),
@@ -188,12 +257,16 @@ namespace Campaign.Infrastructure
             };
         }
 
-        private static MetadataValue ValueFromDTO(MetadataValueDTO value) => value switch
+        private static MetadataEntry EntryFromDTO(MetadataEntryDTO dto)
         {
-            NoteValueDTO note => new NoteValue { Text = note.Text },
-            TagValueDTO tag => new TagValue { Id = tag.Id, Name = tag.Name, HexColor = tag.HexColor },
-            SheetValueDTO _ => new SheetValue(),
-            _ => throw new ArgumentException($"Unknown MetadataValue type: {value.GetType().Name}")
-        };
+            MetadataValue value = dto.entryType switch
+            {
+                "note"  => new NoteValue { Text = dto.noteText },
+                "tag"   => new TagValue { Id = dto.tagId, Name = dto.tagName, HexColor = dto.tagHexColor },
+                "sheet" => new SheetValue(),
+                _       => null
+            };
+            return new MetadataEntry { EntryType = dto.entryType, EntryValue = value };
+        }
     }
 }

@@ -14,6 +14,12 @@ namespace MapEditor.Presenter.View
         [SerializeField] private float     tableThickness = 1f;
         [SerializeField] private float     tablePadding   = 0.1f;
 
+        private static readonly int _propBaseColor = Shader.PropertyToID("_BaseColor");
+
+        // Resolved from this GameObject's own Renderer — the "Terrain" (URP/Lit) material assigned
+        // to it in the scene, so the settings panel doesn't need its own wiring.
+        public Material TerrainMaterial { get; private set; }
+
         private MapEditorViewModel     _vm;
         private TerrainLayoutViewModel _terrain;
         private Mesh                   _mesh;
@@ -32,6 +38,8 @@ namespace MapEditor.Presenter.View
                 return;
             }
 
+            ResolveMaterials();
+
             _terrain = _vm.Map.Terrain;
             if (_terrain == null) return;
 
@@ -40,8 +48,21 @@ namespace MapEditor.Presenter.View
             _terrain.Depth.ValueChanged     += _onTerrainChanged;
             _terrain.Thickness.ValueChanged += _onTerrainChanged;
             _terrain.Height.ValueChanged    += _onTerrainChanged;
+            _terrain.Color.ValueChanged     += _onTerrainChanged;
 
             Rebuild();
+        }
+
+        private void ResolveMaterials()
+        {
+            Renderer renderer = GetComponent<Renderer>();
+            if (renderer == null) return;
+
+            // .materials (not sharedMaterials) instances them, so runtime tweaks never touch the asset.
+            foreach (Material mat in renderer.materials)
+            {
+                if (mat.name.StartsWith("Terrain")) TerrainMaterial = mat;
+            }
         }
 
         private void OnDestroy()
@@ -52,6 +73,7 @@ namespace MapEditor.Presenter.View
                 _terrain.Depth.ValueChanged     -= _onTerrainChanged;
                 _terrain.Thickness.ValueChanged -= _onTerrainChanged;
                 _terrain.Height.ValueChanged    -= _onTerrainChanged;
+                _terrain.Color.ValueChanged     -= _onTerrainChanged;
             }
 
             if (_mesh != null) Destroy(_mesh);
@@ -71,6 +93,10 @@ namespace MapEditor.Presenter.View
                 : new Color(0.6f, 0.4f, 0.2f);
 
             GenerateMesh(w, d, th, h, c);
+
+            // The Terrain material's shader (URP/Lit) doesn't read mesh vertex colors, so the
+            // visible base color has to be pushed onto the material directly.
+            if (TerrainMaterial != null) TerrainMaterial.SetColor(_propBaseColor, c);
 
             if (_vm.Grid != null) _vm.Grid.SurfaceY = h;
 
