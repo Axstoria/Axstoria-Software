@@ -1,0 +1,29 @@
+.pawn-control-overlay {
+    position: absolute;
+    flex-direction: row;
+    align-items: center;
+    background-color: rgba(45, 45, 45, 0.85);
+    border-width: 1px;
+    border-color: rgb(70, 70, 70);
+    border-radius: 14px;
+    padding: 2px;
+}
+
+.pawn-control-button {
+    width: 26px;
+    height: 26px;
+    margin: 2px;
+    padding: 0;
+    border-radius: 13px;
+    border-width: 1px;
+    border-color: rgb(70, 70, 70);
+    background-color: rgb(58, 58, 58);
+    color: rgb(230, 230, 230);
+    font-size: 14px;
+    -unity-text-align: middle-center;
+}
+
+.pawn-control-button:hover {
+    background-color: rgb(100, 140, 210);
+    color: rgb(255, 255, 255);
+}

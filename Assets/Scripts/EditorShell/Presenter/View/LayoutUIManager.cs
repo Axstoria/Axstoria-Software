@@ -37,7 +37,8 @@ namespace EditorShell.Presenter.View
 
             this.AddComponent<ViewSwitcherController>().Init(root);
             this.AddComponent<SnapToolbarController>().Init(root);
-            this.AddComponent<ToolsBarController>().Init(root);
+            var toolsBar = this.AddComponent<ToolsBarController>();
+            toolsBar.Init(root);
             var moveFlyout   = this.AddComponent<MoveFlyoutController>();
             var layersFlyout = this.AddComponent<LayersFlyoutController>();
             moveFlyout.Init(root);
@@ -47,6 +48,10 @@ namespace EditorShell.Presenter.View
 
             var gizmoView = FindFirstObjectByType<TransformGizmoView>();
             moveFlyout.OnToolSelected = type => { if (gizmoView != null) gizmoView.SetTransformType(type); };
+            toolsBar.OnSelectToolClicked = () => { if (gizmoView != null) gizmoView.EnterSelectMode(); };
+
+            this.AddComponent<SelectionOutlineController>();
+            this.AddComponent<PawnControlOverlayController>().Init(root);
             var bottomPanel = GetComponentInChildren<BottomPanelController>() ?? this.AddComponent<BottomPanelController>();
             bottomPanel.Init(root);
             GetComponentInChildren<PrefabBrowserView>()?.Init(root);
@@ -67,6 +72,17 @@ namespace EditorShell.Presenter.View
                 _ => sidePanels.IsSettingsPresent ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
             toolbarManager.AddViewMenuEntry("Outliner", _ => sidePanels.ToggleOutliner(),
                 _ => sidePanels.IsOutlinerPresent ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
+
+            var colorPicker = GetComponentInChildren<ColorPickerPopupController>() ?? this.AddComponent<ColorPickerPopupController>();
+            colorPicker.Init(root);
+
+            var metadataPopup = GetComponentInChildren<MetadataPopupController>() ?? this.AddComponent<MetadataPopupController>();
+            metadataPopup.Init(root);
+            toolbarManager.OnLinkToObjectRequested = () => metadataPopup.Open();
+
+            this.AddComponent<TagsPanelController>().Init(root, colorPicker);
+
+            this.AddComponent<PlayersPanelController>().Init(root, colorPicker);
         }
     }
 }

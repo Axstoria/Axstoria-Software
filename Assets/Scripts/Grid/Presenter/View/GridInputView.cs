@@ -1,9 +1,10 @@
+using EditorShell.Presenter.View;
 using Grid.Domain;
 using Loxodon.Framework.Contexts;
 using MapEditor.Presenter.ViewModels;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.EventSystems;
+using UnityEngine.UIElements;
 
 namespace Grid.Presenter.View
 {
@@ -20,6 +21,8 @@ namespace Grid.Presenter.View
 
         private MapEditorViewModel _vm;
         private GridCell           _lastHovered;
+        private IPanel             _uiPanel;
+        private VisualElement      _uiRoot;
 
         private void Start()
         {
@@ -35,13 +38,20 @@ namespace Grid.Presenter.View
             }
 
             if (gridCamera == null) gridCamera = UnityEngine.Camera.main;
+
+            var uiDoc = FindFirstObjectByType<UIDocument>();
+            if (uiDoc != null)
+            {
+                _uiRoot  = uiDoc.rootVisualElement;
+                _uiPanel = _uiRoot?.panel;
+            }
         }
 
         private void Update()
         {
             if (_vm?.Grid == null) return;
 
-            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            if (UIPointerUtility.IsOverUI(_uiPanel, _uiRoot, Input.mousePosition))
             {
                 if (_lastHovered != null) { _lastHovered = null; OnCellHovered?.Invoke(null); }
                 return;

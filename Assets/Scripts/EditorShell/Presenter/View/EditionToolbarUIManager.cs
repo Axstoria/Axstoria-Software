@@ -25,8 +25,10 @@ namespace EditorShell.Presenter.View
         private DropdownMenu fileMenu;
         private DropdownMenu editMenu;
         private DropdownMenu viewMenu = new();
-        private DropdownMenu toolsMenu;
         private DropdownMenu helpMenu;
+
+        private Label _labelViewingAs;
+        private MapEditorViewModel _vm;
 
         private List<IUIManager> toggleableUIs = new List<IUIManager>();
         private List<(string Name, Action<DropdownMenuAction> Callback, Func<DropdownMenuAction, DropdownMenuAction.Status> Status)> extraViewEntries = new();
@@ -65,8 +67,7 @@ namespace EditorShell.Presenter.View
             fileMenu.AppendAction("Import Asset",          OnImportAssetClicked);
             fileMenu.AppendAction("Open/Rules",            null);
             fileMenu.AppendAction("Open/Sheets",           null);
-            fileMenu.AppendAction("Link to object/Notes",  null);
-            fileMenu.AppendAction("Link to object/Sheets", null);
+            fileMenu.AppendAction("Link to object",  OnLinkToObjectClicked);
 
             root.Q<Button>("file-button").clickable.clickedWithEventInfo +=
                 evt => dropdown.Open(fileMenu, evt);
@@ -86,14 +87,51 @@ namespace EditorShell.Presenter.View
             root.Q<Button>("view-button").clickable.clickedWithEventInfo +=
                 evt => dropdown.Open(viewMenu, evt);
 
-            toolsMenu = new DropdownMenu();
             root.Q<Button>("tools-button").clickable.clickedWithEventInfo +=
-                evt => dropdown.Open(toolsMenu, evt);
+                evt => dropdown.Open(BuildToolsMenu(), evt);
 
             helpMenu = new DropdownMenu();
             helpMenu.AppendAction("About", null);
             root.Q<Button>("help-button").clickable.clickedWithEventInfo +=
                 evt => dropdown.Open(helpMenu, evt);
+
+            _labelViewingAs = root.Q<Label>("label-viewing-as");
+            _vm = Context.GetApplicationContext().GetContainer().Resolve<MapEditorViewModel>();
+            if (_vm != null)
+            {
+                _vm.ViewingAsLabel.ValueChanged += (_, __) => RefreshViewingAsLabel();
+                RefreshViewingAsLabel();
+            }
+        }
+
+        private void RefreshViewingAsLabel()
+        {
+            if (_labelViewingAs == null) return;
+            _labelViewingAs.text = _vm.ViewingAsLabel.Value;
+            _labelViewingAs.style.display =
+                string.IsNullOrEmpty(_vm.ViewingAsLabel.Value) ? DisplayStyle.None : DisplayStyle.Flex;
+        }
+
+        private DropdownMenu BuildToolsMenu()
+        {
+            var menu = new DropdownMenu();
+            if (_vm == null) return menu;
+
+            string currentId = _vm.Session.CurrentPlayer?.IsGameMaster == true
+                ? null
+                : _vm.Session.CurrentPlayer?.Id;
+
+            menu.AppendAction("Preview as/Game Master", _ => _vm.Session.SetCurrentPlayer(null),
+                _ => string.IsNullOrEmpty(currentId) ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
+
+            foreach (PlayerViewModel player in _vm.Map.Players)
+            {
+                string id = player.Model.Id;
+                menu.AppendAction($"Preview as/{player.Name.Value}", _ => _vm.Session.SetCurrentPlayer(id),
+                    _ => currentId == id ? DropdownMenuAction.Status.Checked : DropdownMenuAction.Status.Normal);
+            }
+
+            return menu;
         }
 
         private void BuildViewMenu()
@@ -108,6 +146,18 @@ namespace EditorShell.Presenter.View
                 else
                     viewMenu.AppendAction(entry.Name, entry.Callback);
             }
+        }
+
+        public Action OnLinkToObjectRequested;
+        private void OnLinkToObjectClicked(DropdownMenuAction action)
+        {
+            var vm = Context.GetApplicationContext().GetContainer().Resolve<MapEditorViewModel>();
+            if (vm == null)
+            {
+                Debug.LogWarning("[EditionToolbarUIManager] MapEditorViewModel not registered, cannot link.");
+                return;
+            }
+            OnLinkToObjectRequested?.Invoke();
         }
 
         private void OnSwitchToSheetEditorClicked(DropdownMenuAction action)
@@ -174,6 +224,9 @@ namespace EditorShell.Presenter.View
 
             foreach (SceneObject obj in loaded.Objects)
                 active.AddObject(obj);
+
+            active.Metadata = loaded.Metadata;
+            active.NotifyMetadataChanged();
 
             if (vm.Grid != null)
                 vm.Grid.RebuildOccupancy(active.Objects);

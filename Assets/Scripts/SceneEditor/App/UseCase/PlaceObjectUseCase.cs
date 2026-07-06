@@ -12,12 +12,14 @@ namespace SceneEditor.App.UseCase
         private readonly Map              _map;
         private readonly Grid.Domain.Grid _grid;
         private readonly CommandHistory   _history;
+        private readonly ISessionContext  _session;
 
-        public PlaceObjectUseCase(Map map, Grid.Domain.Grid grid, CommandHistory history)
+        public PlaceObjectUseCase(Map map, Grid.Domain.Grid grid, CommandHistory history, ISessionContext session)
         {
             _map     = map;
             _grid    = grid;
             _history = history;
+            _session = session;
         }
 
         public bool CanPlace(List<GridCoord> footprint, GridCoord origin)
@@ -27,6 +29,7 @@ namespace SceneEditor.App.UseCase
 
         public void Execute(SceneObject obj, GridCoord origin, List<GridCoord> footprint)
         {
+            if (!_session.CurrentPlayer.IsGameMaster) return;
             if (!CanPlace(footprint, origin)) return;
             _history.Record(new PlaceObjectCommand(_map, _grid, obj, origin, footprint));
         }
