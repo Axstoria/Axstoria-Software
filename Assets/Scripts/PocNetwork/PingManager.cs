@@ -58,7 +58,7 @@ public class PingManager : NetworkBehaviour
     public void Ping()
     {
         Vector2 mousePos = Mouse.current.position.ReadValue();
-        Ray ray = Camera.main.ScreenPointToRay(mousePos);
+        Ray ray = UnityEngine.Camera.main.ScreenPointToRay(mousePos);
 
         
         if (Physics.Raycast(ray, out var hit))
