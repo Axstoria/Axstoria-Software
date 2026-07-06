@@ -1,0 +1,41 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="..." />
+    <ui:VisualElement name="overlay" class="overlay">
+        <ui:VisualElement name="popup" class="popup">
+            <ui:Label text="Link to object" class="popup-title" />
+            <ui:VisualElement class="divider" />
+            <ui:VisualElement class="field-row">
+                <ui:Label text="Category" class="field-label" />
+                <ui:DropdownField name="category-dropdown" class="field-input" />
+            </ui:VisualElement>
+            <ui:VisualElement name="panel-notes">
+                <ui:VisualElement class="field-row">
+                    <ui:Label text="Object" class="field-label" />
+                    <ui:DropdownField name="object-dropdown-notes" class="field-input" />
+                </ui:VisualElement>
+                <ui:VisualElement class="field-row">
+                    <ui:Label text="Note" class="field-label" />
+                    <ui:TextField name="note-field" class="field-input" multiline="true" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="panel-tags">
+                <ui:VisualElement class="field-row">
+                    <ui:Label text="Object" class="field-label" />
+                    <ui:DropdownField name="object-dropdown-tags" class="field-input" />
+                </ui:VisualElement>
+                <ui:VisualElement class="field-row">
+                    <ui:Label text="Tag" class="field-label" />
+                    <ui:DropdownField name="tag-dropdown" class="field-input" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="panel-sheets">
+                <ui:Label text="Sheets — not yet implemented" class="field-label" />
+            </ui:VisualElement>
+            <ui:VisualElement class="divider" />
+            <ui:VisualElement class="button-row">
+                <ui:Button name="cancel-button"  text="Cancel"  class="button-cancel" />
+                <ui:Button name="confirm-button" text="Confirm" class="button-confirm" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

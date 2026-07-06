@@ -34,7 +34,7 @@ namespace CharacterSheet.Presenter.View
                     parent, eventData.position, eventData.pressEventCamera, out Vector2 pointerLocal))
                 return;
 
-            float delta = pointerLocal.x - _startPointerLocal.x;
+            float delta = (pointerLocal.x - _startPointerLocal.x) / Mathf.Max(targetPanel.localScale.x, 0.0001f);
             float newWidth = isRight ? _startWidth - delta : _startWidth + delta;
             newWidth = Mathf.Clamp(newWidth, controller.PanelMinWidth, controller.GetMaxWidth(targetPanel));
 

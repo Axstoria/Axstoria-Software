@@ -47,8 +47,9 @@ namespace CharacterSheet.Presenter.View
             if (parent == null) return PanelMin;
 
             RectTransform other = panel == leftPanel ? rightPanel : leftPanel;
-            float otherWidth = other != null && other.gameObject.activeSelf ? other.sizeDelta.x : 0f;
-            float max = parent.rect.width - otherWidth - GetWorkspaceMinWidth() - HandleWidth * 2f;
+            float otherWidth = other != null && other.gameObject.activeSelf ? DisplayedWidth(other) : 0f;
+            float scale = Mathf.Max(panel.localScale.x, 0.0001f);
+            float max = (parent.rect.width - otherWidth - GetWorkspaceMinWidth() - HandleWidth * 2f) / scale;
             return Mathf.Max(max, PanelMin);
         }
 
@@ -75,10 +76,13 @@ namespace CharacterSheet.Presenter.View
         private void UpdateWorkspace()
         {
             if (workspace == null) return;
-            float left  = IsLeftPresent  ? leftPanel.sizeDelta.x  : 0f;
-            float right = IsRightPresent ? rightPanel.sizeDelta.x : 0f;
+            float left  = IsLeftPresent  ? DisplayedWidth(leftPanel)  : 0f;
+            float right = IsRightPresent ? DisplayedWidth(rightPanel) : 0f;
             workspace.offsetMin = new Vector2(left, workspace.offsetMin.y);
             workspace.offsetMax = new Vector2(-right, workspace.offsetMax.y);
         }
+
+        private static float DisplayedWidth(RectTransform panel)
+            => panel.sizeDelta.x * panel.localScale.x;
     }
 }

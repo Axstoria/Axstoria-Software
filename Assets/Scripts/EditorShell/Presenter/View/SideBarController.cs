@@ -6,6 +6,8 @@ using SceneEditor.Domain;
 using SceneEditor.Presenter.View;
 using SceneEditor.Presenter.ViewModels;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Collections.Specialized;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -86,11 +88,25 @@ namespace EditorShell.Presenter.View
         public FloatField ScaleZ { get; private set; }
         private VisualElement _transformFields;
         private Label         _labelNoSelection;
+        private Toggle        _toggleIsPawn;
         private ObjectViewModel _selectedObject;
         private EventHandler    _onSelectedTransformChanged;
+        private EventHandler  _onMetadataChanged;
+        private VisualElement _notesList;
+        private Label         _labelNoNotes;
+        private VisualElement _tagsList;
+        private Label         _labelNoTags;
+        private DropdownField _tagAssignDropdown;
+        private Button        _btnAddTag;
+        private List<TagViewModel> _tagChoices = new();
+        private NotifyCollectionChangedEventHandler _onTagsChanged;
+        private VisualElement _sheetsList;
+        private Label         _labelNoSheets;
 
         // --- Selection ---
         public Action<ObjectViewModel> OnObjectSelected;
+
+        private VisualElement _root;
 
         private IPanel _uiPanel;
         private MapEditorViewModel _vm;
@@ -99,6 +115,7 @@ namespace EditorShell.Presenter.View
 
         public void Init(VisualElement root)
         {
+            _root         = root;
             _uiPanel      = root.panel;
             _outlinerPane = root.Q<VisualElement>("outliner-pane");
 
@@ -194,6 +211,7 @@ namespace EditorShell.Presenter.View
         {
             _labelNoSelection = root.Q<Label>("label-no-selection");
             _transformFields  = root.Q<VisualElement>("transform-fields");
+            _toggleIsPawn     = root.Q<Toggle>("toggle-is-pawn");
             PosX   = root.Q<FloatField>("field-pos-x");
             PosY   = root.Q<FloatField>("field-pos-y");
             PosZ   = root.Q<FloatField>("field-pos-z");
@@ -203,6 +221,32 @@ namespace EditorShell.Presenter.View
             ScaleX = root.Q<FloatField>("field-scale-x");
             ScaleY = root.Q<FloatField>("field-scale-y");
             ScaleZ = root.Q<FloatField>("field-scale-z");
+            _notesList = root.Q<VisualElement>("notes-list");
+            _labelNoNotes = root.Q<Label>("label-no-notes");
+            _tagsList      = root.Q<VisualElement>("tags-list");
+            _labelNoTags   = root.Q<Label>("label-no-tags");
+            _tagAssignDropdown = root.Q<DropdownField>("tag-assign-dropdown");
+            _btnAddTag     = root.Q<Button>("btn-add-tag");
+            _sheetsList    = root.Q<VisualElement>("sheets-list");
+            _labelNoSheets = root.Q<Label>("label-no-sheets");
+        }
+
+        private void RefreshTagChoices()
+        {
+            _tagChoices = new List<TagViewModel>(_vm.Map.Tags);
+            _tagAssignDropdown.choices = _tagChoices.Select(t => t.Name.Value).ToList();
+            _tagAssignDropdown.index = _tagChoices.Count > 0 ? 0 : -1;
+        }
+
+        private void OnAddTagClicked()
+        {
+            if (_selectedObject == null || _tagAssignDropdown.index < 0) return;
+            TagValue selectedTag = _tagChoices[_tagAssignDropdown.index].Model;
+
+            bool alreadyAssigned = _selectedObject.Model.Metadata?.Any(e =>
+                e.EntryValue is TagValue tv && tv.Id == selectedTag.Id) == true;
+            if (!alreadyAssigned)
+                _vm.SetObjectMetadata.Execute(_selectedObject.Model, "tag", new TagValue { Id = selectedTag.Id });
         }
 
         // ── Scene click-to-select ─────────────────────────────────────────────
@@ -222,52 +266,50 @@ namespace EditorShell.Presenter.View
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))
             {
+                Debug.Log($"[SideBarController] Raycast hit '{hit.collider.gameObject.name}'.");
                 if (_spawner.TryGetId(hit.collider.gameObject, out string id))
                 {
                     foreach (ObjectViewModel obj in _vm.Map.Objects)
                     {
-                        if (obj.Model.Id == id) { SelectObject(obj); return; }
+                        if (obj.Model.Id != id) continue;
+                        if (_vm.Permissions.CanInteract(_vm.Session.CurrentPlayer, obj.Model))
+                            SelectObject(obj);
+                        return;
                     }
+                    Debug.Log($"[SideBarController] Id '{id}' not found in _vm.Map.Objects.");
                 }
+                else
+                {
+                    Debug.Log($"[SideBarController] '{hit.collider.gameObject.name}' is not a registered spawned object.");
+                }
+            }
+            else
+            {
+                Debug.Log("[SideBarController] Raycast hit nothing.");
             }
 
             // Click on empty space → deselect
-            if (_gizmo != null) _gizmo.Deselect();
+            bool isAimingPawnMove = _gizmo != null && _gizmo.IsSelectModeActive
+                && _selectedObject != null && _selectedObject.Model.IsPawn;
+            if (_gizmo != null && !isAimingPawnMove) _gizmo.Deselect();
         }
 
         private void HandleRightClickDeselect()
         {
             if (_gizmo == null) return;
             if (!Input.GetMouseButtonDown(1)) return;
-            if (!IsPointerOverOutliner()) return;
+            bool overOutliner = IsPointerOverOutliner();
+            bool overOtherUI  = IsPointerOverUI() && !overOutliner;
+            if (overOtherUI) return;
 
             _gizmo.Deselect();
         }
 
         private bool IsPointerOverOutliner()
-        {
-            if (_uiPanel == null || _outlinerPane == null) return false;
-            var screen = Input.mousePosition;
-            var panelPos = RuntimePanelUtils.ScreenToPanel(
-                _uiPanel, new Vector2(screen.x, Screen.height - screen.y));
-
-            VisualElement picked = _uiPanel.Pick(panelPos);
-            while (picked != null)
-            {
-                if (picked == _outlinerPane) return true;
-                picked = picked.parent;
-            }
-            return false;
-        }
+            => UIPointerUtility.IsOverElement(_uiPanel, _outlinerPane, Input.mousePosition);
 
         private bool IsPointerOverUI()
-        {
-            if (_uiPanel == null) return false;
-            var screen = Input.mousePosition;
-            var panelPos = RuntimePanelUtils.ScreenToPanel(
-                _uiPanel, new Vector2(screen.x, Screen.height - screen.y));
-            return _uiPanel.Pick(panelPos) != null;
-        }
+            => UIPointerUtility.IsOverUI(_uiPanel, _root, Input.mousePosition);
 
         // ── System connections ────────────────────────────────────────────────
 
@@ -429,6 +471,27 @@ namespace EditorShell.Presenter.View
             _vm.Map.Objects.CollectionChanged += OnSelectedObjectRemoved;
             if (_gizmo != null) _gizmo.OnSelectionChanged += OnGizmoSelectionChanged;
 
+            RefreshTagChoices();
+            _onTagsChanged = (_, __) => RefreshTagChoices();
+            _vm.Map.Tags.CollectionChanged += _onTagsChanged;
+            _btnAddTag.clicked += OnAddTagClicked;
+
+            _toggleIsPawn.RegisterValueChangedCallback(e =>
+            {
+                if (_selectedObject != null) _selectedObject.IsPawn.Value = e.newValue;
+            });
+
+            _vm.Session.OnCurrentPlayerChanged += OnCurrentPlayerChanged;
+
+            SetSelectedObject(null);
+        }
+
+        private void OnCurrentPlayerChanged()
+        {
+            if (_selectedObject == null) return;
+            if (_vm.Permissions.CanInteract(_vm.Session.CurrentPlayer, _selectedObject.Model)) return;
+
+            if (_gizmo != null) _gizmo.Deselect();
             SetSelectedObject(null);
         }
 
@@ -460,6 +523,9 @@ namespace EditorShell.Presenter.View
             if (_onSelectedTransformChanged != null && _selectedObject != null)
                 _selectedObject.Model.OnTransformChanged -= _onSelectedTransformChanged;
 
+            if (_onMetadataChanged != null && _selectedObject != null)
+                _selectedObject.Model.OnMetadataChanged -= _onMetadataChanged;
+
             _selectedObject = obj;
 
             if (obj == null)
@@ -472,9 +538,15 @@ namespace EditorShell.Presenter.View
             _labelNoSelection.style.display = DisplayStyle.None;
             _transformFields.style.display  = DisplayStyle.Flex;
 
+            _toggleIsPawn.SetValueWithoutNotify(obj.IsPawn.Value);
+
             _onSelectedTransformChanged = (_, __) => RefreshTransformFields();
             obj.Model.OnTransformChanged += _onSelectedTransformChanged;
             RefreshTransformFields();
+
+            _onMetadataChanged = (_, __) => RefreshMetadata();
+            obj.Model.OnMetadataChanged += _onMetadataChanged;
+            RefreshMetadata();
         }
 
         private void RefreshTransformFields()
@@ -495,6 +567,86 @@ namespace EditorShell.Presenter.View
             ScaleY.SetValueWithoutNotify(t.Scale.y);
             ScaleZ.SetValueWithoutNotify(t.Scale.z);
         }
+
+        private void RefreshMetadata()
+        {
+            if (_notesList == null || _tagsList == null || _sheetsList == null) return;
+
+            _notesList.Clear();
+            _tagsList.Clear();
+            _sheetsList.Clear();
+
+            var entries = _selectedObject?.Model?.Metadata;
+
+            var notes  = entries?.Where(e => e.EntryValue is NoteValue).ToList();
+            var tags   = entries?.Where(e => e.EntryValue is TagValue).ToList();
+            var sheets = entries?.Where(e => e.EntryValue is SheetValue).ToList();
+
+            _labelNoNotes.style.display  = notes  is { Count: > 0 } ? DisplayStyle.None : DisplayStyle.Flex;
+            _labelNoTags.style.display   = tags   is { Count: > 0 } ? DisplayStyle.None : DisplayStyle.Flex;
+            _labelNoSheets.style.display = sheets is { Count: > 0 } ? DisplayStyle.None : DisplayStyle.Flex;
+
+            if (notes != null)
+            {
+                foreach (var entry in notes)
+                {
+                    var label = new Label(FormatMetadataEntry(entry));
+                    label.AddToClassList("settings-caption");
+                    _notesList.Add(label);
+                }
+            }
+
+            if (tags != null)
+            {
+                foreach (var entry in tags)
+                {
+                    var tagValue = (TagValue)entry.EntryValue;
+                    var tagDef = _vm.Map.Tags.FirstOrDefault(t => t.Model.Id == tagValue.Id);
+
+                    var chip = new VisualElement();
+                    chip.AddToClassList("tag-chip");
+
+                    var swatch = new VisualElement();
+                    swatch.AddToClassList("tag-swatch");
+                    string hex = tagDef?.HexColor.Value ?? "#808080";
+                    if (ColorUtility.TryParseHtmlString(hex, out Color c))
+                        swatch.style.backgroundColor = c;
+
+                    var label = new Label(tagDef?.Name.Value ?? "(unknown tag)");
+                    label.AddToClassList("tag-chip-name");
+
+                    var remove = new Button { text = "×" };
+                    remove.AddToClassList("tag-chip-remove");
+                    remove.RegisterCallback<ClickEvent>(evt =>
+                    {
+                        evt.StopPropagation();
+                        _vm.RemoveObjectMetadata.Execute(_selectedObject.Model, entry);
+                    });
+
+                    chip.Add(swatch);
+                    chip.Add(label);
+                    chip.Add(remove);
+                    _tagsList.Add(chip);
+                }
+            }
+
+            if (sheets != null)
+            {
+                foreach (var entry in sheets)
+                {
+                    var label = new Label(FormatMetadataEntry(entry));
+                    label.AddToClassList("settings-caption");
+                    _sheetsList.Add(label);
+                }
+            }
+        }
+
+        private static string FormatMetadataEntry(MetadataEntry entry) => entry.EntryValue switch
+        {
+            NoteValue  note => note.Text,
+            SheetValue _    => "(not yet implemented)",
+            _               => $"Unknown ({entry.EntryType})"
+        };
 
         private void ApplyTransformFromFields()
         {

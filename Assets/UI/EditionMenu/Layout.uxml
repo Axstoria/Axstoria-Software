@@ -74,6 +74,22 @@
                         <engine:Slider name="slider-max-zoom" label="Max Zoom" value="80" low-value="0" high-value="100" />
                         <engine:Button name="btn-reset-view" text="Reset View (F)" class="settings-btn" style="margin-top: 6px;" />
                     </engine:Foldout>
+                    <engine:Foldout name="foldout-tags" text="Tags" enabled="true" value="false">
+                        <engine:Label text="TAGS" class="settings-subhead" />
+                        <engine:VisualElement class="tag-manager-new-row">
+                            <engine:VisualElement name="new-tag-swatch" class="tag-manager-swatch" />
+                            <engine:TextField name="new-tag-name-field" placeholder-text="New tag name..." class="tag-manager-name-field" style="flex-grow: 1;" />
+                            <engine:Button name="add-tag-button" text="+ Add" class="settings-btn" />
+                        </engine:VisualElement>
+                        <engine:VisualElement name="tag-manager-list" class="tag-manager-list" />
+                    </engine:Foldout>
+                    <engine:Foldout name="foldout-players" text="Players" enabled="true" value="false">
+                        <engine:VisualElement class="tag-manager-new-row">
+                            <engine:TextField name="new-player-name-field" placeholder-text="New player name..." class="tag-manager-name-field" style="flex-grow: 1;" />
+                            <engine:Button name="add-player-button" text="+ Add" class="settings-btn" />
+                        </engine:VisualElement>
+                        <engine:VisualElement name="player-list" class="player-list" />
+                    </engine:Foldout>
                 </engine:VisualElement>
             </engine:ScrollView>
         </engine:VisualElement>
@@ -154,6 +170,20 @@
                                 <engine:FloatField name="field-scale-y" label="Y" />
                                 <engine:FloatField name="field-scale-z" label="Z" />
                             </engine:VisualElement>
+                            <engine:Label text="NOTES" class="settings-subhead" />
+                            <engine:VisualElement name="notes-list" />
+                            <engine:Label name="label-no-notes" text="No notes." class="settings-caption" />
+                            <engine:Label text="TAGS" class="settings-subhead" />
+                            <engine:VisualElement name="tags-list" />
+                            <engine:Label name="label-no-tags" text="No tags." class="settings-caption" />
+                            <engine:VisualElement style="flex-direction: row; margin-top: 4px;">
+                                <engine:DropdownField name="tag-assign-dropdown" style="flex-grow: 1;" />
+                                <engine:Button name="btn-add-tag" text="Add" class="settings-btn" />
+                            </engine:VisualElement>
+                            <engine:Toggle name="toggle-is-pawn" label="Is Pawn" style="margin-top: 6px;" />
+                            <engine:Label text="SHEETS" class="settings-subhead" />
+                            <engine:VisualElement name="sheets-list" />
+                            <engine:Label name="label-no-sheets" text="No sheets." class="settings-caption" />
                         </engine:VisualElement>
                     </engine:VisualElement>
                 </engine:ScrollView>
