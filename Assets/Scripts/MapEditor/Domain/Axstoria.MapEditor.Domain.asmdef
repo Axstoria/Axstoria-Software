@@ -3,7 +3,8 @@
     "rootNamespace": "MapEditor.Domain",
     "references": [
         "Axstoria.SceneEditor.Domain",
-        "Axstoria.Grid.Domain"
+        "Axstoria.Grid.Domain",
+        "Axstoria.Camera.Domain"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

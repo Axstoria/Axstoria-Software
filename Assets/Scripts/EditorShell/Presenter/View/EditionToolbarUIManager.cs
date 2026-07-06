@@ -202,6 +202,8 @@ namespace EditorShell.Presenter.View
             vm.SaveMap.Execute(vm.Map.Model);
         }
 
+        public Action<Map> OnMapImported;
+
         private void OnImportMapClicked(DropdownMenuAction action)
         {
             var vm = Context.GetApplicationContext().GetContainer().Resolve<MapEditorViewModel>();
@@ -228,8 +230,54 @@ namespace EditorShell.Presenter.View
             active.Metadata = loaded.Metadata;
             active.NotifyMetadataChanged();
 
+            var existingPlayers = new List<Player>(active.Players);
+            foreach (Player p in existingPlayers)
+                active.RemovePlayer(p);
+
+            foreach (Player p in loaded.Players)
+                active.AddPlayer(p);
+
+            // Terrain — push into the existing TerrainLayoutViewModel's ObservableProperties
+            // so TerrainBuilderView's ValueChanged-driven rebuild actually fires.
+            if (loaded.TerrainLayout != null && vm.Map.Terrain != null)
+            {
+                vm.Map.Terrain.Width.Value     = loaded.TerrainLayout.Width;
+                vm.Map.Terrain.Depth.Value     = loaded.TerrainLayout.Depth;
+                vm.Map.Terrain.Thickness.Value = loaded.TerrainLayout.Thickness;
+                vm.Map.Terrain.Height.Value    = loaded.TerrainLayout.Height;
+                float[] col = loaded.TerrainLayout.Color;
+                if (col != null && col.Length >= 3)
+                    vm.Map.Terrain.Color.Value = new Color(col[0], col[1], col[2], col.Length > 3 ? col[3] : 1f);
+            }
+            if (vm.Grid != null && loaded.TerrainLayout?.Grid != null)
+                vm.Grid.CellSize = loaded.TerrainLayout.Grid.CellSize;
+
+            // Camera settings — push into the ObservableProperty-backed fields (auto-refreshes
+            // those sliders via existing subscriptions); OrbitSmoothing/ZoomSmoothing aren't
+            // ObservableProperty-wrapped, so copy them directly into the shared Settings instance.
+            if (loaded.CameraSettings != null && vm.Camera != null)
+            {
+                vm.Camera.OrbitSensitivity.Value = loaded.CameraSettings.OrbitSensitivity;
+                vm.Camera.PanSensitivity.Value   = loaded.CameraSettings.PanSensitivity;
+                vm.Camera.ZoomSpeed.Value        = loaded.CameraSettings.ZoomSpeed;
+                vm.Camera.MinZoomDistance.Value  = loaded.CameraSettings.MinZoomDistance;
+                vm.Camera.MaxZoomDistance.Value  = loaded.CameraSettings.MaxZoomDistance;
+                vm.Camera.MinPitch.Value         = loaded.CameraSettings.MinPitch;
+                vm.Camera.MaxPitch.Value         = loaded.CameraSettings.MaxPitch;
+                active.CameraSettings.OrbitSmoothing = loaded.CameraSettings.OrbitSmoothing;
+                active.CameraSettings.ZoomSmoothing  = loaded.CameraSettings.ZoomSmoothing;
+            }
+
+            // Light + skybox have no reactive ViewModel path — store on the domain, then let
+            // OnMapImported subscribers (SideBarController, SkyboxSelectorController) refresh
+            // both the live scene state and the UI from it.
+            active.LightSettings = loaded.LightSettings;
+            active.SkyboxName    = loaded.SkyboxName;
+
             if (vm.Grid != null)
                 vm.Grid.RebuildOccupancy(active.Objects);
+
+            OnMapImported?.Invoke(active);
         }
 
         private void OnUndoClicked(DropdownMenuAction action)

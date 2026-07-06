@@ -40,6 +40,9 @@
                         <engine:Label text="Ambient Color" class="settings-caption" />
                         <engine:VisualElement name="ambient-color-swatch" class="hsv-swatch" />
                     </engine:Foldout>
+                    <engine:Foldout name="foldout-skybox" text="Skybox" enabled="true" value="false">
+                        <engine:VisualElement name="skybox-grid" class="skybox-grid" />
+                    </engine:Foldout>
                     <engine:Foldout name="foldout-camera" text="Camera" enabled="true" value="false">
                         <engine:Slider name="slider-orbit-sensitivity" label="Orbit Sensitivity" value="0.4" low-value="0.05" high-value="2" />
                         <engine:Slider name="slider-zoom-speed" label="Zoom Speed" value="0.45" low-value="0.05" high-value="2" />

@@ -3,34 +3,19 @@ using System.Collections.Generic;
 
 namespace Campaign.Infrastructure
 {
-    [Serializable]
-    public abstract class MetadataValueDTO { }
-
-    [Serializable]
-    public class NoteValueDTO : MetadataValueDTO
-    {
-        public string Text { get; set; }
-    }
-
-    [Serializable]
-    public class TagValueDTO : MetadataValueDTO
-    {
-        public string Id       { get; set; }
-        public string Name     { get; set; }
-        public string HexColor { get; set; } = "#FFFFFF";
-    }
-
-    [Serializable]
-    public class SheetValueDTO : MetadataValueDTO
-    {
-        // TODO: Implement this class when sheets are done
-    }
-
+    // JsonUtility cannot serialize/deserialize through a polymorphic (abstract-typed)
+    // field — it silently drops it, producing an entry with no value at all on load.
+    // MetadataEntryDTO is deliberately flat (one concrete field per known entry type)
+    // instead of wrapping an abstract "value" type, so every field is a plain,
+    // JsonUtility-serializable member.
     [Serializable]
     public class MetadataEntryDTO
     {
-        public string EntryType;
-        public MetadataValueDTO EntryValue;
+        public string entryType;
+        public string noteText;
+        public string tagId;
+        public string tagName;
+        public string tagHexColor;
     }
 
     [Serializable]
@@ -45,6 +30,33 @@ namespace Campaign.Infrastructure
         public List<SceneObjectDTO>   objects;
         public List<MetadataEntryDTO> metadata;
         public List<PlayerDTO>        players;
+        public LightDTO               light;
+        public string                 skyboxName;
+        public CameraSettingsDTO      cameraSettings;
+    }
+
+    [Serializable]
+    public class LightDTO
+    {
+        public float intensity;
+        public float colorR, colorG, colorB;
+        public float pitch, yaw;
+        public float shadowStrength;
+        public float ambientIntensity;
+        public float ambientColorR, ambientColorG, ambientColorB;
+    }
+
+    [Serializable]
+    public class CameraSettingsDTO
+    {
+        public float orbitSensitivity;
+        public float minPitch, maxPitch;
+        public float orbitSmoothing;
+        public float zoomSpeed;
+        public float zoomSmoothing;
+        public float minZoomDistance, maxZoomDistance;
+        public float panSensitivity;
+        public float panSmoothing;
     }
 
     [Serializable]

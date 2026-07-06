@@ -1214,6 +1214,7 @@ GameObject:
   - component: {fileID: 1957207860}
   - component: {fileID: 1957207861}
   - component: {fileID: 1957207862}
+  - component: {fileID: 1759955890}
   m_Layer: 0
   m_Name: UI Manager
   m_TagString: Untagged
@@ -1302,6 +1303,50 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EditorShell.Presenter.View.SideBarController
   _directionalLight: {fileID: 1816956863}
+--- !u!114 &1759955890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1957207856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0aedbba389f84ebaa768abad44eb3982, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::EditorShell.Presenter.View.SkyboxSelectorController
+  _skyboxes:
+  - displayName: Cartoon Blue Sky
+    material: {fileID: 2100000, guid: c56e28e54cac24b04ae3dd957d214534, type: 2}
+    preview: {fileID: 2800000, guid: d731d71c2b8e94c18b5ef8be277e6773, type: 3}
+  - displayName: Cartoon Night Sky
+    material: {fileID: 2100000, guid: aa78c8d403a8547fe86d1f74239e6b03, type: 2}
+    preview: {fileID: 2800000, guid: 5cd44424375bd4ad69191a50c41ec04d, type: 3}
+  - displayName: Cold Night
+    material: {fileID: 2100000, guid: 9af23ba5fa5364ff598888460e0e2759, type: 2}
+    preview: {fileID: 2800000, guid: aad96e1c2baf24d3499e2ea1426ab824, type: 3}
+  - displayName: Cold Sunset
+    material: {fileID: 2100000, guid: 2d796ced94d61438fbab81b194038162, type: 2}
+    preview: {fileID: 2800000, guid: 6774108631deb4532b5f7df6e4f779a7, type: 3}
+  - displayName: Deep Dusk
+    material: {fileID: 2100000, guid: b4f152e0498484391a9f0d5a1facf03b, type: 2}
+    preview: {fileID: 2800000, guid: 5fdaaa9d974104e6d8f9e575170a0c70, type: 3}
+  - displayName: Epic Blue Sunset
+    material: {fileID: 2100000, guid: 7416536dbe0334cfd888dd1beb75a9fb, type: 2}
+    preview: {fileID: 2800000, guid: 33dc9d88f32144697ba9777ee1aaae7b, type: 3}
+  - displayName: Epic Glorious Pink
+    material: {fileID: 2100000, guid: 8b7dd0809c7c6498789fa32a61eaa6cb, type: 2}
+    preview: {fileID: 2800000, guid: 87dff0577f22146db9255e2cf270d6ee, type: 3}
+  - displayName: Night MoonBurst
+    material: {fileID: 2100000, guid: c494c335823f54b52b2e87e1b7a63a23, type: 2}
+    preview: {fileID: 2800000, guid: 6faf329ad7f5a4920bd3e23e4b000057, type: 3}
+  - displayName: Overcast Low
+    material: {fileID: 2100000, guid: f2b5f3f20933f434e850db1b710542fd, type: 2}
+    preview: {fileID: 2800000, guid: 402fe3aa91fba453f92dd3bbe820dbd9, type: 3}
+  - displayName: Space Another Planet
+    material: {fileID: 2100000, guid: 656058fe318eb48558d21d66d1a79a2b, type: 2}
+    preview: {fileID: 2800000, guid: 0b5345cf23ab840779a8cbf1b89f355a, type: 3}
+  _defaultIndex: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

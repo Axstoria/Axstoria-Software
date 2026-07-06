@@ -1,5 +1,6 @@
 using Camera.Presenter.ViewModels;
 using Loxodon.Framework.Contexts;
+using MapEditor.Domain;
 using MapEditor.Presenter.View;
 using MapEditor.Presenter.ViewModels;
 using SceneEditor.Domain;
@@ -335,21 +336,30 @@ namespace EditorShell.Presenter.View
             _ambientColor = RenderSettings.ambientLight;
             RefreshAmbientSwatch(_ambientColor);
 
-            // slider → scene
-            LightIntensity.RegisterValueChangedCallback(e => _directionalLight.intensity      = e.newValue);
+            // slider → scene (and mirrored into the domain LightSettings so it survives save/load)
+            LightIntensity.RegisterValueChangedCallback(e =>
+            {
+                _directionalLight.intensity = e.newValue;
+                SyncLightSettingsToDomain();
+            });
             LightColorSwatch.RegisterCallback<ClickEvent>(_ =>
             {
                 _colorPickerOverlay.Open(_directionalLight.color, LightColorSwatch, color =>
                 {
                     _directionalLight.color = color;
                     RefreshLightSwatch(color);
+                    SyncLightSettingsToDomain();
                 });
             });
-            LightPitch.RegisterValueChangedCallback(_     => ApplyLightRotation());
-            LightYaw.RegisterValueChangedCallback(_       => ApplyLightRotation());
-            LightShadows.RegisterValueChangedCallback(e   => _directionalLight.shadowStrength = e.newValue);
+            LightPitch.RegisterValueChangedCallback(_ => { ApplyLightRotation(); SyncLightSettingsToDomain(); });
+            LightYaw.RegisterValueChangedCallback(_   => { ApplyLightRotation(); SyncLightSettingsToDomain(); });
+            LightShadows.RegisterValueChangedCallback(e =>
+            {
+                _directionalLight.shadowStrength = e.newValue;
+                SyncLightSettingsToDomain();
+            });
             // Flat ambient mode ignores RenderSettings.ambientIntensity, so intensity is folded into the color instead.
-            AmbientIntensity.RegisterValueChangedCallback(_ => ApplyAmbientColor());
+            AmbientIntensity.RegisterValueChangedCallback(_ => { ApplyAmbientColor(); SyncLightSettingsToDomain(); });
             AmbientColorSwatch.RegisterCallback<ClickEvent>(_ =>
             {
                 _colorPickerOverlay.Open(_ambientColor, AmbientColorSwatch, color =>
@@ -357,8 +367,13 @@ namespace EditorShell.Presenter.View
                     _ambientColor = color;
                     RefreshAmbientSwatch(color);
                     ApplyAmbientColor();
+                    SyncLightSettingsToDomain();
                 });
             });
+
+            // Seed the domain LightSettings from the scene's initial state so a Save taken
+            // before touching any slider still persists something meaningful.
+            SyncLightSettingsToDomain();
         }
 
         private void ConnectTerrainGrid()
@@ -671,6 +686,50 @@ namespace EditorShell.Presenter.View
 
         private void RefreshAmbientSwatch(Color color)
             => AmbientColorSwatch.style.backgroundColor = color;
+
+        // Mirrors the live scene light/ambient state into the domain LightSettings so it's
+        // actually there to serialize on Save (previously write-only/unused by this UI).
+        private void SyncLightSettingsToDomain()
+        {
+            if (_directionalLight == null || _vm?.Map?.Model == null) return;
+
+            LightSettings settings = _vm.Map.Model.LightSettings;
+            settings.Intensity        = _directionalLight.intensity;
+            settings.ColorR           = _directionalLight.color.r;
+            settings.ColorG           = _directionalLight.color.g;
+            settings.ColorB           = _directionalLight.color.b;
+            Vector3 euler             = _directionalLight.transform.eulerAngles;
+            settings.Pitch            = euler.x;
+            settings.Yaw              = euler.y;
+            settings.ShadowStrength   = _directionalLight.shadowStrength;
+            settings.AmbientIntensity = AmbientIntensity.value;
+            settings.AmbientColorR    = _ambientColor.r;
+            settings.AmbientColorG    = _ambientColor.g;
+            settings.AmbientColorB    = _ambientColor.b;
+        }
+
+        // Pushes loaded LightSettings onto the live scene and refreshes the sliders/swatches
+        // to match. Called by LayoutUIManager after a map import.
+        public void ApplyLightSettings(LightSettings settings)
+        {
+            if (_directionalLight == null || settings == null) return;
+
+            _directionalLight.intensity = settings.Intensity;
+            _directionalLight.color = new Color(settings.ColorR, settings.ColorG, settings.ColorB);
+            _directionalLight.transform.eulerAngles = new Vector3(settings.Pitch, settings.Yaw, 0f);
+            _directionalLight.shadowStrength = settings.ShadowStrength;
+
+            _ambientColor = new Color(settings.AmbientColorR, settings.AmbientColorG, settings.AmbientColorB);
+            AmbientIntensity.SetValueWithoutNotify(settings.AmbientIntensity);
+            ApplyAmbientColor();
+
+            LightIntensity.SetValueWithoutNotify(settings.Intensity);
+            RefreshLightSwatch(_directionalLight.color);
+            LightPitch.SetValueWithoutNotify(settings.Pitch);
+            LightYaw.SetValueWithoutNotify(settings.Yaw);
+            LightShadows.SetValueWithoutNotify(settings.ShadowStrength);
+            RefreshAmbientSwatch(_ambientColor);
+        }
 
         // ── Terrain helpers ───────────────────────────────────────────────────
 

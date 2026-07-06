@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Camera.Domain;
 using SceneEditor.Domain;
 
 namespace MapEditor.Domain
@@ -15,6 +16,9 @@ namespace MapEditor.Domain
         public List<MetadataEntry> Metadata      { get; set; } = new();
         public List<Player>        Players       { get; set; } = new();
         public TerrainLayout       TerrainLayout { get; set; }
+        public LightSettings       LightSettings { get; set; } = new();
+        public string              SkyboxName    { get; set; }
+        public CameraSettings      CameraSettings { get; set; } = new();
 
         public event Action<SceneObject> OnObjectAdded;
         public event Action<SceneObject> OnObjectRemoved;

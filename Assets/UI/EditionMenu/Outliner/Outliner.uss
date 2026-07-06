@@ -545,6 +545,58 @@
     border-radius: 3px;
 }
 
+.skybox-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.skybox-item {
+    width: 84px;
+    align-items: center;
+    margin: 0 6px 8px 0;
+    padding: 4px;
+    background-color: rgb(58, 58, 58);
+    border-radius: 4px;
+    border-width: 1px;
+    border-color: rgb(70, 70, 70);
+}
+
+.skybox-item:hover {
+    background-color: rgb(68, 68, 68);
+    border-color: rgb(100, 140, 210);
+}
+
+.skybox-item--selected {
+    background-color: rgb(100, 140, 210);
+    border-color: rgb(130, 165, 225);
+}
+
+.skybox-item--selected:hover {
+    background-color: rgb(112, 150, 220);
+}
+
+.skybox-item--selected .skybox-item__label {
+    color: rgb(255, 255, 255);
+}
+
+.skybox-item__thumbnail {
+    width: 76px;
+    height: 44px;
+    background-color: rgb(30, 30, 30);
+    border-radius: 3px;
+    margin-bottom: 4px;
+    -unity-background-scale-mode: scale-and-crop;
+}
+
+.skybox-item__label {
+    font-size: 10.5px;
+    -unity-text-align: middle-center;
+    color: rgb(200, 200, 200);
+    overflow: hidden;
+    white-space: normal;
+    width: 76px;
+}
+
 .player-list {
     flex-direction: column;
 }
